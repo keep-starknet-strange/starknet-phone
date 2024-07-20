@@ -4,7 +4,7 @@
 
 [building graphene os](https://grapheneos.org/build)
 
-### Ethereum Phone stuff 
+### Ethereum Phone 
 
 [Ethereum Phone platform manifest](https://github.com/EthereumPhone/platform_manifest)
 
