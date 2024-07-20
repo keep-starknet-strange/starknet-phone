@@ -2,7 +2,7 @@
 
 ## Resources 
 
-[building graphene os](git@github.com:keep-starknet-strange/cairo-os.git)
+[building graphene os](https://grapheneos.org/build)
 
 ### Ethereum Phone stuff 
 
