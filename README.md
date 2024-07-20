@@ -4,7 +4,7 @@
 
 [building graphene os](git@github.com:keep-starknet-strange/cairo-os.git)
 
-### Ethereum Phone stuff 
+### Ethereum Phone 
 
 [Ethereum Phone platform manifest](https://github.com/EthereumPhone/platform_manifest)
 
