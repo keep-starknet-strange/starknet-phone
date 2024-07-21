@@ -1,5 +1,12 @@
 
 
+## License 
+
+This project is licensed under the MIT license.
+
+See [LICENSE](./LICENSE.txt) for more information.
+
+
 ## Resources 
 
 [building graphene os](https://grapheneos.org/build)
