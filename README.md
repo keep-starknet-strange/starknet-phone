@@ -31,6 +31,7 @@ We live on contributions. If you'd like to contribute please follow the [guide](
   <tbody>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/drspacemn"><img src="https://avatars.githubusercontent.com/u/16685321?v=4?s=100" width="100px;" alt="drspacemn"/><br /><sub><b>drspacemn</b></sub></a><br /><a href="#infra-drspacemn" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/keep-starknet-strange/starknet-phone/commits?author=drspacemn" title="Tests">⚠️</a> <a href="https://github.com/keep-starknet-strange/starknet-phone/commits?author=drspacemn" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/trbutler4"><img src="https://avatars.githubusercontent.com/u/58192340?v=4?s=100" width="100px;" alt="Thomas Butler"/><br /><sub><b>Thomas Butler</b></sub></a><br /><a href="#infra-trbutler4" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/keep-starknet-strange/starknet-phone/commits?author=trbutler4" title="Tests">⚠️</a> <a href="https://github.com/keep-starknet-strange/starknet-phone/commits?author=trbutler4" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
