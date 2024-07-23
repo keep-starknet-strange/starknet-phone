@@ -8,8 +8,9 @@
     "CONTRIBUTING.md"
   ],
   "imageSize": 100,
-  "commitConvention": "gitmoji",
+  "commitConvention": "none",
+  "commitType": "docs",
   "contributors": [],
   "contributorsPerLine": 7,
-  "skipCi": true
+  "skipCi": false
 }
