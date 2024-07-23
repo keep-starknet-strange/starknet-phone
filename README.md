@@ -1,6 +1,7 @@
 <div align="center">
-  <h1 style="border:none">Starknet Phone</h1>
-  <img src="docs/src/assets/starknetPhoneBanner.png" alt="starknet-phone" height="125" style="margin-bottom:20px;"/>
+  <h1 style="border-bottom:0">Starknet Phone</h1>
+  <img src="docs/src/assets/starknetPhoneBanner.png" alt="starknet-phone" height="125"/>
+  <br><br>
 
   [![Check Workflow Status](https://github.com/keep-starknet-strange/starknet-phone/actions/workflows/check.yml/badge.svg)](https://github.com/keep-starknet-strange/starknet-phone/actions/workflows/check.yml)
 
