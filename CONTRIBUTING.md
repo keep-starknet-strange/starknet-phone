@@ -2,7 +2,7 @@
 
 <!-- markdownlint-disable MD051 -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-0-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- markdownlint-enable MD051 -->
 
@@ -59,7 +59,5 @@ mdl -s .github/linter/readme_style.rb README.md
 - [blockstream-sn TG](https://t.me/+N7UqCg2hxA4wNTZh)
 - [Syncing a Fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork)
 - [Submitting data blobs to Celestia](https://docs.celestia.org/developers/submit-data)
-
-##
 
 Thank you for your contribution!

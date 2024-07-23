@@ -1,6 +1,11 @@
 [book]
-authors = ["Thomas Butler"]
+authors = ["Thomas Butler", "drspacemn"]
 language = "en"
 multilingual = false
 src = "src"
-title = "cairo-os-book"
+title = "Starknet Phone"
+
+[output.html]
+git-repository-url = "https://github.com/keep-starknet-strange/starknet-phone"
+edit-url-template = "https://github.com/keep-starknet-strange/starknet-phone/issues/new/choose"
+cname = "docs.starknetphone.xyz"

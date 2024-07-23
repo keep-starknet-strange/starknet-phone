@@ -1,6 +1,6 @@
 {
   "projectName": "starknet-phone",
-  "projectOwner": "drspacemn",
+  "projectOwner": "keep-starknet-strange",
   "repoType": "github",
   "repoHost": "https://github.com",
   "files": [
@@ -8,9 +8,32 @@
     "CONTRIBUTING.md"
   ],
   "imageSize": 100,
-  "commit": true,
-  "commitConvention": "gitmoji",
-  "contributors": [],
+  "commitConvention": "none",
+  "commitType": "docs",
+  "contributors": [
+    {
+      "login": "drspacemn",
+      "name": "drspacemn",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16685321?v=4",
+      "profile": "https://github.com/drspacemn",
+      "contributions": [
+        "infra",
+        "test",
+        "code"
+      ]
+    },
+    {
+      "login": "trbutler4",
+      "name": "Thomas Butler",
+      "avatar_url": "https://avatars.githubusercontent.com/u/58192340?v=4",
+      "profile": "https://github.com/trbutler4",
+      "contributions": [
+        "infra",
+        "test",
+        "code"
+      ]
+    }
+  ],
   "contributorsPerLine": 7,
-  "linkToUsage": false
+  "skipCi": true
 }
