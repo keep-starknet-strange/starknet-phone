@@ -8,9 +8,7 @@
     "CONTRIBUTING.md"
   ],
   "imageSize": 100,
-  "commit": true,
   "commitConvention": "gitmoji",
-  "commitType": "chore",
   "contributors": [],
   "contributorsPerLine": 7,
   "skipCi": true
