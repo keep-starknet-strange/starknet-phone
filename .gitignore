@@ -1,0 +1,5 @@
+# Sys files
+**/.DS_Store
+
+# mdBook
+docs/book/
