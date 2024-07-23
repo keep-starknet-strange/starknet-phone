@@ -60,6 +60,4 @@ mdl -s .github/linter/readme_style.rb README.md
 - [Syncing a Fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork)
 - [Submitting data blobs to Celestia](https://docs.celestia.org/developers/submit-data)
 
-##
-
 Thank you for your contribution!
