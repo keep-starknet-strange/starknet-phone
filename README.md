@@ -1,5 +1,5 @@
 <div align="center">
-  <h1 style="border-bottom:0">Starknet Phone</h1>
+  <h1 style="border-bottom:0;">Starknet Phone</h1>
   <img src="docs/src/assets/starknetPhoneBanner.png" alt="starknet-phone" height="125"/>
   <br><br>
 
