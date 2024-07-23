@@ -1,6 +1,6 @@
 {
   "projectName": "starknet-phone",
-  "projectOwner": "drspacemn",
+  "projectOwner": "keep-starknet-strange",
   "repoType": "github",
   "repoHost": "https://github.com",
   "files": [
@@ -10,7 +10,8 @@
   "imageSize": 100,
   "commit": true,
   "commitConvention": "gitmoji",
+  "commitType": "chore",
   "contributors": [],
   "contributorsPerLine": 7,
-  "linkToUsage": false
+  "skipCi": true
 }
