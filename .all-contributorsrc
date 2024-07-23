@@ -21,6 +21,17 @@
         "test",
         "code"
       ]
+    },
+    {
+      "login": "trbutler4",
+      "name": "Thomas Butler",
+      "avatar_url": "https://avatars.githubusercontent.com/u/58192340?v=4",
+      "profile": "https://github.com/trbutler4",
+      "contributions": [
+        "infra",
+        "test",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
