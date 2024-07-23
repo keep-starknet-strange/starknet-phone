@@ -1,0 +1,16 @@
+{
+  "projectName": "starknet-phone",
+  "projectOwner": "drspacemn",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md",
+    "CONTRIBUTING.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "gitmoji",
+  "contributors": [],
+  "contributorsPerLine": 7,
+  "linkToUsage": false
+}
