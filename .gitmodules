@@ -1,15 +1,3 @@
-[submodule "beerus"]
-	path = beerus
-	url = https://github.com/trbutler4/beerus
-	branch = android-impl
-[submodule "light_client/beerus"]
-	path = light_client/beerus
-	url = https://github.com/trbutler4/beerus
-	branch = android-impl
-[submodule "light_client_app/beerus"]
-	path = light_client_app/beerus
-	url = https://github.com/trbutler4/beerus
-	branch = android-impl
 [submodule "light_client_app/beerus-android"]
 	path = light_client_app/beerus-android
 	url = https://github.com/trbutler4/beerus-android
