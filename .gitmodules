@@ -1,0 +1,3 @@
+[submodule "snphone_platform_manifest"]
+	path = snphone_platform_manifest
+	url = https://github.com/suffix-labs/snphone_platform_manifest
