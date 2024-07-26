@@ -1,6 +1,3 @@
-[submodule "light_client_app/beerus-android"]
-	path = light_client_app/beerus-android
-	url = https://github.com/trbutler4/beerus-android
 [submodule "light_client_app/snphone-beerus"]
 	path = light_client_app/snphone-beerus
 	url = https://github.com/suffix-labs/snphone-beerus
