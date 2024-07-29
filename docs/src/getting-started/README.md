@@ -3,7 +3,7 @@
 ## Installing on an emulator 
 
 1. Download a zip file of the image here: 
-2. Make sure [android studio]() is installed.
+2. Make sure [Android Studio](https://developer.android.com/studio/install) is installed.
 3. Navigate to the Android SDK install location. On mac this default to ```Library/Android/sdk```
 ```bash 
 cd Library/Android/sdk
