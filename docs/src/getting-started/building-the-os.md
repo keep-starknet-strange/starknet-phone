@@ -70,12 +70,6 @@ ANDROID_BUILD_TOP=~/starknet-phone-os ARCH=x86_64 common/update_virt_prebuilts.s
 ```
 
 
-
-
-## Building for an emulator 
-
-SDK emulator target: sdk_phone64_x86_64\
-
 ## Vanadium 
 
 Install depot_tools for chromium and add it to your path: 
