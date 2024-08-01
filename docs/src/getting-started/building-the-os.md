@@ -33,19 +33,19 @@ repo sync -j8
 
 NOTE: must be done from bash or zsh
 
-1. set up build environment
+set up build environment
 
 ```bash
 source build/envsetup.sh
 ```
 
-2. setting the build target
+set the build target
 
 ```bash
 lunch sdk_phone64_x86_64-cur-eng
 ```
 
-3. start the build. This can take multiple hours to run.
+start the build. This can take multiple hours to run.
 
 ```bash
 m
@@ -55,7 +55,7 @@ m
 
 #### Emulator
 
-1. sync repo
+sync repo
 
 ```bash
 mkdir -p android/kernel/6.1
@@ -64,13 +64,13 @@ repo init -u https://github.com/GrapheneOS/kernel_manifest-6.1.git -b 14
 repo sync -j8
 ```
 
-2. build the kernel image and modules for the emulator
+build the kernel image and modules for the emulator
 
 ```bash
 ARCH=x86_64 common/build_virt.sh
 ```
 
-3. replace the prebuilts in the OS source tree
+replace the prebuilts in the OS source tree
 
 ```bash
 ANDROID_BUILD_TOP=~/starknet-phone-os ARCH=x86_64 common/update_virt_prebuilts.sh
