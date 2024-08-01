@@ -9,10 +9,7 @@ phone: light client, wallet, and browser.
 Installing the build:
 
 1. Install [Android Studio](https://developer.android.com/studio/install).
-1. Create a new pixel device with the latest android SDK. Follow the
-
-instructions [here](https://developer.android.com/studio/run/managing-avds)
-
+1. [Create a new device](https://developer.android.com/studio/run/managing-avds)
 1. Create a fork of this repository, and open the application in Android Studio.
 1. Refer to the [contribution guide](<>) for any contributions.
 
