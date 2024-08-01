@@ -1,3 +1,6 @@
+[submodule "light_client_app/snphone-beerus"]
+	path = light_client_app/snphone-beerus
+	url = https://github.com/suffix-labs/snphone-beerus
 [submodule "snphone_platform_manifest"]
 	path = snphone_platform_manifest
 	url = https://github.com/suffix-labs/snphone_platform_manifest
