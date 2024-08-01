@@ -1,8 +1,23 @@
 # Getting Started
 
-## Installing on an emulator 
+## Install Android Studio 
 
-1. Download a zip file of the image here: 
+Most development, at least starting out, will be on the 3 android applications that form the core of 
+the starknet phone: light client, wallet, and browser.
+
+1. Install [Android Studio](https://developer.android.com/studio/install).
+2. Create a new pixel device with the latest android SDK. Follow the instructions 
+[here](https://developer.android.com/studio/run/managing-avds)
+3. Create a fork of this repository, and open the application in Android Studio. 
+4. Refer to the [contribution guide]() for any contributions.
+
+
+## Installing on an emulator
+
+NOTE: We are still working to provide an image for download. For now, development on any of 
+the application can be done on a generic android OS.
+
+1. Download a zip file of the image. 
 2. Make sure [Android Studio](https://developer.android.com/studio/install) is installed.
 3. Navigate to the Android SDK install location. On mac this default to ```Library/Android/sdk```
 ```bash 

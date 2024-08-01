@@ -70,14 +70,4 @@ ANDROID_BUILD_TOP=~/starknet-phone-os ARCH=x86_64 common/update_virt_prebuilts.s
 ```
 
 
-## Vanadium 
-
-Install depot_tools for chromium and add it to your path: 
-
-```bash 
-git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
-export PATH="$PATH:/path/to/depot_tools"
-```
-
-
 
