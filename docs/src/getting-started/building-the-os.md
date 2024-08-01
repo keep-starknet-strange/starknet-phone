@@ -6,11 +6,11 @@ Baseline build dependencies:
 
 - x86_64 Linux build environment.
 - 32GiB of memory or more. Link-Time Optimization (LTO) creates huge peaks
-during linking and is mandatory for Control Flow Integrity (CFI). Linking
-Vanadium (Chromium) and the Linux kernel with LTO + CFI are the most memory
-demanding tasks.
+  during linking and is mandatory for Control Flow Integrity (CFI). Linking
+  Vanadium (Chromium) and the Linux kernel with LTO + CFI are the most memory
+  demanding tasks.
 - 100GiB+ of additional free storage space for a typical build of the entire
-OS for a multiarch device.
+  OS for a multiarch device.
 
 More detailed dependiencies and build guide can be found
 [here](https://grapheneos.org/build)
@@ -18,6 +18,7 @@ More detailed dependiencies and build guide can be found
 ## Downloading the source code
 
 ### Development Branch
+
 Starknet Phone forks the '14' branch of grapheneOS, which is the main
 development branch of GrapheneOS.
 
@@ -33,14 +34,19 @@ repo sync -j8
 NOTE: must be done from bash or zsh
 
 1. set up build environment
+
 ```bash
 source build/envsetup.sh
 ```
+
 2. setting the build target
+
 ```bash
 lunch sdk_phone64_x86_64-cur-eng
 ```
+
 3. start the build. This can take multiple hours to run.
+
 ```bash
 m
 ```
