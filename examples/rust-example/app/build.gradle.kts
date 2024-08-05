@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.cli.jvm.main
+import org.jetbrains.kotlin.ir.backend.js.compile
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -33,7 +36,17 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    sourceSets {
+        named("main") {
+            jniLibs.srcDir("src/main/jni/x86_64")
+            // Configure the JNI libraries directory
+            // Note: For newer configurations, JNI libraries are often managed differently
+            // Check your specific plugin version's documentation for precise configuration
+        }
+    }
 }
+
 
 dependencies {
 

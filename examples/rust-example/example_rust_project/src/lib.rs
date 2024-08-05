@@ -1,8 +1,8 @@
-use core::ffi::c_char;
-use std::ffi::CString;
+//#[cfg(target_os = "android")]
+//#[path = "android.rs"]
+mod android;
 
-#[no_mangle]
-pub unsafe extern "C" fn rust_hello() -> *const c_char {
-    let msg = CString::new("Hello, Android from Rust!").unwrap();
-    msg.into_raw()
+pub fn hello() -> String {
+    let msg = "Hello from Rust!";
+    msg.to_string()
 }
