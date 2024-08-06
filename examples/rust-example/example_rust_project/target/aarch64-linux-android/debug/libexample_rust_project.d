@@ -1,1 +1,0 @@
-/Users/iv-personal/Projects/snphone/starknet-phone/examples/rust-example/example_rust_project/target/aarch64-linux-android/debug/libexample_rust_project.so: /Users/iv-personal/Projects/snphone/starknet-phone/examples/rust-example/example_rust_project/build.rs /Users/iv-personal/Projects/snphone/starknet-phone/examples/rust-example/example_rust_project/src/lib.rs

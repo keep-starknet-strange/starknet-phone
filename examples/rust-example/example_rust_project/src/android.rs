@@ -4,8 +4,10 @@ use jni::{
     JNIEnv,
 };
 
+use super::hello;
+
 #[no_mangle]
-pub extern "system" fn Java_com_example_rust_example_RustLib_hello<'local>(
+pub extern "C" fn Java_com_example_rust_example_RustLib_hello<'local>(
     mut env: JNIEnv<'local>, // this is the class that owns our static method
     _class: JClass<'local>,
     input: JString<'local>,
@@ -18,7 +20,7 @@ pub extern "system" fn Java_com_example_rust_example_RustLib_hello<'local>(
 
     // creating a new java string to return to our android app
     let output = env
-        .new_string(format!("Hello, {}!", input))
+        .new_string(hello(&input))
         .expect("Couldn't create a java string!");
 
     output.into_raw()
