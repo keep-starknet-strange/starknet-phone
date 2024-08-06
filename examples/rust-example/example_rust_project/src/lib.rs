@@ -1,8 +1,5 @@
-//#[cfg(target_os = "android")]
-//#[path = "android.rs"]
 mod android;
 
-pub fn hello() -> String {
-    let msg = "Hello from Rust!";
-    msg.to_string()
+pub fn hello(input: &str) -> String {
+    format!("Hello, {}", input)
 }
