@@ -2,7 +2,6 @@ package com.example.rust_example
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.rust_example.RustLib
 
 
 class MainActivity : AppCompatActivity() {

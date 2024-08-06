@@ -39,7 +39,7 @@ android {
 
     sourceSets {
         named("main") {
-            jniLibs.srcDir("src/main/jni/x86_64")
+            jniLibs.srcDir("src/main/jni/")
             // Configure the JNI libraries directory
             // Note: For newer configurations, JNI libraries are often managed differently
             // Check your specific plugin version's documentation for precise configuration

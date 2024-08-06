@@ -7,6 +7,6 @@ public class RustLib {
 
     static {
         // here we load the rust library we created
-        System.loadLibrary("rust_example_project");
+        System.loadLibrary("example_rust_project");
     }
 }
