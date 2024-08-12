@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
@@ -32,8 +33,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
@@ -95,11 +100,21 @@ class SendActivity : ComponentActivity() {
             Spacer(modifier = Modifier.height(40.dp))
 
             // Amount Text
-            Text(
-                text = amount,
-                fontFamily = FontFamily(Font(R.font.publicsans_bold)),
-                color = Color.White,
-                fontSize = 40.sp,
+            TextField(
+                value = amount,
+                onValueChange = { newValue ->
+                    amount = newValue
+                },
+                textStyle = TextStyle(
+                    fontFamily = FontFamily(Font(R.font.publicsans_bold)),
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    fontSize = 40.sp
+                ),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, // Number-only keyboard
+                    imeAction = ImeAction.Done),
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
             )
 
             Spacer(modifier = Modifier.height(8.dp))

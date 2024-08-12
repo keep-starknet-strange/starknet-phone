@@ -64,32 +64,32 @@ dependencies {
     androidTestImplementation(composeBom)
 
     // Material Design 3
-    implementation("androidx.compose.material3:material3")
+    implementation(libs.androidx.material3)
     // or Material Design 2
-    implementation("androidx.compose.material:material")
+    implementation(libs.androidx.material)
 
     // Retrofit for network requests
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     //dagger
-    implementation("com.google.dagger:hilt-android:2.50")
-    implementation("androidx.hilt:hilt-navigation-fragment:1.0.0")
-    implementation ("androidx.hilt:hilt-navigation-compose:1.0.0-alpha03")
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.fragment)
+    implementation (libs.androidx.hilt.navigation.compose.v100alpha03)
 
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    debugImplementation("androidx.compose.ui:ui-tooling")
+    implementation(libs.androidx.ui.tooling.preview)
+    debugImplementation(libs.androidx.ui.tooling)
 
     // Optional - Integration with activities
-    implementation("androidx.activity:activity-compose:1.9.0")
+    implementation(libs.androidx.activity.compose)
     // Optional - Integration with ViewModels
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     // Optional - Integration with LiveData
-    implementation("androidx.compose.runtime:runtime-livedata")
+    implementation(libs.androidx.runtime.livedata)
 
-    implementation("androidx.navigation:navigation-compose:2.5.3")
+    implementation(libs.androidx.navigation.compose)
 
 
     implementation(libs.androidx.core.ktx)
@@ -100,4 +100,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(kotlin("script-runtime"))
 }
