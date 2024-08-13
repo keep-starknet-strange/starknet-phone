@@ -21,6 +21,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".SendActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
+        <activity
+            android:name=".ReceiverActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
     </application>
 
 </manifest>
