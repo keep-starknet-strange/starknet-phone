@@ -54,8 +54,6 @@ m
 
 ### Adding prebuilt binaries
 
-#### Emulator
-
 sync repo
 
 ```bash
