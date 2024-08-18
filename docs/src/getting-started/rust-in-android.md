@@ -106,7 +106,8 @@ Run
 ```bash
 make build-android
 ```
-Copy the .so file to jni directory in android app.
+Copy the .so file from 'target/x86_64-linux-android/release/libexample_rust_project.so' to
+'app/src/main/jni/x86_64/libexample_rust_project.so' so the android app can read compiled native code.
 Use the library like any other library.
 ```java
 package com.example.rust_example
