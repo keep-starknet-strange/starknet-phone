@@ -1,3 +1,5 @@
+mod create_account;
+
 fn main() {
-    println!("Hello, world!");
+    create_account::create_account();
 }
