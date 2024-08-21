@@ -1,8 +1,0 @@
-/home/thomas/Projects/snphone/starknet-phone/wallet_app/snphone-wallet/target/debug/deps/libstarknet_crypto_codegen-8053b84934669da2.so: /home/thomas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/starknet-crypto-codegen-0.4.0/src/lib.rs /home/thomas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/starknet-crypto-codegen-0.4.0/src/pedersen.rs /home/thomas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/starknet-crypto-codegen-0.4.0/src/poseidon/mod.rs /home/thomas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/starknet-crypto-codegen-0.4.0/src/poseidon/params.rs
-
-/home/thomas/Projects/snphone/starknet-phone/wallet_app/snphone-wallet/target/debug/deps/starknet_crypto_codegen-8053b84934669da2.d: /home/thomas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/starknet-crypto-codegen-0.4.0/src/lib.rs /home/thomas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/starknet-crypto-codegen-0.4.0/src/pedersen.rs /home/thomas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/starknet-crypto-codegen-0.4.0/src/poseidon/mod.rs /home/thomas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/starknet-crypto-codegen-0.4.0/src/poseidon/params.rs
-
-/home/thomas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/starknet-crypto-codegen-0.4.0/src/lib.rs:
-/home/thomas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/starknet-crypto-codegen-0.4.0/src/pedersen.rs:
-/home/thomas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/starknet-crypto-codegen-0.4.0/src/poseidon/mod.rs:
-/home/thomas/.cargo/registry/src/index.crates.io-6f17d22bba15001f/starknet-crypto-codegen-0.4.0/src/poseidon/params.rs:

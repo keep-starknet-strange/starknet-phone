@@ -1,1 +1,0 @@
-/home/thomas/Projects/snphone/starknet-phone/wallet_app/snphone-wallet/target/debug/snphone-wallet: /home/thomas/Projects/snphone/starknet-phone/wallet_app/snphone-wallet/src/create_account.rs /home/thomas/Projects/snphone/starknet-phone/wallet_app/snphone-wallet/src/main.rs
