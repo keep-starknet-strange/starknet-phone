@@ -1,5 +1,8 @@
 package com.example.walletapp
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -88,7 +91,9 @@ class ReceiverActivity : ComponentActivity() {
                 color = Color.White,
                 fontSize = 15.sp,
                 modifier = Modifier.clickable {
-                    // TODO(47): Copy address to clipboard
+                    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    val clip = ClipData.newPlainText("Wallet Address", "0xfoo...123") // Replace with actual wallet address
+                    clipboard.setPrimaryClip(clip)
                 }
             )
         }
