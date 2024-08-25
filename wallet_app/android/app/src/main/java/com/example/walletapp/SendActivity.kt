@@ -63,6 +63,8 @@ class SendActivity : ComponentActivity() {
 
     @Composable
     fun SendScreenView(modifier: Modifier){
+        /* TODO(34) send tokens */
+
         var amount by rememberSaveable {
             mutableStateOf("0.00")
         }
@@ -78,7 +80,7 @@ class SendActivity : ComponentActivity() {
             Spacer(modifier = Modifier.height(40.dp))
             // Dropdown button for selecting currency
             Button(
-                onClick = { /* TODO: Handle currency selection */ },
+                onClick = { /* Handle currency selection */ },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF1E1E96)),
                 modifier = Modifier.padding(8.dp)
             ) {
@@ -131,7 +133,7 @@ class SendActivity : ComponentActivity() {
 
             // Confirm Button
             Button(
-                onClick = { /* TODO: Handle confirm action */ },
+                onClick = { /* Handle confirm action */ },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
                 modifier = Modifier
                     .fillMaxWidth()
