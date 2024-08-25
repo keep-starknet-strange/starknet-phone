@@ -88,7 +88,7 @@ class ReceiverActivity : ComponentActivity() {
                 color = Color.White,
                 fontSize = 15.sp,
                 modifier = Modifier.clickable {
-                    // TODO: Copy address to clipboard
+                    // TODO(47): Copy address to clipboard
                 }
             )
         }
