@@ -26,7 +26,7 @@ development branch of GrapheneOS.
 mkdir starknet-phone-os
 cd starknet-phone-os
 repo init -u \
-https://github.com/suffix-labs/snphone_platform_manifest/tree/14 -b 14
+https://github.com/suffix-labs/snphone_platform_manifest -b 14
 repo sync -j8
 ```
 
