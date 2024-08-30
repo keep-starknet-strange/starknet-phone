@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -92,6 +93,23 @@ fun Wallet( modifier: Modifier) {
         WalletCard(icon = painterResource(id = R.drawable.ic_ethereum), amount = "$11,625.7", exchange = 4.44 , type ="ETH" )
 
         WalletCard(icon = painterResource(id = R.drawable.token2), amount = "$1.78", exchange = 4.44 , type ="STRK" )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Text(
+            text = "+ New Token",
+            fontFamily = FontFamily(Font(R.font.publicsans_bold)),
+            color = Color.White,
+            fontSize = 14.sp,
+            modifier = Modifier
+                .clickable {
+                    val intent = Intent(context, AddTokenActivity::class.java)
+                    context.startActivity(intent)
+                }
+                .background(Color.Transparent)
+                .padding(10.dp)
+                .align(Alignment.CenterHorizontally)
+        )
 
 
         Spacer(modifier = Modifier.weight(1f))
