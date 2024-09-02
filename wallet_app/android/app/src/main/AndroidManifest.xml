@@ -29,6 +29,19 @@
             android:name=".ReceiverActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
+        <activity android:name=".AddTokenActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
+        <activity android:name=".AccountPasswordActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
+        <activity android:name=".RecoveryPhraseActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
+
+        <activity android:name=".WalletActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
     </application>
 
 </manifest>

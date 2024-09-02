@@ -7,7 +7,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,26 +19,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
-import androidx.compose.material.Icon
 import androidx.compose.material.Surface
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
@@ -51,7 +47,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             WalletappTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    Wallet(
+                    CreateAccount(
                         modifier = Modifier.padding(10.dp)
                     )
                 }
@@ -60,10 +56,17 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Wallet( modifier: Modifier) {
-    val context = (LocalContext.current as Activity)
 
+@Composable
+fun StarknetLogo (modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(id = R.drawable.starknet_icon  ),
+        contentDescription = "Starknet Logo",
+        modifier = modifier.size(123.dp) )
+}
+@Composable
+fun CreateAccount( modifier: Modifier) {
+    val context = (LocalContext.current as Activity)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -71,7 +74,7 @@ fun Wallet( modifier: Modifier) {
             .padding(20.dp)
     ) {
         Text(
-            text = "$11,625.48",
+            text = "Starknet Wallet",
             fontFamily = FontFamily(Font(R.font.inter_regular)),
             color = Color.White,
             fontSize = 28.sp,
@@ -79,96 +82,56 @@ fun Wallet( modifier: Modifier) {
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 70.dp)
         )
-        Text(
-            text = "0xfoo...123",
-            fontFamily = FontFamily(Font(R.font.inter_regular)),
-            color = Color.White,
-            fontSize = 16.sp,
+        Spacer(modifier = Modifier.height(50.dp))
+        StarknetLogo(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        WalletCard(icon = painterResource(id = R.drawable.ic_ethereum), amount = "$11,625.7", exchange = 4.44 , type ="ETH" )
-
-        WalletCard(icon = painterResource(id = R.drawable.token2), amount = "$1.78", exchange = 4.44 , type ="STRK" )
-
-
         Spacer(modifier = Modifier.weight(1f))
-        Row(
+        Column(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            verticalArrangement = Arrangement.spacedBy(8.dp) // Adjust space between buttons
         ) {
             Button(
-                onClick = { val i = Intent(context,ReceiverActivity::class.java)
+                onClick = { val i = Intent(context, AccountPasswordActivity::class.java)
                     context.startActivity(i) },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
-                shape = RoundedCornerShape(15.dp),
+                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
             ) {
                 Text(
-                    text = "Receive", fontFamily = FontFamily(Font(R.font.publicsans_bold)),
-                    color = Color.White,
-                    fontSize = 14.sp
-                )
-            }
-            Button(
-                onClick = {val i = Intent(context,SendActivity::class.java)
-                          context.startActivity(i)},
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
-                shape = RoundedCornerShape(15.dp),
-            ) {
-                Text(text = "Send", fontFamily = FontFamily(Font(R.font.publicsans_bold)),
-                    color = Color.White,
-                    fontSize = 14.sp)
-            }
-        }
-        Spacer(modifier = Modifier.height(15.dp))
-}
-}
-
-@Composable
-fun WalletCard(icon: Painter,amount:String,exchange:Double,type:String){
-    Card(
-        backgroundColor = Color(0xFF1E1E96),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-        ) {
-            Image(
-                painter = icon, // replace with your Ethereum icon
-                contentDescription = null,
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Column(modifier = Modifier, horizontalAlignment = Alignment.End) {
-                Text(
-                    text = amount,
+                    text = "Create a New Wallet",
                     fontFamily = FontFamily(Font(R.font.inter_regular)),
                     color = Color.White,
-                    fontSize = 18.sp
+                    fontSize = 17.sp
                 )
-                Row {
-                    Text(
-                        text = exchange.toString(),
-                        fontFamily = FontFamily(Font(R.font.inter_regular)),
-                        color = Color.White,
-                        fontSize = 10.sp
-                    )
-                    Text(
-                        text = type,
-                        fontFamily = FontFamily(Font(R.font.publicsans_bold)),
-                        color = Color.White,
-                        fontSize = 10.sp
-                    )
+            }
 
-                }
+            Spacer(modifier = Modifier.height(10.dp))
 
+
+            Button(
+                onClick = { val i = Intent(context, RecoveryPhraseActivity::class.java)
+                    context.startActivity(i) },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt())),
+                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(49.dp)
+            ) {
+                Text(
+                    text = "Import Starknet Wallet",
+                    fontFamily = FontFamily(Font(R.font.inter_regular)),
+                    color = Color.White,
+                    fontSize = 17.sp
+                )
             }
         }
+
+        Spacer(modifier = Modifier.height(15.dp))
     }
 }
+
+
+
