@@ -35,7 +35,7 @@
         <activity android:name=".AccountPasswordActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
-        <activity android:name=".SeedPhraseActivity"
+        <activity android:name=".RecoveryPhraseActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
 

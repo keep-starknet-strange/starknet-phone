@@ -33,7 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.fillMaxWidth
 import com.example.walletapp.ui.theme.WalletappTheme
 
-class SeedPhraseActivity : ComponentActivity() {
+class RecoveryPhraseActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, true)
@@ -41,7 +41,7 @@ class SeedPhraseActivity : ComponentActivity() {
             WalletappTheme {
                 val navController = rememberNavController()
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    SeedPhraseScreenView(
+                    RecoveryPhraseScreenView(
                         modifier = Modifier.padding(10.dp),
                         navController = navController
                     )
@@ -51,7 +51,7 @@ class SeedPhraseActivity : ComponentActivity() {
     }
 
     @Composable
-    fun SeedPhraseScreenView(modifier: Modifier, navController: NavController) {
+    fun RecoveryPhraseScreenView(modifier: Modifier, navController: NavController) {
         var isVisible by remember { mutableStateOf(false) }
         var showDialog by remember { mutableStateOf(false) }
 
@@ -239,9 +239,6 @@ fun generateSeedWords(): List<SeedWordItem> {
     )
     return List(12) { SeedWordItem(it + 1, randomWords.random()) }
 }
-
-
-
 
 @Composable
 fun CustomDialog(onDismiss: () -> Unit) {

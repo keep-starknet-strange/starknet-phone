@@ -112,7 +112,7 @@ fun CreateAccount( modifier: Modifier) {
 
 
             Button(
-                onClick = { val i = Intent(context, SeedPhraseActivity::class.java)
+                onClick = { val i = Intent(context, RecoveryPhraseActivity::class.java)
                     context.startActivity(i) },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt())),
                 shape = RoundedCornerShape(10.dp),

@@ -149,13 +149,13 @@ class AccountPasswordActivity : ComponentActivity() {
             )
             Spacer(modifier = Modifier.weight(1f))
             Image(
-                painterResource(id = R.drawable.progress_2),
+                painterResource(id = R.drawable.progress_1),
                 contentDescription ="progress",
                 modifier = Modifier.fillMaxWidth().height(6.dp))
 
             Spacer(modifier = Modifier.height(20.dp))
             Button(
-                onClick = { val i = Intent(context, SeedPhraseActivity::class.java)
+                onClick = { val i = Intent(context, RecoveryPhraseActivity::class.java)
                     context.startActivity(i) },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
                 modifier = Modifier
