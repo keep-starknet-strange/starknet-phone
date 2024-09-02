@@ -32,6 +32,9 @@
         <activity android:name=".AddTokenActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
+        <activity android:name=".AccountBalanceActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
     </application>
 
 </manifest>

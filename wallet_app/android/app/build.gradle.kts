@@ -79,6 +79,8 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.fragment)
     implementation (libs.androidx.hilt.navigation.compose.v100alpha03)
 
+    implementation (libs.core)
+
     implementation(libs.androidx.ui.tooling.preview)
     debugImplementation(libs.androidx.ui.tooling)
 

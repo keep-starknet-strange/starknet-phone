@@ -43,6 +43,10 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.core.view.WindowCompat
 import com.example.walletapp.ui.theme.WalletappTheme
+import org.web3j.protocol.Web3j
+import org.web3j.protocol.http.HttpService
+import org.web3j.utils.Convert
+import java.math.BigDecimal
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +68,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Wallet( modifier: Modifier) {
     val context = (LocalContext.current as Activity)
+
 
     Column(
         modifier = Modifier
@@ -110,6 +115,20 @@ fun Wallet( modifier: Modifier) {
                 .padding(10.dp)
                 .align(Alignment.CenterHorizontally)
         )
+
+        Button(
+            onClick = {val intent = Intent(context, AccountBalanceActivity::class.java)
+                context.startActivity(intent)},
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
+            shape = RoundedCornerShape(15.dp),
+            modifier = Modifier.background(Color.Transparent)
+                .padding(10.dp)
+                .align(Alignment.CenterHorizontally)
+        ) {
+            Text(text = "Get Account Balance", fontFamily = FontFamily(Font(R.font.publicsans_bold)),
+                color = Color.White,
+                fontSize = 14.sp)
+        }
 
 
         Spacer(modifier = Modifier.weight(1f))
@@ -190,3 +209,4 @@ fun WalletCard(icon: Painter,amount:String,exchange:Double,type:String){
         }
     }
 }
+
