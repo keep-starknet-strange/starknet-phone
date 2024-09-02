@@ -32,6 +32,16 @@
         <activity android:name=".AddTokenActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
+        <activity android:name=".AccountPasswordActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
+        <activity android:name=".SeedPhraseActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
+
+        <activity android:name=".WalletActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
     </application>
 
 </manifest>
