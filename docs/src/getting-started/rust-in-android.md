@@ -149,3 +149,16 @@ class MainActivity : AppCompatActivity() {
     }
 }
 ```
+
+Add the following to your build.gradle file to link the library:
+
+```kotlin
+sourceSets {
+       named("main") {
+           jniLibs.srcDir("src/main/jni/")
+           // Configure the JNI libraries directory
+           // Note: For newer configurations, JNI libraries are often managed differently
+           // Check your specific plugin version's documentation for precise configuration
+       }
+   }
+```
