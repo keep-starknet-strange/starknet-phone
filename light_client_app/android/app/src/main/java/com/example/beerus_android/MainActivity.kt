@@ -1,7 +1,5 @@
 package com.example.beerus_android
 
-import com.example.beerus_android.Beerus;
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -63,7 +61,7 @@ fun Toggle(modifier: Modifier = Modifier) {
     var runState by rememberSaveable {
         mutableStateOf("Not Running")
     }
-    var checked by rememberSaveable { mutableStateOf(false)}
+    var checked by rememberSaveable { mutableStateOf(true)}
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -93,8 +91,8 @@ fun Toggle(modifier: Modifier = Modifier) {
         Spacer(modifier=Modifier.height(40.dp))
 
         if(checked){
-            startBeerus()
             runState="Running"
+
         }else{
             runState="Not Running"
         }
@@ -118,13 +116,3 @@ fun Toggle(modifier: Modifier = Modifier) {
 //        Greeting("Android")
 //    }
 //}
-
-fun startBeerus() {
-    Beerus.run(
-        "",
-        "",
-        "tmp",
-        5,
-        8080
-    )
-}
