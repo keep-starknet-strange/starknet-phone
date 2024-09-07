@@ -1,5 +1,7 @@
 # Rust In Android
 
+[comprehensive guide](https://google.github.io/comprehensive-rust/android.html)
+
 Because there are a lot of starknet libraries in rust, and the beerus client
 is written in rust, being able to run rust code on android is important
 for reaching MVP.
