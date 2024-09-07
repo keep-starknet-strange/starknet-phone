@@ -38,6 +38,9 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.core.view.WindowCompat
 import com.example.walletapp.ui.theme.WalletappTheme
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -122,6 +125,25 @@ fun CreateAccount( modifier: Modifier) {
             ) {
                 Text(
                     text = "Import Starknet Wallet",
+                    fontFamily = FontFamily(Font(R.font.inter_regular)),
+                    color = Color.White,
+                    fontSize = 17.sp
+                )
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+
+
+            Button(
+                onClick = { val i = Intent(context, WalletActivity::class.java)
+                    context.startActivity(i) },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt())),
+                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(49.dp)
+            ) {
+                Text(
+                    text = "My Starknet Wallet",
                     fontFamily = FontFamily(Font(R.font.inter_regular)),
                     color = Color.White,
                     fontSize = 17.sp

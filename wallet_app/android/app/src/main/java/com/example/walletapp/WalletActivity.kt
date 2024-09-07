@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.core.view.WindowCompat
+import com.example.walletapp.ui.activity.AccountBalanceActivity
 import com.example.walletapp.ui.theme.WalletappTheme
 
 class WalletActivity : ComponentActivity() {

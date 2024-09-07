@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.dagger.hilt.android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -93,6 +95,16 @@ dependencies {
 
     implementation(libs.androidx.navigation.compose)
 
+    implementation (libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation (libs.kotlinx.coroutines.core)
+    implementation (libs.kotlinx.coroutines.android)
+
+    implementation("com.google.dagger:hilt-android:2.50")
+    kapt("com.google.dagger:hilt-android-compiler:2.50")
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-fragment:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0-alpha03")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
