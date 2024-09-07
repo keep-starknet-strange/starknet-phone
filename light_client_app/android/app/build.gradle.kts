@@ -45,6 +45,14 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    sourceSets {
+        named("main") {
+            jniLibs.srcDir("src/main/jni/")
+            // Configure the JNI libraries directory
+            // Note: For newer configurations, JNI libraries are often managed differently
+            // Check your specific plugin version's documentation for precise configuration
+        }
+    }
 }
 
 dependencies {
