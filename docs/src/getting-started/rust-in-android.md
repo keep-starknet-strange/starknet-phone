@@ -1,5 +1,7 @@
 # Rust In Android
 
+[comprehensive guide](https://google.github.io/comprehensive-rust/android.html)
+
 Because there are a lot of starknet libraries in rust, and the beerus client
 is written in rust, being able to run rust code on android is important
 for reaching MVP.
@@ -148,4 +150,17 @@ class MainActivity : AppCompatActivity() {
         println(result)
     }
 }
+```
+
+Add the following to your build.gradle file to link the library:
+
+```kotlin
+sourceSets {
+       named("main") {
+           jniLibs.srcDir("src/main/jni/")
+           // Configure the JNI libraries directory
+           // Note: For newer configurations, JNI libraries are often managed differently
+           // Check your specific plugin version's documentation for precise configuration
+       }
+   }
 ```

@@ -12,6 +12,15 @@ Baseline build dependencies:
 - 100GiB+ of additional free storage space for a typical build of the entire
   OS for a multiarch device.
 
+Setup for Debiand GNU/Linux 12 (bookworm) based systems:
+
+```bash
+sudo apt update
+sudo apt install repo yarnpkg zip rsync
+echo 'export PATH=$PATH:/sbin:/usr/sbin:/usr/local/sbin' >> ~/.bashrc
+source ~/.bashrc
+```
+
 More detailed dependiencies and build guide can be found
 [here](https://grapheneos.org/build)
 
