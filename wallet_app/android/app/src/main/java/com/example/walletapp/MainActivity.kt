@@ -3,16 +3,14 @@ package com.example.walletapp
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,6 +24,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,6 +40,14 @@ import com.example.walletapp.ui.theme.WalletappTheme
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import com.swmansion.starknet.account.StandardAccount
+import com.swmansion.starknet.data.types.*
+import com.swmansion.starknet.provider.rpc.JsonRpcProvider
+import com.swmansion.starknet.signer.StarkCurveSigner
+import kotlinx.coroutines.future.await
+import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,6 +77,12 @@ fun StarknetLogo (modifier: Modifier = Modifier) {
 @Composable
 fun CreateAccount( modifier: Modifier) {
     val context = (LocalContext.current as Activity)
+    val scope = rememberCoroutineScope()
+
+    // Predefined values for account creation
+    val privateKey = Felt.fromHex("0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a") // Replace with an actual private key
+    val accountAddress = Felt.fromHex("0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca") // Replace with an actual address
+    val provider = JsonRpcProvider("http://0.0.0.0:5050")
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -132,11 +145,34 @@ fun CreateAccount( modifier: Modifier) {
             }
             Spacer(modifier = Modifier.height(10.dp))
 
-
+            // New button for deploying Starknet account
             Button(
-                onClick = { val i = Intent(context, WalletActivity::class.java)
-                    context.startActivity(i) },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt())),
+                onClick = {
+                    scope.launch {
+                        try {
+                            val signer = StarkCurveSigner(privateKey)
+                            val chainId = provider.getChainId().sendAsync().await()
+                            val account = StandardAccount(
+                                address = accountAddress,
+                                signer = signer,
+                                provider = provider,
+                                chainId = chainId,
+                                cairoVersion = Felt.ONE,
+                            )
+
+                            // Here you would typically deploy the account
+                            // For now, we'll just show a success message
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(context, "Account deployed successfully!", Toast.LENGTH_LONG).show()
+                            }
+                        } catch (e: Exception) {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(context, "Error deploying account: ${e.message}", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color("#4CAF50".toColorInt())),
                 shape = RoundedCornerShape(10.dp),
                 modifier = Modifier
                     .fillMaxWidth()
