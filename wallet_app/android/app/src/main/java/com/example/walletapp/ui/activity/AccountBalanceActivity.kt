@@ -3,6 +3,7 @@ package com.example.walletapp.ui.activity
 import android.app.Activity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -38,42 +39,47 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.walletapp.data.repository.StarknetRepository
+import com.example.walletapp.BuildConfig
 import com.example.walletapp.ui.theme.WalletappTheme
+import com.swmansion.starknet.data.types.Call
+import com.swmansion.starknet.data.types.Felt
+import com.swmansion.starknet.data.types.Uint256
+import com.swmansion.starknet.provider.exceptions.RpcRequestFailedException
+import com.swmansion.starknet.provider.rpc.JsonRpcProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.future.await
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 
 class AccountBalanceActivity : ComponentActivity() {
-    private lateinit var viewModelFactory: StarknetViewModelFactory
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        // Create the repository and factory
-        val repository = StarknetRepository()  // Initialize your repository here
-        viewModelFactory = StarknetViewModelFactory(repository)
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
         setContent {
             WalletappTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    AccountBalanceScreenView(viewModelFactory = viewModelFactory
-                    )
+                    AccountBalanceScreenView()
                 }
             }
         }
     }
 
     @Composable
-    fun AccountBalanceScreenView(viewModelFactory: StarknetViewModelFactory){
-        val context = (LocalContext.current as Activity)
-        val viewModel: StarknetViewModel = viewModel(factory = viewModelFactory)
+    fun AccountBalanceScreenView(){
+         val context = (LocalContext.current as Activity)
 
-        val contractAddress by remember { mutableStateOf("0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7") }
-        var accountAddress by remember { mutableStateOf("0x02dc260794e4c2eeae87b1403a88385a72c18a5844d220b88117b2965a8cf3a5") }
+         var accountAddress by remember { mutableStateOf("0x02dc260794e4c2eeae87b1403a88385a72c18a5844d220b88117b2965a8cf3a5") }
 
-        val balance by viewModel.balanceLiveData.observeAsState("...")
-        val error by viewModel.errorLiveData.observeAsState("")
+        var balance by remember { mutableStateOf("")}
+
+        val scope = CoroutineScope(Dispatchers.IO)
+
 
         Column(modifier = Modifier
             .fillMaxSize()
@@ -105,7 +111,22 @@ class AccountBalanceActivity : ComponentActivity() {
             Spacer(modifier = Modifier.height(16.dp))
             Row(){
                 Button(onClick = {
-                    viewModel.fetchAccountBalance(contractAddress, accountAddress)
+
+                    scope.launch {
+                        // Catch any errors and display message in the UI
+                        try {
+                            val accountAddress2 = Felt.fromHex( accountAddress)
+
+                            // Get the balance of the account
+                            val balancefinal = getBalance(accountAddress2)
+                            Log.d("balance","${balancefinal}")
+                            withContext(Dispatchers.Main) { balance= "${balancefinal.value} wei" }
+                        } catch (e: RpcRequestFailedException) {
+                            withContext(Dispatchers.Main) { Toast.makeText(applicationContext, "${e.code}: ${e.message}", Toast.LENGTH_LONG).show() }
+                        } catch (e: Exception) {
+                            withContext(Dispatchers.Main) { Toast.makeText(applicationContext, e.message, Toast.LENGTH_LONG).show() }
+                        }
+                    }
                 }) {
                     Text("Get Balance")
                 }
@@ -119,37 +140,41 @@ class AccountBalanceActivity : ComponentActivity() {
             }
 
             Spacer(modifier = Modifier.height(20.dp))
-
-            if (error.isNotEmpty()) {
-                Text("Error: $error",color= MaterialTheme.colors.error,fontSize = 20.sp,fontWeight = FontWeight.Bold)
-            } else {
-                Text("Balance : ${ConvertHexToBalance(balance)}",color= Color.White,fontSize = 20.sp,fontWeight = FontWeight.Bold)
-            }
+            Text("Balance : ${(balance)}",color= Color.White,fontSize = 20.sp,fontWeight = FontWeight.Bold)
 
 
         }
     }
+    private val provider = JsonRpcProvider(
+        url = BuildConfig.DEMO_RPC_URL,
+    )
 
+    private suspend fun getBalance(accountAddress: Felt): Uint256 {
+        val erc20ContractAddress = Felt.fromHex("0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7")
 
-    fun ConvertHexToBalance(hex: String): String {
-        return try {
-            // Remove "0x" prefix if present
-            val cleanedHex = hex.removePrefix("0x")
+        // Create a call to Starknet ERC-20 ETH contract
+        val call = Call(
+            contractAddress = erc20ContractAddress,
+            entrypoint = "balanceOf", // entrypoint can be passed both as a string name and Felt value
+            calldata = listOf(accountAddress), // calldata is List<Felt>, so we wrap accountAddress in listOf()
+        )
 
-            // Convert hex string to BigInteger
-            val balanceBigInt = cleanedHex.toBigInteger(16)
+        // Create a Request object which has to be executed in synchronous or asynchronous way
+        val request = provider.callContract(call)
 
-            // If StarkNet uses a base unit similar to Ethereum's wei, you might need to adjust the balance
-            // For this example, we'll assume the balance is in the smallest unit and needs to be converted
+        // Execute a Request. This operation returns JVM CompletableFuture
+        val future = request.sendAsync()
 
-            // Convert balance to a decimal format (adjust the divisor based on StarkNet's unit)
-            val balanceDecimal = BigDecimal(balanceBigInt)
-                .divide(BigDecimal("1000000000000000000"), 18, RoundingMode.HALF_UP)
+        // Await the completion of the future without blocking the main thread
+        // this comes from kotlinx-coroutines-jdk8
+        // The result of the future is a List<Felt> which represents the output values of the balanceOf function
+        val response = future.await()
 
-            balanceDecimal.stripTrailingZeros().toPlainString() // Return balance without scientific notation
-        } catch (e: Exception) {
-            "Invalid Balance" // Handle invalid hex strings or other exceptions
-        }
+        // Output value's type is UInt256 and is represented by two Felt values
+        return Uint256(
+            low = response[0],
+            high = response[1],
+        )
     }
 
 }
