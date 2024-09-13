@@ -1,4 +1,5 @@
 package com.example.walletapp
+
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -15,7 +16,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -74,11 +74,13 @@ class WalletActivity : ComponentActivity() {
 }
 
 
-@Composable
+
+    @Composable
     fun Wallet(modifier: Modifier) {
-        val networkList = listOf("Starknet Mainnet", "Starknet Testnet")
-        val selectedNetworkIndex = 0 
+        val networkList = listOf("Starknet Mainnet", "Test Networks")
+        var selectedNetworkIndex by remember { mutableStateOf(0) }
         val context = (LocalContext.current as Activity)
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -86,16 +88,19 @@ class WalletActivity : ComponentActivity() {
                 .padding(20.dp)
         ) {
 
-              Box(
-
-               ){
-                   SwitchNetwork(networkList, selectedNetworkIndex,
-                       modifier = Modifier,
-                       onItemClick = { index ->
-                           println("Selected network: ${networkList[index]}")
-                       })
-               }
-           }
+            Box(
+                modifier = Modifier.fillMaxWidth(), // Ensure Box takes full width of the parent
+                contentAlignment = Alignment.Center // Center contents horizontally
+            ) {
+                SwitchNetwork(
+                    networkList,
+                    selectedNetworkIndex,
+                    modifier = Modifier,
+                    onItemClick = { index ->
+                       selectedNetworkIndex = index
+                    }
+                )
+            }
 
 
             Text(
@@ -235,11 +240,6 @@ class WalletActivity : ComponentActivity() {
         }
     }
 
-
-
-
-
-
 @Composable
 fun SwitchNetwork(
     itemList: List<String>,
@@ -249,7 +249,6 @@ fun SwitchNetwork(
 ) {
 
     var isVisible by remember { mutableStateOf(false) }
-    val scrollState = rememberScrollState()
 
     Column(
         modifier = Modifier,
@@ -262,106 +261,147 @@ fun SwitchNetwork(
             modifier = modifier
                 .height(44.dp)
                 .width(250.dp)
-                .background(Color(0xFF1B1B76))
-                .clip(RoundedCornerShape(48.dp))
-                .border(1.dp, Color(0xFF5A5A5A))
                 .clickable { isVisible = true }
                 .padding(horizontal = 16.dp),
             contentAlignment = Alignment.CenterStart
         ) {
-            Row(
-                modifier = Modifier.fillMaxSize(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(30.dp))
+                    .background(Color("#1B1B76".toColorInt()))
             ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .border(1.dp, Color("#5A5A5A".toColorInt()), RoundedCornerShape(30.dp))
+                        .padding(10.dp)
+                ){
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
 
-                Icon(
-                    painter = painterResource(id = R.drawable.starknet_icon),
-                    contentDescription = "Logo",
-                    modifier = Modifier.size(20.dp)
-                )
+                        Image(
+                          painter = painterResource(id = R.drawable.token2),
+                            contentDescription = "Logo",
+                            modifier = Modifier.size(20.dp)
+                        )
 
-                Text(
-                    text = itemList[selectedIndex],
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight(600),
-                    modifier = Modifier.padding(start = 8.dp),
-                    color = Color.White
-                )
+                        Text(
+                            text = itemList[selectedIndex],
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight(600),
+                            modifier = Modifier.padding(start = 8.dp),
+                            color = Color.White
+                        )
 
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "Dropdown Icon",
-                    tint = Color.White
-                )
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = "Dropdown Icon",
+                            tint = Color.White
+                        )
+                    }
+                }
             }
         }
 
 
-        // Dropdown menu
+
         if (isVisible) {
             Popup(
                 alignment = Alignment.TopCenter,
                 properties = PopupProperties(excludeFromSystemGesture = true),
                 onDismissRequest = { isVisible = false } // Close dropdown when clicking outside
             ) {
-                Box(
-                    modifier = Modifier
-                        .padding(top = 70.dp)
-                        .height(160.dp)
-                        .width(300.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .border(1.dp, Color(0xFF5A5A5A))
-                ) {
+               Box(
+                   modifier = Modifier
+                       .padding(top = 70.dp)
+               ){
+                   Box(
+                       modifier = Modifier
 
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            IconButton(onClick = { isVisible = false }) {
-                                Icon(
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = "Close Popup",
-                                    tint = Color.White
-                                )
-                            }
-                        }
+                           .height(140.dp)
+                           .width(260.dp)
+                   ) {
+                       Box(
+                           modifier = Modifier
+                               .fillMaxSize()
+                               .clip(RoundedCornerShape(10.dp))
+                               .background(Color("#1B1B76".toColorInt()))
+                       )
+                       Box(
+                           modifier = Modifier
+                               .fillMaxSize()
+                               .border(1.dp, Color("#5A5A5A".toColorInt()), RoundedCornerShape(10.dp))
+                       )
 
-                        itemList.forEachIndexed { index, item ->
+                       Column(
+                           modifier = Modifier
+                               .fillMaxSize()
+                               .padding(4.dp),
+                       ) {
 
-                            Box(
-                                modifier = Modifier
-                                    .background(Color.Green)
-                                    .fillMaxWidth()
-                                    .pointerInput(Unit) {
-                                        detectTapGestures(
-                                            onTap = {
-                                                onItemClick(index)
-                                                isVisible = false
-                                            }
-                                        )
-                                    }
-                                    .hoverable(remember { MutableInteractionSource() })
-                                    .background( Color(0xFF1B1B50))
-                                    .clickable { onItemClick(index) }
-                                    .padding(vertical = 8.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(text = item, color = Color.White)
-                            }
-                        }
-                    }
-                }
+                           Row(
+                               modifier = Modifier.fillMaxWidth(),
+                               horizontalArrangement = Arrangement.End
+                           ) {
+                               IconButton(onClick = { isVisible = false }) {
+                                   Icon(
+                                       imageVector = Icons.Default.Close,
+                                       contentDescription = "Close Popup",
+                                       tint = Color.White
+                                   )
+                               }
+                           }
+
+                           itemList.forEachIndexed { index, item ->
+                               Box(
+                                   modifier = Modifier
+                                       .fillMaxWidth()
+                                       .background(if (index == selectedIndex) Color("#6D6CA7".toColorInt()) else Color("#1B1B76".toColorInt()))
+                                       .clickable {
+                                           onItemClick(index)
+                                           isVisible = false
+                                       }
+                                       .padding(vertical = 5.dp)
+                                       .padding(bottom = 10.dp),
+                                   contentAlignment = Alignment.Center
+                               ) {
+                                   Row(
+                                       modifier = Modifier.fillMaxWidth(),
+                                       horizontalArrangement = Arrangement.Center
+
+                                   ) {
+                                       Image(
+                                           painter = painterResource(id = R.drawable.token2),
+                                           contentDescription = "Logo",
+                                           modifier = Modifier.size(20.dp)
+                                       )
+
+                                       Spacer(modifier = Modifier.width(10.dp)) // Add horizontal space between the Image and Text
+
+                                       Text(
+                                           text = item,
+                                           color = Color.White
+                                       )
+                                   }
+                               }
+                           }
+
+                       }
+                   }
+               }
             }
         }
 
+
+
     }
 }
+
+
 
 
 
