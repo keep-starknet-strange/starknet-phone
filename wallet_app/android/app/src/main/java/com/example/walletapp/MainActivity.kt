@@ -1,5 +1,6 @@
 package com.example.walletapp
 
+import StarknetClient
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -78,11 +79,8 @@ fun StarknetLogo (modifier: Modifier = Modifier) {
 fun CreateAccount( modifier: Modifier) {
     val context = (LocalContext.current as Activity)
     val scope = rememberCoroutineScope()
+    val starknetClient = StarknetClient(BuildConfig.DEMO_RPC_URL)
 
-    // Predefined values for account creation
-    val privateKey = Felt.fromHex("0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a") // Replace with an actual private key
-    val accountAddress = Felt.fromHex("0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca") // Replace with an actual address
-    val provider = JsonRpcProvider("http://10.0.2.2:5050")
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -150,18 +148,8 @@ fun CreateAccount( modifier: Modifier) {
                 onClick = {
                     scope.launch {
                         try {
-                            val signer = StarkCurveSigner(privateKey)
-                            val chainId = provider.getChainId().sendAsync().await()
-                            val account = StandardAccount(
-                                address = accountAddress,
-                                signer = signer,
-                                provider = provider,
-                                chainId = chainId,
-                                cairoVersion = Felt.ONE,
-                            )
+                            starknetClient.deployAccount()
 
-                            // Here you would typically deploy the account
-                            // For now, we'll just show a success message
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(context, "Account deployed successfully!", Toast.LENGTH_LONG).show()
                             }
