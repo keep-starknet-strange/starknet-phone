@@ -1,14 +1,16 @@
+import org.jetbrains.kotlin.cli.jvm.main
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
 }
 
 android {
-    namespace = "com.example.lightclientservice"
+    namespace = "com.snphone.lightclientservice"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.lightclientservice"
+        applicationId = "com.snphone.lightclientservice"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -33,6 +35,13 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    sourceSets {
+        named("main") {
+            jniLibs.srcDir("src/main/jniLibs/")
+        }
+    }
+
 }
 
 dependencies {
@@ -40,6 +49,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
