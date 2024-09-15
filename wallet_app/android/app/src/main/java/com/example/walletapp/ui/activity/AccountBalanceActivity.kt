@@ -120,7 +120,7 @@ class AccountBalanceActivity : ComponentActivity() {
                             // Get the balance of the account
                             val balancefinal = getBalance(accountAddress2)
                             Log.d("balance","${balancefinal}")
-                            withContext(Dispatchers.Main) { balance= "${balancefinal.value} wei" }
+                            withContext(Dispatchers.Main) { balance= "${weiToEther(balancefinal)} ETH" }
                         } catch (e: RpcRequestFailedException) {
                             withContext(Dispatchers.Main) { Toast.makeText(applicationContext, "${e.code}: ${e.message}", Toast.LENGTH_LONG).show() }
                         } catch (e: Exception) {
@@ -175,6 +175,11 @@ class AccountBalanceActivity : ComponentActivity() {
             low = response[0],
             high = response[1],
         )
+    }
+
+    fun weiToEther(wei: Uint256): BigDecimal {
+        val weiInEther = BigDecimal("1000000000000000000") // 10^18
+        return BigDecimal(wei.value.toString()).divide(weiInEther)
     }
 
 }
