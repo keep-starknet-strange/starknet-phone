@@ -1,4 +1,4 @@
-package com.example.lightclientservice;
+package com.snphone.lightclientservice;
 
 public class BeerusClient {
 

@@ -1,4 +1,4 @@
-package com.example.lightclientservice
+package com.snphone.lightclientservice
 
 import android.app.Service
 import android.content.Intent
