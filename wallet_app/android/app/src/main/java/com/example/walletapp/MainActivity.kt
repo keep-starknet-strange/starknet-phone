@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Card
 import androidx.compose.material.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,16 +37,9 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.core.view.WindowCompat
 import com.example.walletapp.ui.theme.WalletappTheme
-import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.HiltAndroidApp
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import com.swmansion.starknet.account.StandardAccount
-import com.swmansion.starknet.data.types.*
-import com.swmansion.starknet.provider.rpc.JsonRpcProvider
-import com.swmansion.starknet.signer.StarkCurveSigner
-import kotlinx.coroutines.future.await
 import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
