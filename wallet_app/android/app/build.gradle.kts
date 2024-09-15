@@ -97,7 +97,6 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.fragment)
     implementation (libs.androidx.hilt.navigation.compose.v100alpha03)
-    implementation("com.swmansion.starknet:starknet:0.12.2")
 
     implementation(libs.androidx.ui.tooling.preview)
     debugImplementation(libs.androidx.ui.tooling)
