@@ -65,6 +65,10 @@ android {
 }
 dependencies {
 
+    implementation("com.swmansion.starknet:starknet:0.12.1@aar"){
+        isTransitive = true
+    }
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
