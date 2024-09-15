@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.core.view.WindowCompat
+import com.example.walletapp.ui.activity.AccountBalanceActivity
 import com.example.walletapp.ui.theme.WalletappTheme
 
 class WalletActivity : ComponentActivity() {
@@ -55,156 +56,162 @@ class WalletActivity : ComponentActivity() {
 }
 
 
-    @Composable
-    fun Wallet(modifier: Modifier) {
-        val context = (LocalContext.current as Activity)
-        Column(
+@Composable
+fun Wallet(modifier: Modifier) {
+    val context = (LocalContext.current as Activity)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color("#0C0C4F".toColorInt()))
+            .padding(20.dp)
+    ) {
+        Text(
+            text = "$11,625.48",
+            fontFamily = FontFamily(Font(R.font.inter_regular)),
+            color = Color.White,
+            fontSize = 28.sp,
             modifier = Modifier
-                .fillMaxSize()
-                .background(Color("#0C0C4F".toColorInt()))
-                .padding(20.dp)
+                .align(Alignment.CenterHorizontally)
+                .padding(top = 70.dp)
+        )
+        Text(
+            text = "0xfoo...123",
+            fontFamily = FontFamily(Font(R.font.inter_regular)),
+            color = Color.White,
+            fontSize = 16.sp,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        WalletCard(
+            icon = painterResource(id = R.drawable.ic_ethereum),
+            amount = "$11,625.7",
+            exchange = 4.44,
+            type = "ETH"
+        )
+
+        WalletCard(
+            icon = painterResource(id = R.drawable.token2),
+            amount = "$1.78",
+            exchange = 4.44,
+            type = "STRK"
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Text(
+            text = "+ New Token",
+            fontFamily = FontFamily(Font(R.font.publicsans_bold)),
+            color = Color.White,
+            fontSize = 14.sp,
+            modifier = Modifier
+                .clickable {
+                    val intent = Intent(context, AddTokenActivity::class.java)
+                    context.startActivity(intent)
+                }
+                .background(Color.Transparent)
+                .padding(10.dp)
+                .align(Alignment.CenterHorizontally)
+        )
+
+        Button(
+            onClick = {val intent = Intent(context, AccountBalanceActivity::class.java)
+                context.startActivity(intent)},
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
+            shape = RoundedCornerShape(15.dp),
+            modifier = Modifier.background(Color.Transparent)
+                .padding(10.dp)
+                .align(Alignment.CenterHorizontally)
         ) {
-            Text(
-                text = "$11,625.48",
-                fontFamily = FontFamily(Font(R.font.inter_regular)),
+            Text(text = "Get Account Balance", fontFamily = FontFamily(Font(R.font.publicsans_bold)),
                 color = Color.White,
-                fontSize = 28.sp,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 70.dp)
-            )
-            Text(
-                text = "0xfoo...123",
-                fontFamily = FontFamily(Font(R.font.inter_regular)),
-                color = Color.White,
-                fontSize = 16.sp,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            WalletCard(
-                icon = painterResource(id = R.drawable.ic_ethereum),
-                amount = "$11,625.7",
-                exchange = 4.44,
-                type = "ETH"
-            )
-
-            WalletCard(
-                icon = painterResource(id = R.drawable.token2),
-                amount = "$1.78",
-                exchange = 4.44,
-                type = "STRK"
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Text(
-                text = "+ New Token",
-                fontFamily = FontFamily(Font(R.font.publicsans_bold)),
-                color = Color.White,
-                fontSize = 14.sp,
-                modifier = Modifier
-                    .clickable {
-                        val intent = Intent(context, AddTokenActivity::class.java)
-                        context.startActivity(intent)
-                    }
-                    .background(Color.Transparent)
-                    .padding(10.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
-
-
-            Spacer(modifier = Modifier.weight(1f))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Button(
-                    onClick = {
-                        val i = Intent(context, ReceiverActivity::class.java)
-                        context.startActivity(i)
-                    },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
-                    shape = RoundedCornerShape(15.dp),
-                ) {
-                    Text(
-                        text = "Receive", fontFamily = FontFamily(Font(R.font.publicsans_bold)),
-                        color = Color.White,
-                        fontSize = 14.sp
-                    )
-                }
-                Button(
-                    onClick = {
-                        val i = Intent(context, SendActivity::class.java)
-                        context.startActivity(i)
-                    },
-
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
-                    shape = RoundedCornerShape(15.dp),
-                ) {
-                    Text(
-                        text = "Send", fontFamily = FontFamily(Font(R.font.publicsans_bold)),
-                        color = Color.White,
-                        fontSize = 14.sp
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(15.dp))
+                fontSize = 14.sp)
         }
-    }
 
-    @Composable
-    fun WalletCard(icon: Painter, amount: String, exchange: Double, type: String) {
-        Card(
-            backgroundColor = Color(0xFF1E1E96),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
+
+        Spacer(modifier = Modifier.weight(1f))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
+            Button(
+                onClick = {
+                    val i = Intent(context, ReceiverActivity::class.java)
+                    context.startActivity(i)
+                },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
+                shape = RoundedCornerShape(15.dp),
             ) {
-                Image(
-                    painter = icon, // replace with your Ethereum icon
-                    contentDescription = null,
+                Text(
+                    text = "Receive", fontFamily = FontFamily(Font(R.font.publicsans_bold)),
+                    color = Color.White,
+                    fontSize = 14.sp
                 )
-                Spacer(modifier = Modifier.weight(1f))
-                Column(modifier = Modifier, horizontalAlignment = Alignment.End) {
+            }
+            Button(
+                onClick = {
+                    val i = Intent(context, SendActivity::class.java)
+                    context.startActivity(i)
+                },
+
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
+                shape = RoundedCornerShape(15.dp),
+            ) {
+                Text(
+                    text = "Send", fontFamily = FontFamily(Font(R.font.publicsans_bold)),
+                    color = Color.White,
+                    fontSize = 14.sp
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(15.dp))
+    }
+}
+
+@Composable
+fun WalletCard(icon: Painter, amount: String, exchange: Double, type: String) {
+    Card(
+        backgroundColor = Color(0xFF1E1E96),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            Image(
+                painter = icon, // replace with your Ethereum icon
+                contentDescription = null,
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Column(modifier = Modifier, horizontalAlignment = Alignment.End) {
+                Text(
+                    text = amount,
+                    fontFamily = FontFamily(Font(R.font.inter_regular)),
+                    color = Color.White,
+                    fontSize = 18.sp
+                )
+                Row {
                     Text(
-                        text = amount,
+                        text = exchange.toString(),
                         fontFamily = FontFamily(Font(R.font.inter_regular)),
                         color = Color.White,
-                        fontSize = 18.sp
+                        fontSize = 10.sp
                     )
-                    Row {
-                        Text(
-                            text = exchange.toString(),
-                            fontFamily = FontFamily(Font(R.font.inter_regular)),
-                            color = Color.White,
-                            fontSize = 10.sp
-                        )
-                        Text(
-                            text = type,
-                            fontFamily = FontFamily(Font(R.font.publicsans_bold)),
-                            color = Color.White,
-                            fontSize = 10.sp
-                        )
-
-                    }
+                    Text(
+                        text = type,
+                        fontFamily = FontFamily(Font(R.font.publicsans_bold)),
+                        color = Color.White,
+                        fontSize = 10.sp
+                    )
 
                 }
+
             }
         }
     }
-
-
-
-
-
-
-
-
+}
