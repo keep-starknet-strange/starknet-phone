@@ -104,7 +104,7 @@ class WalletActivity : ComponentActivity() {
 
 
             Text(
-                text = "$11,625.48",
+                text = "$11,625.48", // TODO(#82): load actual balance
                 fontFamily = FontFamily(Font(R.font.inter_regular)),
                 color = Color.White,
                 fontSize = 28.sp,
@@ -113,7 +113,7 @@ class WalletActivity : ComponentActivity() {
                     .padding(top = 70.dp)
             )
             Text(
-                text = "0xfoo...123",
+                text = "0xfoo...123", // TODO(#82): load actual address
                 fontFamily = FontFamily(Font(R.font.inter_regular)),
                 color = Color.White,
                 fontSize = 16.sp,
@@ -122,6 +122,7 @@ class WalletActivity : ComponentActivity() {
 
             Spacer(modifier = Modifier.height(32.dp))
 
+            // TODO(#82): load actual balance
             WalletCard(
                 icon = painterResource(id = R.drawable.ic_ethereum),
                 amount = "$11,625.7",
@@ -129,6 +130,7 @@ class WalletActivity : ComponentActivity() {
                 type = "ETH"
             )
 
+            // TOOD(#82): load actual balance
             WalletCard(
                 icon = painterResource(id = R.drawable.token2),
                 amount = "$1.78",
@@ -400,8 +402,3 @@ fun SwitchNetwork(
 
     }
 }
-
-
-
-
-
