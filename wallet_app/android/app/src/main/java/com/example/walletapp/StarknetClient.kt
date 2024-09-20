@@ -60,6 +60,10 @@ class StarknetClient(private val rpcUrl: String) {
         )
     }
 
+    suspend fun sendERC20() {
+        // TODO(#24)
+    }
+
     fun weiToEther(wei: Uint256): BigDecimal {
         val weiInEther = BigDecimal("1000000000000000000") // 10^18
         return BigDecimal(wei.value.toString()).divide(weiInEther)
