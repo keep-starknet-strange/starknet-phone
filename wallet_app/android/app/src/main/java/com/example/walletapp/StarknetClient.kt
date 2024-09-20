@@ -16,8 +16,8 @@ class StarknetClient(private val rpcUrl: String) {
     suspend fun deployAccount() {
 
         // Predefined values for account creation
-        val privateKey = Felt.fromHex("0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a") // TODO: Replace with an actual private key
-        val accountAddress = Felt.fromHex("0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca") // TODO: Replace with an actual address
+        val privateKey = Felt.fromHex("0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a") // TODO(#80): Load from local.properties
+        val accountAddress = Felt.fromHex("0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca") // TODO(#80): Load from local.properties
 
         val signer = StarkCurveSigner(privateKey)
         val chainId = provider.getChainId().sendAsync().await()
