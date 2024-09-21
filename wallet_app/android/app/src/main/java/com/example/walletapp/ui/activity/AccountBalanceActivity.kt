@@ -1,5 +1,6 @@
 package com.example.walletapp.ui.activity
 
+import StarknetClient
 import android.app.Activity
 import android.os.Bundle
 import android.util.Log
@@ -80,6 +81,8 @@ class AccountBalanceActivity : ComponentActivity() {
 
         val scope = CoroutineScope(Dispatchers.IO)
 
+        val starknetClient = StarknetClient(BuildConfig.DEMO_RPC_URL)
+
 
         Column(modifier = Modifier
             .fillMaxSize()
@@ -118,9 +121,9 @@ class AccountBalanceActivity : ComponentActivity() {
                             val accountAddress2 = Felt.fromHex( accountAddress)
 
                             // Get the balance of the account
-                            val balancefinal = getBalance(accountAddress2)
+                            val balancefinal = starknetClient.getEthBalance(accountAddress2)
                             Log.d("balance","${balancefinal}")
-                            withContext(Dispatchers.Main) { balance= "${balancefinal.value} wei" }
+                            withContext(Dispatchers.Main) { balance= "${starknetClient.weiToEther(balancefinal)} ETH" }
                         } catch (e: RpcRequestFailedException) {
                             withContext(Dispatchers.Main) { Toast.makeText(applicationContext, "${e.code}: ${e.message}", Toast.LENGTH_LONG).show() }
                         } catch (e: Exception) {
@@ -145,36 +148,4 @@ class AccountBalanceActivity : ComponentActivity() {
 
         }
     }
-    private val provider = JsonRpcProvider(
-        url = BuildConfig.DEMO_RPC_URL,
-    )
-
-    private suspend fun getBalance(accountAddress: Felt): Uint256 {
-        val erc20ContractAddress = Felt.fromHex("0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7")
-
-        // Create a call to Starknet ERC-20 ETH contract
-        val call = Call(
-            contractAddress = erc20ContractAddress,
-            entrypoint = "balanceOf", // entrypoint can be passed both as a string name and Felt value
-            calldata = listOf(accountAddress), // calldata is List<Felt>, so we wrap accountAddress in listOf()
-        )
-
-        // Create a Request object which has to be executed in synchronous or asynchronous way
-        val request = provider.callContract(call)
-
-        // Execute a Request. This operation returns JVM CompletableFuture
-        val future = request.sendAsync()
-
-        // Await the completion of the future without blocking the main thread
-        // this comes from kotlinx-coroutines-jdk8
-        // The result of the future is a List<Felt> which represents the output values of the balanceOf function
-        val response = future.await()
-
-        // Output value's type is UInt256 and is represented by two Felt values
-        return Uint256(
-            low = response[0],
-            high = response[1],
-        )
-    }
-
 }
