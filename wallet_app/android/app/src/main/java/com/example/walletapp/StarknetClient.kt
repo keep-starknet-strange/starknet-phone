@@ -20,8 +20,8 @@ class StarknetClient(private val rpcUrl: String) {
 
 
         // Predefined values for account creation
-        val privateKey = Felt.fromHex(privateKey) // TODO(#80): Load from local.properties
-        val accountAddress = Felt.fromHex(accountAddress) // TODO(#80): Load from local.properties
+        val privateKey = Felt.fromHex(privateKey)
+        val accountAddress = Felt.fromHex(accountAddress)
 
         val signer = StarkCurveSigner(privateKey)
         val chainId = provider.getChainId().sendAsync().await()

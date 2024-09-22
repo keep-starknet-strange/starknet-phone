@@ -1,8 +1,10 @@
 package com.example.walletapp
 
+import StarknetClient
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -54,6 +56,12 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import com.swmansion.starknet.data.types.Felt
+import com.swmansion.starknet.provider.exceptions.RpcRequestFailedException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.math.BigDecimal
+import java.text.DecimalFormat
 
 
 class WalletActivity : ComponentActivity() {
@@ -80,6 +88,24 @@ class WalletActivity : ComponentActivity() {
         val networkList = listOf("Starknet Mainnet", "Test Networks")
         var selectedNetworkIndex by remember { mutableStateOf(0) }
         val context = (LocalContext.current as Activity)
+        val address=BuildConfig.ACCOUNT_ADDRESS
+        val accountAddress = Felt.fromHex(address)
+        val starknetClient = StarknetClient(BuildConfig.RPC_URL)
+        var balance by remember { mutableStateOf("") }
+
+        LaunchedEffect (Unit){
+            try {
+                // Get the balance of the account
+                val getBalance = starknetClient.getEthBalance(accountAddress)
+                withContext(Dispatchers.Main) {
+                    balance = starknetClient.weiToEther(getBalance).toDoubleWithTwoDecimal()
+                }
+            } catch (e: RpcRequestFailedException) {
+                withContext(Dispatchers.Main) { Toast.makeText(context, "${e.code}: ${e.message}", Toast.LENGTH_LONG).show() }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { Toast.makeText(context, e.message, Toast.LENGTH_LONG).show() }
+            }
+        }
 
         Column(
             modifier = Modifier
@@ -104,29 +130,29 @@ class WalletActivity : ComponentActivity() {
 
 
             Text(
-                text = "$11,625.48", // TODO(#82): load actual balance
-                fontFamily = FontFamily(Font(R.font.inter_regular)),
+                text ="$11,625.48",
+                fontFamily = FontFamily(Font(R.font.publicsans_bold)),
                 color = Color.White,
-                fontSize = 28.sp,
+                fontSize = 24.sp,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 70.dp)
             )
             Text(
-                text = "0xfoo...123", // TODO(#82): load actual address
+                text = address.take(10) + ".....",
                 fontFamily = FontFamily(Font(R.font.inter_regular)),
                 color = Color.White,
-                fontSize = 16.sp,
+                fontSize = 14.sp,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // TODO(#82): load actual balance
+
             WalletCard(
                 icon = painterResource(id = R.drawable.ic_ethereum),
                 amount = "$11,625.7",
-                exchange = 4.44,
+                exchange = balance,
                 type = "ETH"
             )
 
@@ -134,7 +160,7 @@ class WalletActivity : ComponentActivity() {
             WalletCard(
                 icon = painterResource(id = R.drawable.token2),
                 amount = "$1.78",
-                exchange = 4.44,
+                exchange ="4.44",
                 type = "STRK"
             )
 
@@ -194,9 +220,14 @@ class WalletActivity : ComponentActivity() {
             Spacer(modifier = Modifier.height(15.dp))
         }
     }
+// Function to format BigDecimal to Double with 2 decimal places
+fun BigDecimal.toDoubleWithTwoDecimal(): String {
+    val decimalFormat = DecimalFormat("#.00")
+    return decimalFormat.format(this.toDouble())
+}
 
     @Composable
-    fun WalletCard(icon: Painter, amount: String, exchange: Double, type: String) {
+    fun WalletCard(icon: Painter, amount: String, exchange: String, type: String) {
         Card(
             backgroundColor = Color(0xFF1E1E96),
             modifier = Modifier
@@ -223,16 +254,17 @@ class WalletActivity : ComponentActivity() {
                     )
                     Row {
                         Text(
-                            text = exchange.toString(),
-                            fontFamily = FontFamily(Font(R.font.inter_regular)),
+                            text = exchange,
+                            fontFamily = FontFamily(Font(R.font.publicsans_bold)),
                             color = Color.White,
-                            fontSize = 10.sp
+                            fontSize = 14.sp
                         )
+                        Spacer(modifier=Modifier.width(2.dp))
                         Text(
                             text = type,
                             fontFamily = FontFamily(Font(R.font.publicsans_bold)),
                             color = Color.White,
-                            fontSize = 10.sp
+                            fontSize = 12.sp
                         )
 
                     }

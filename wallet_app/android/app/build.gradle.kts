@@ -29,7 +29,7 @@ android {
 
 
 
-        buildConfigField("String", "DEMO_RPC_URL", "\"https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_7/rFAP8fkTAz9TmYw8_V5Fyzxi-WSoQdhk\"")
+        buildConfigField("String", "RPC_URL", "\"${properties.getProperty("RPC_URL")}\"")
         buildConfigField("String", "ACCOUNT_ADDRESS", "\"${properties.getProperty("ACCOUNT_ADDRESS")}\"")
         buildConfigField("String", "PRIVATE_KEY", "\"${properties.getProperty("KEY_NAME")}\"")
     }
