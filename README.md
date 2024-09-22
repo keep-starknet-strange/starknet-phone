@@ -39,6 +39,9 @@ We live on contributions. If you'd like to contribute please follow the [guide](
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/lauchaves"><img src="https://avatars.githubusercontent.com/u/5482929?v=4?s=100" width="100px;" alt="Lau Chaves"/><br /><sub><b>Lau Chaves</b></sub></a><br /><a href="#design-lauchaves" title="Design">🎨</a> <a href="https://github.com/keep-starknet-strange/starknet-phone/commits?author=lauchaves" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ooochoche"><img src="https://avatars.githubusercontent.com/u/101812348?v=4?s=100" width="100px;" alt="Benedict Ejembi"/><br /><sub><b>Benedict Ejembi</b></sub></a><br /><a href="#design-ooochoche" title="Design">🎨</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Gift-Naomi"><img src="https://avatars.githubusercontent.com/u/149405096?v=4?s=100" width="100px;" alt="Mystic"/><br /><sub><b>Mystic</b></sub></a><br /><a href="#design-Gift-Naomi" title="Design">🎨</a></td>
+    </tr>
   </tbody>
 </table>
 
