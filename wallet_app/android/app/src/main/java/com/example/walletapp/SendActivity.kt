@@ -62,7 +62,7 @@ class SendActivity : ComponentActivity() {
     }
 
     @Composable
-    fun SendScreenView(modifier: Modifier){
+    fun SendScreenView(modifier: Modifier) {
         /* TODO(34) send tokens */
 
         var amount by rememberSaveable {
@@ -113,10 +113,12 @@ class SendActivity : ComponentActivity() {
                     textAlign = TextAlign.Center,
                     fontSize = 40.sp
                 ),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, // Number-only keyboard
-                    imeAction = ImeAction.Done),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number, // Number-only keyboard
+                    imeAction = ImeAction.Done
+                ),
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
+                singleLine = true
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -142,6 +144,5 @@ class SendActivity : ComponentActivity() {
                 Text(text = "Confirm", color = Color.White)
             }
         }
-
     }
 }

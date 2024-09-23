@@ -1,10 +1,9 @@
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
-    id("kotlin-kapt")
-    id("org.jmailen.kotlinter")
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    // Remove any ktlint plugin application from here if it exists
 }
 
 android {
@@ -14,6 +13,11 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+    sourceSets {
+        getByName("main") {
+            jniLibs.srcDirs("src/main/jniLibs")
+        }
     }
 
     defaultConfig {
@@ -28,8 +32,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-
-
         buildConfigField("String", "DEMO_RPC_URL", "\"https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_7/${properties.getProperty("KEY_NAME")}\"")
         buildConfigField("String", "DEMO_ACCOUNT_ADDRESS", "\"0x02dc260794e4c2eeae87b1403a88385a72c18a5844d220b88117b2965a8cf3a5\"")
         buildConfigField("String", "DEMO_PRIVATE_KEY", "\"rFAP8fkTAz9TmYw8_V5Fyzxi-WSoQdhk\"")
@@ -37,7 +39,6 @@ android {
     }
 
     buildTypes {
-
 
         release {
             isMinifyEnabled = false
@@ -65,7 +66,7 @@ android {
 }
 dependencies {
 
-    implementation("com.swmansion.starknet:starknet:0.12.1@aar"){
+    implementation("com.swmansion.starknet:starknet:0.12.1@aar") {
         isTransitive = true
     }
 
@@ -93,10 +94,10 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.androidx.hilt.navigation.compose)
 
-    //dagger
+    // dagger
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.fragment)
-    implementation (libs.androidx.hilt.navigation.compose.v100alpha03)
+    implementation(libs.androidx.hilt.navigation.compose.v100alpha03)
 
     implementation(libs.androidx.ui.tooling.preview)
     debugImplementation(libs.androidx.ui.tooling)
@@ -109,7 +110,6 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
 
     implementation(libs.androidx.navigation.compose)
-
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

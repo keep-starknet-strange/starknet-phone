@@ -22,10 +22,10 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -44,7 +44,6 @@ class AddTokenActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     AddTokenScreenView(modifier = Modifier.padding(10.dp))
                 }
-
             }
         }
     }
@@ -159,4 +158,3 @@ fun AddTokenScreenView(modifier: Modifier) {
         }
     }
 }
-

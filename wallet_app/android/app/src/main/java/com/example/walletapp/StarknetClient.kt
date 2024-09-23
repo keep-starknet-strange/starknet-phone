@@ -1,8 +1,9 @@
 import com.swmansion.starknet.account.StandardAccount
 import com.swmansion.starknet.data.types.Call
 import com.swmansion.starknet.data.types.Felt
+import com.swmansion.starknet.data.types.StarknetChainId
 import com.swmansion.starknet.data.types.Uint256
-import com.swmansion.starknet.provider.rpc.JsonRpcProvider
+import com.swmansion.starknet.provider.rpc.JsonRpcProvider // Add this import
 import com.swmansion.starknet.signer.StarkCurveSigner
 import kotlinx.coroutines.future.await
 import java.math.BigDecimal
@@ -13,23 +14,11 @@ class StarknetClient(private val rpcUrl: String) {
 
     private val provider = JsonRpcProvider(rpcUrl)
 
-    suspend fun deployAccount() {
-
-        // Predefined values for account creation
-        val privateKey = Felt.fromHex("0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a") // TODO(#80): Load from local.properties
-        val accountAddress = Felt.fromHex("0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca") // TODO(#80): Load from local.properties
-
+    suspend fun deployAccount(privateKey: Felt): StandardAccount {
+        val publicKey = StarkCurveSigner(privateKey).publicKey
         val signer = StarkCurveSigner(privateKey)
-        val chainId = provider.getChainId().sendAsync().await()
-        val account = StandardAccount(
-            address = accountAddress,
-            signer = signer,
-            provider = provider,
-            chainId = chainId,
-            cairoVersion = Felt.ONE,
-        )
-
-        // TODO: deploy account
+        val chainId = StarknetChainId.MAIN // or StarknetChainId.GOERLI for testnet
+        return StandardAccount(publicKey, signer, provider, chainId)
     }
 
     suspend fun getEthBalance(accountAddress: Felt): Uint256 {
@@ -39,7 +28,7 @@ class StarknetClient(private val rpcUrl: String) {
         val call = Call(
             contractAddress = erc20ContractAddress,
             entrypoint = "balanceOf", // entrypoint can be passed both as a string name and Felt value
-            calldata = listOf(accountAddress), // calldata is List<Felt>, so we wrap accountAddress in listOf()
+            calldata = listOf(accountAddress) // calldata is List<Felt>, so we wrap accountAddress in listOf()
         )
 
         // Create a Request object which has to be executed in synchronous or asynchronous way
@@ -56,7 +45,7 @@ class StarknetClient(private val rpcUrl: String) {
         // Output value's type is UInt256 and is represented by two Felt values
         return Uint256(
             low = response[0],
-            high = response[1],
+            high = response[1]
         )
     }
 

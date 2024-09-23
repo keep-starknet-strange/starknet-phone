@@ -1,0 +1,13 @@
+[package]
+name = "rust_android_logging"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["staticlib", "cdylib"]
+
+[dependencies]
+log = "0.4"
+android_logger = "0.11"
+libc = "0.2"
+jni = "0.21.1"  # Add this line
