@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.core.view.WindowCompat
 import com.example.walletapp.ui.theme.WalletappTheme
-
+import com.swmansion.starknet.data.types.Felt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -47,6 +47,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, true)
+        RustLogger.init()
+        RustLogger.logInfo("MainActivity created - logged from Rust!")
         setContent {
             WalletappTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
@@ -59,16 +61,17 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Composable
+fun StarknetLogo(modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(id = R.drawable.starknet_icon),
+        contentDescription = "Starknet Logo",
+        modifier = modifier.size(123.dp)
+    )
+}
 
 @Composable
-fun StarknetLogo (modifier: Modifier = Modifier) {
-    Image(
-        painter = painterResource(id = R.drawable.starknet_icon  ),
-        contentDescription = "Starknet Logo",
-        modifier = modifier.size(123.dp) )
-}
-@Composable
-fun CreateAccount( modifier: Modifier) {
+fun CreateAccount(modifier: Modifier) {
     val context = (LocalContext.current as Activity)
     val scope = rememberCoroutineScope()
     val starknetClient = StarknetClient(BuildConfig.DEMO_RPC_URL)
@@ -98,8 +101,11 @@ fun CreateAccount( modifier: Modifier) {
             verticalArrangement = Arrangement.spacedBy(8.dp) // Adjust space between buttons
         ) {
             Button(
-                onClick = { val i = Intent(context, AccountPasswordActivity::class.java)
-                    context.startActivity(i) },
+                onClick = {
+                    val i = Intent(context, AccountPasswordActivity::class.java)
+                    context.startActivity(i)
+                    RustLogger.logInfo("Create a New Wallet button clicked")
+                },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
                 shape = RoundedCornerShape(10.dp),
                 modifier = Modifier
@@ -116,10 +122,11 @@ fun CreateAccount( modifier: Modifier) {
 
             Spacer(modifier = Modifier.height(10.dp))
 
-
             Button(
-                onClick = { val i = Intent(context, RecoveryPhraseActivity::class.java)
-                    context.startActivity(i) },
+                onClick = {
+                    val i = Intent(context, RecoveryPhraseActivity::class.java)
+                    context.startActivity(i)
+                },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt())),
                 shape = RoundedCornerShape(10.dp),
                 modifier = Modifier
@@ -140,12 +147,14 @@ fun CreateAccount( modifier: Modifier) {
                 onClick = {
                     scope.launch {
                         try {
-                            starknetClient.deployAccount()
+                            starknetClient.deployAccount(Felt.fromHex(BuildConfig.DEMO_PRIVATE_KEY))
+                            RustLogger.logInfo("Account deployed successfully")
 
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(context, "Account deployed successfully!", Toast.LENGTH_LONG).show()
                             }
                         } catch (e: Exception) {
+                            RustLogger.logError("Error deploying account: ${e.message}")
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(context, "Error deploying account: ${e.message}", Toast.LENGTH_LONG).show()
                             }
@@ -170,4 +179,3 @@ fun CreateAccount( modifier: Modifier) {
         Spacer(modifier = Modifier.height(15.dp))
     }
 }
-

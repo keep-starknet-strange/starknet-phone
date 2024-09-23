@@ -50,7 +50,7 @@ class ReceiverActivity : ComponentActivity() {
     }
 
     @Composable
-    fun ReceiverScreenView(modifier: Modifier){
+    fun ReceiverScreenView(modifier: Modifier) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -97,6 +97,5 @@ class ReceiverActivity : ComponentActivity() {
                 }
             )
         }
-
     }
 }

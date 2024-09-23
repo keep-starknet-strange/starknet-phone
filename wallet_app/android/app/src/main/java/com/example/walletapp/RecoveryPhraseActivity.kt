@@ -5,19 +5,39 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.IconButton
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -28,9 +48,6 @@ import androidx.core.graphics.toColorInt
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.runtime.Composable
-import androidx.compose.material3.Text
-import androidx.compose.foundation.layout.fillMaxWidth
 import com.example.walletapp.ui.theme.WalletappTheme
 
 class RecoveryPhraseActivity : ComponentActivity() {
@@ -41,17 +58,14 @@ class RecoveryPhraseActivity : ComponentActivity() {
             WalletappTheme {
                 val navController = rememberNavController()
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    RecoveryPhraseScreenView(
-                        modifier = Modifier.padding(10.dp),
-                        navController = navController
-                    )
+                    RecoveryPhraseScreenView(navController = navController)
                 }
             }
         }
     }
 
     @Composable
-    fun RecoveryPhraseScreenView(modifier: Modifier, navController: NavController) {
+    fun RecoveryPhraseScreenView(navController: NavController) {
         var isVisible by remember { mutableStateOf(false) }
         var showDialog by remember { mutableStateOf(false) }
 
@@ -81,7 +95,7 @@ class RecoveryPhraseActivity : ComponentActivity() {
                     color = Color.White,
                     fontSize = 18.sp,
                     fontFamily = FontFamily(Font(R.font.inter_regular)),
-                    modifier = Modifier.weight(2f),
+                    modifier = Modifier.weight(2f)
                 )
             }
             Spacer(modifier = Modifier.height(20.dp))
@@ -94,10 +108,12 @@ class RecoveryPhraseActivity : ComponentActivity() {
             )
             Spacer(modifier = Modifier.height(40.dp))
 
-            if (isVisible) SeedPhrases() else {
+            if (isVisible) {
+                SeedPhrases()
+            } else {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.warning_sign),
@@ -177,7 +193,7 @@ class RecoveryPhraseActivity : ComponentActivity() {
 
             Spacer(modifier = Modifier.height(20.dp))
             Button(
-                onClick = { showDialog = !showDialog  },
+                onClick = { showDialog = !showDialog },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -212,7 +228,6 @@ class RecoveryPhraseActivity : ComponentActivity() {
                         modifier = Modifier
                             .size(32.dp)
                             .background(Color("#1B1B76".toColorInt()), shape = CircleShape)
-                            .wrapContentSize(Alignment.Center)
                     ) {
                         Text(
                             text = "${item.number}",
@@ -253,15 +268,6 @@ fun CustomDialog(onDismiss: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-//                Image(
-//                    painter = painterResource(id = R.drawable.check_symbol),
-//                    contentDescription = "success",
-//                    modifier = Modifier
-//                        .size(80.dp)
-//                        .background(Color.White, shape = CircleShape)
-//                        .padding(8.dp)
-//                        .align(Alignment.CenterHorizontally)
-//                )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "Congratulations!",
@@ -273,7 +279,7 @@ fun CustomDialog(onDismiss: () -> Unit) {
         },
         text = {
             Text(
-                text = "You’re done creating your wallet",
+                text = "You're done creating your wallet",
                 color = Color.White,
                 fontSize = 18.sp,
                 textAlign = TextAlign.Center
@@ -281,15 +287,17 @@ fun CustomDialog(onDismiss: () -> Unit) {
         },
         confirmButton = {
             Button(
-                onClick = { val i = Intent(context, WalletActivity::class.java)
-                    context.startActivity(i) },
+                onClick = {
+                    val i = Intent(context, WalletActivity::class.java)
+                    context.startActivity(i)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color("#2C74DD".toColorInt()))
             ) {
                 Text(
-                    text = "Let’s start!",
+                    text = "Let's start!",
                     color = Color.White
                 )
             }

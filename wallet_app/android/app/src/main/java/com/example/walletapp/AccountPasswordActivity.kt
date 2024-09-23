@@ -18,18 +18,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.unit.dp
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.sharp.ArrowBack
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,6 +37,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.core.view.WindowCompat
@@ -62,7 +60,7 @@ class AccountPasswordActivity : ComponentActivity() {
     }
 
     @Composable
-    fun AccountPasswordScreenView(modifier: Modifier){
+    fun AccountPasswordScreenView(modifier: Modifier) {
         val (password, setPassword) = remember { mutableStateOf("") }
         val (confirmPassword, setConfirmPassword) = remember { mutableStateOf("") }
         val context = (LocalContext.current as Activity)
@@ -93,7 +91,7 @@ class AccountPasswordActivity : ComponentActivity() {
                     color = Color.White,
                     fontSize = 18.sp,
                     fontFamily = FontFamily(Font(R.font.inter_regular)),
-                    modifier = Modifier.weight(2f),
+                    modifier = Modifier.weight(2f)
                 )
             }
             Spacer(modifier = Modifier.height(40.dp))
@@ -120,9 +118,11 @@ class AccountPasswordActivity : ComponentActivity() {
                         fontSize = 15.sp
                     )
                 },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, // Number-only keyboard
-                    imeAction = ImeAction.Done),
-                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number, // Number-only keyboard
+                    imeAction = ImeAction.Done
+                ),
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -143,20 +143,25 @@ class AccountPasswordActivity : ComponentActivity() {
                         fontSize = 15.sp
                     )
                 },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, // Number-only keyboard
-                    imeAction = ImeAction.Done),
-                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number, // Number-only keyboard
+                    imeAction = ImeAction.Done
+                ),
+                modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.weight(1f))
             Image(
                 painterResource(id = R.drawable.progress_1),
-                contentDescription ="progress",
-                modifier = Modifier.fillMaxWidth().height(6.dp))
+                contentDescription = "progress",
+                modifier = Modifier.fillMaxWidth().height(6.dp)
+            )
 
             Spacer(modifier = Modifier.height(20.dp))
             Button(
-                onClick = { val i = Intent(context, RecoveryPhraseActivity::class.java)
-                    context.startActivity(i) },
+                onClick = {
+                    val i = Intent(context, RecoveryPhraseActivity::class.java)
+                    context.startActivity(i)
+                },
                 colors = ButtonDefaults.buttonColors(Color("#1B1B76".toColorInt())),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -167,6 +172,5 @@ class AccountPasswordActivity : ComponentActivity() {
             }
             Spacer(modifier = Modifier.height(15.dp))
         }
-
     }
 }
