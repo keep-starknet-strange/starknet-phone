@@ -19,6 +19,11 @@ android {
             useSupportLibrary = true
         }
     }
+    sourceSets {
+        getByName("main") {
+            jniLibs.srcDirs("src/main/jniLibs")
+        }
+    }
 
     buildTypes {
         release {

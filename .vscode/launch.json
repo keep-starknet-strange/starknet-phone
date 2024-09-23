@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "android",
+      "request": "launch",
+      "name": "Android Launch",
+      "appSrcRoot": "${workspaceRoot}/android/app/src/main",
+      "apkFile": "${workspaceRoot}/android/app/build/outputs/apk/debug/app-debug.apk",
+      "adbPort": 5037
+    }
+  ]
+}
