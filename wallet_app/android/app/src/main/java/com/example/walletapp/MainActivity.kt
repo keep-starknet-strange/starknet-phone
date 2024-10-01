@@ -71,7 +71,7 @@ fun StarknetLogo (modifier: Modifier = Modifier) {
 fun CreateAccount( modifier: Modifier) {
     val context = (LocalContext.current as Activity)
     val scope = rememberCoroutineScope()
-    val starknetClient = StarknetClient(BuildConfig.DEMO_RPC_URL)
+    val starknetClient = StarknetClient(BuildConfig.RPC_URL)
 
     Column(
         modifier = Modifier

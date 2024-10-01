@@ -1,3 +1,4 @@
+import com.example.walletapp.BuildConfig
 import com.swmansion.starknet.account.StandardAccount
 import com.swmansion.starknet.data.types.Call
 import com.swmansion.starknet.data.types.Felt
@@ -12,12 +13,15 @@ const val ETH_ERC20_ADDRESS = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741
 class StarknetClient(private val rpcUrl: String) {
 
     private val provider = JsonRpcProvider(rpcUrl)
+    private val privateKey=BuildConfig.PRIVATE_KEY
+    private val accountAddress=BuildConfig.ACCOUNT_ADDRESS
 
     suspend fun deployAccount() {
 
+
         // Predefined values for account creation
-        val privateKey = Felt.fromHex("0x2bbf4f9fd0bbb2e60b0316c1fe0b76cf7a4d0198bd493ced9b8df2a3a24d68a") // TODO(#80): Load from local.properties
-        val accountAddress = Felt.fromHex("0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca") // TODO(#80): Load from local.properties
+        val privateKey = Felt.fromHex(privateKey)
+        val accountAddress = Felt.fromHex(accountAddress)
 
         val signer = StarkCurveSigner(privateKey)
         val chainId = provider.getChainId().sendAsync().await()

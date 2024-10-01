@@ -81,7 +81,7 @@ class AccountBalanceActivity : ComponentActivity() {
 
         val scope = CoroutineScope(Dispatchers.IO)
 
-        val starknetClient = StarknetClient(BuildConfig.DEMO_RPC_URL)
+        val starknetClient = StarknetClient(BuildConfig.RPC_URL)
 
 
         Column(modifier = Modifier
