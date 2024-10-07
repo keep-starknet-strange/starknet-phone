@@ -35,39 +35,50 @@ fn run_wrapper(
         .build()
         .unwrap();
 
-    let run_response = rt.block_on(run(eth_execution_rpc, starknet_rpc));
-
-    InvocationArg::try_from(run_response)
+    let result = rt.block_on(sleep_and_return());
+    println!("Sleep function completed: {}", result);
+    InvocationArg::try_from(result)
         .map_err(|error| format!("{}", error))
-        .and_then(|run_response| {
-            Instance::try_from(run_response).map_err(|error| format!("{}", error))
-        })
-}
+        .and_then(|arg| Instance::try_from(arg).map_err(|error| format!("{}", error)))
 
-async fn run(eth_execution_rpc: String, starknet_rpc: String) -> i64 {
-    let config = Config {
-        network: Network::SEPOLIA, // TODO: take network as input
+    /*
+    let run_response = rt.block_on(run(
         eth_execution_rpc,
         starknet_rpc,
-        data_dir: PathBuf::from("tmp"),
-        poll_secs: 5,
-        rpc_addr: SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 8080),
-    };
+        String::from("tmp"),
+        5,
+        8080,
+    ));
 
-    match config.check().await {
-        Ok(_) => 0,
-        Err(_) => 1,
+    match run_response {
+        Ok(_) => {
+            println!("Beerus client ran successfully");
+            InvocationArg::try_from("Beerus client started")
+                .map_err(|error| format!("{}", error))
+                .and_then(|arg| Instance::try_from(arg).map_err(|error| format!("{}", error)))
+        }
+        Err(e) => {
+            eprintln!("Error running Beerus client: {}", e);
+            Err(format!("Error running Beerus client: {}", e))
+        }
     }
+    */
 }
 
-/*
-#[tokio::main]
+// This is just for verifying async behvaior in android
+async fn sleep_and_return() -> String {
+    tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
+    "Slept for 5 seconds".to_string()
+}
+
+// NOTE: this should probably run in its own thread?
 async fn run(
     eth_execution_rpc: String,
     starknet_rpc: String,
     data_dir: String,
+    poll_secs: u64,
+    socket_port: u16,
 ) -> eyre::Result<()> {
-    /*
     tracing_subscriber::fmt::init();
 
     let config = Config {
@@ -76,10 +87,7 @@ async fn run(
         starknet_rpc,
         data_dir: PathBuf::from(data_dir),
         poll_secs,
-        rpc_addr: SocketAddr::new(
-            IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)),
-            socket_port,
-        ),
+        rpc_addr: SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), socket_port),
     };
     config.check().await?;
 
@@ -88,7 +96,9 @@ async fn run(
 
     let rpc_spec_version = beerus.spec_version().await?;
     if rpc_spec_version != RPC_SPEC_VERSION {
-        eyre::bail!("RPC spec version mismatch: expected {RPC_SPEC_VERSION} but got {rpc_spec_version}");
+        eyre::bail!(
+            "RPC spec version mismatch: expected {RPC_SPEC_VERSION} but got {rpc_spec_version}"
+        );
     }
 
     let state = beerus.get_state().await?;
@@ -116,18 +126,13 @@ async fn run(
         });
     }
 
-    let server =
-        super::rpc::serve(&config.starknet_rpc, &config.rpc_addr, state)
-            .await?;
+    let server = super::rpc::serve(&config.starknet_rpc, &config.rpc_addr, state).await?;
 
     tracing::info!(port = server.port(), "rpc server started");
     server.done().await;
-    */
-
 
     Ok(())
 }
-*/
 
 /*
 #[no_mangle]
