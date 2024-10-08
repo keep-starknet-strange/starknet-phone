@@ -9,3 +9,4 @@ docs/book/
 lightclientservice/app/build
 lightclientservice/target
 lightclientservice/local.properties
+lightclientservice/.idea
