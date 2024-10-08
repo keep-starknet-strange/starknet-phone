@@ -1,4 +1,4 @@
-package com.example.walletapp
+package com.example.walletapp.ui.activity
 
 import StarknetClient
 import android.app.Activity
