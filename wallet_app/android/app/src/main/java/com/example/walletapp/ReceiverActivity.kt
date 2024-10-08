@@ -1,4 +1,4 @@
-package com.example.walletapp.ui.activity
+package com.example.walletapp
 
 import android.content.ClipData
 import android.content.ClipboardManager

@@ -1,4 +1,5 @@
-import com.example.walletapp.BuildConfig
+package com.example.walletapp
+
 import com.swmansion.starknet.account.StandardAccount
 import com.swmansion.starknet.data.types.Call
 import com.swmansion.starknet.data.types.Felt
@@ -13,7 +14,7 @@ const val ETH_ERC20_ADDRESS = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741
 class StarknetClient(private val rpcUrl: String) {
 
     private val provider = JsonRpcProvider(rpcUrl)
-    private val privateKey=BuildConfig.PRIVATE_KEY
+    private val privateKey= BuildConfig.PRIVATE_KEY
     private val accountAddress=BuildConfig.ACCOUNT_ADDRESS
 
     suspend fun deployAccount() {

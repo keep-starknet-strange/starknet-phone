@@ -1,4 +1,4 @@
-package com.example.walletapp.ui.activity
+package com.example.walletapp
 
 import android.app.Activity
 import android.content.Intent
@@ -27,8 +27,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.sharp.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier

@@ -1,4 +1,4 @@
-package com.example.walletapp.ui.activity
+package com.example.walletapp
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

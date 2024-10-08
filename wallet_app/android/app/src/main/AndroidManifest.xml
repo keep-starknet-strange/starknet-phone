@@ -25,29 +25,29 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.activity.SendActivity"
+            android:name=".SendActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
         <activity
-            android:name=".ui.activity.ReceiverActivity"
+            android:name=".ReceiverActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
-        <activity android:name=".ui.activity.AddTokenActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Walletapp"/>
-
-        <activity android:name=".ui.activity.AccountBalanceActivity"
+        <activity android:name=".AddTokenActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
 
-        <activity android:name=".ui.activity.AccountPasswordActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Walletapp"/>
-        <activity android:name=".ui.activity.RecoveryPhraseActivity"
+        <activity android:name=".AccountBalanceActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
 
-        <activity android:name=".ui.activity.WalletActivity"
+        <activity android:name=".AccountPasswordActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
+        <activity android:name=".RecoveryPhraseActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
+
+        <activity android:name=".WalletActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
     </application>

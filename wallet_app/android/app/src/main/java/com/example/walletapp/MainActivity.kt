@@ -1,6 +1,5 @@
-package com.example.walletapp.ui.activity
+package com.example.walletapp
 
-import StarknetClient
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
