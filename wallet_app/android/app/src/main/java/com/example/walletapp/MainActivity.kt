@@ -72,6 +72,7 @@ fun CreateAccount( modifier: Modifier) {
     val context = (LocalContext.current as Activity)
     val scope = rememberCoroutineScope()
     val starknetClient = StarknetClient(BuildConfig.RPC_URL)
+    starknetClient.test()
 
     Column(
         modifier = Modifier
