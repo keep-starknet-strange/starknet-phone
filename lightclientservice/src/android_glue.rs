@@ -6,15 +6,25 @@ use std::{
 };
 
 use super::config::Config;
-use clap::Parser;
 use helios::config::networks::Network;
 use tokio::sync::RwLock;
 
 use j4rs::prelude::*;
-use j4rs::{InvocationArg, JavaClass};
+use j4rs::InvocationArg;
 use j4rs_derive::*;
 
+use j4rs::jni_sys::{jint, JavaVM};
+
 const RPC_SPEC_VERSION: &str = "0.6.0";
+
+const JNI_VERSION_1_6: jint = 0x00010006;
+
+#[allow(non_snake_case)]
+#[no_mangle]
+pub extern "C" fn jni_onload(env: *mut JavaVM, _reserved: jobject) -> jint {
+    j4rs::set_java_vm(env);
+    JNI_VERSION_1_6
+}
 
 #[call_from_java("com.snphone.lightclientservice.BeerusClient.run")]
 fn run_wrapper(
@@ -63,6 +73,17 @@ fn run_wrapper(
         }
     }
     */
+}
+
+#[call_from_java("com.snphone.lightclientservice.BeerusClient.echo")]
+fn echo(message_instance: Instance) -> Result<Instance, String> {
+    let jvm: Jvm = Jvm::attach_thread().unwrap();
+    let message: String = jvm.to_rust(message_instance).unwrap();
+
+    let ia = InvocationArg::try_from(message)
+        .map_err(|error| format!("{}", error))
+        .unwrap();
+    Instance::try_from(ia).map_err(|error| format!("{}", error))
 }
 
 // This is just for verifying async behvaior in android

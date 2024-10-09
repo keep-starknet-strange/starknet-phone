@@ -10,6 +10,8 @@ import android.os.Message
 import android.widget.Toast
 import android.os.Process
 
+import org.astonbitecode.j4rs.api.java2rust.Java2RustUtils
+
 class BeerusService : Service() {
 
     private var serviceLooper: Looper? = null
@@ -19,7 +21,7 @@ class BeerusService : Service() {
     private inner class ServiceHandler(looper: Looper): Handler(looper) {
         override fun handleMessage(msg: Message) {
             try {
-                val runResponse = BeerusClient.run("TODO", "TODO")
+                val runResponse = BeerusClient.run(Java2RustUtils.createInstance("TODO"), Java2RustUtils.createInstance("TODO"))
                 println(runResponse)
                 Thread.sleep(5000)
             } catch (e: InterruptedException) {

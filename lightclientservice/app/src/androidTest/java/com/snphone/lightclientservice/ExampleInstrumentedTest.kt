@@ -8,6 +8,8 @@ import org.junit.runner.RunWith
 
 import org.junit.Assert.*
 
+import org.astonbitecode.j4rs.api.java2rust.Java2RustUtils
+
 /**
  * Instrumented test, which will execute on an Android device.
  *
@@ -20,5 +22,11 @@ class ExampleInstrumentedTest {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         assertEquals("com.example.lightclientservice", appContext.packageName)
+    }
+
+    @Test
+    fun test_beerus_client() {
+        val msg = BeerusClient.echo(Java2RustUtils.createInstance("Hello"));
+        assertEquals(msg, "Hello")
     }
 }

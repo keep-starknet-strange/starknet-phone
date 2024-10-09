@@ -11,6 +11,12 @@ public class BeerusClient {
      */
     public static native String run(Instance<String> ethExecutionRpc, Instance<String> starknetRpc);
 
+    /**
+     * just used to test communication between rust and android side
+     * @return the same string as inputted
+     */
+    public static native String echo(Instance<String> message);
+
     static {
         System.loadLibrary("beerus");
     }
