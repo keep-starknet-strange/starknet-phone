@@ -1,4 +1,12 @@
-import org.jetbrains.kotlin.cli.jvm.main
+import java.util.Properties
+import java.io.FileInputStream
+
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
+}
 
 plugins {
     alias(libs.plugins.android.application)
@@ -9,6 +17,10 @@ android {
     namespace = "com.snphone.lightclientservice"
     compileSdk = 34
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         applicationId = "com.snphone.lightclientservice"
         minSdk = 24
@@ -17,6 +29,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val alchemyApiKey = localProperties.getProperty("ALCHEMY_API_KEY") ?: ""
+        buildConfigField("String", "ETH_SEPOLIA_RPC_URL", "\"https://eth-sepolia.g.alchemy.com/v2/${alchemyApiKey}\"")
+        buildConfigField("String", "STARKNET_SEPOLIA_RPC_URL", "\"https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_7/${alchemyApiKey}\"")
     }
 
     buildTypes {
@@ -26,6 +42,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        getByName("debug") {
+            isJniDebuggable = true
         }
     }
     compileOptions {

@@ -50,20 +50,13 @@ fn default_rpc_addr() -> SocketAddr {
 impl Config {
     pub fn from_env() -> Self {
         Self {
-            network: Network::from_str(
-                &std::env::var("NETWORK").unwrap_or_default(),
-            )
-            .unwrap_or(Network::MAINNET),
-            eth_execution_rpc: std::env::var("ETH_EXECUTION_RPC")
-                .unwrap_or_default(),
+            network: Network::from_str(&std::env::var("NETWORK").unwrap_or_default())
+                .unwrap_or(Network::MAINNET),
+            eth_execution_rpc: std::env::var("ETH_EXECUTION_RPC").unwrap_or_default(),
             starknet_rpc: std::env::var("STARKNET_RPC").unwrap_or_default(),
-            data_dir: PathBuf::from(
-                std::env::var("DATA_DIR").unwrap_or_default(),
-            ),
-            poll_secs: u64::from_str(
-                &std::env::var("POLL_SECS").unwrap_or_default(),
-            )
-            .unwrap_or(DEFAULT_POLL_SECS),
+            data_dir: PathBuf::from(std::env::var("DATA_DIR").unwrap_or_default()),
+            poll_secs: u64::from_str(&std::env::var("POLL_SECS").unwrap_or_default())
+                .unwrap_or(DEFAULT_POLL_SECS),
             rpc_addr: std::env::var("RPC_ADDR")
                 .ok()
                 .and_then(|rpc_addr| rpc_addr.parse::<SocketAddr>().ok())
@@ -87,39 +80,28 @@ impl Config {
     }
 
     pub async fn check(&self) -> Result<()> {
+        println!("DEBUG: validating config...");
         self.validate()?;
 
         let expected_chain_id = match self.network {
             Network::MAINNET => MAINNET_ETHEREUM_CHAINID,
             Network::SEPOLIA => SEPOLIA_ETHEREUM_CHAINID,
             _ => {
-                eyre::bail!(
-                    "Ethereum chain id check failed: unsupported network"
-                );
+                eyre::bail!("Ethereum chain id check failed: unsupported network");
             }
         };
-        check_chain_id(
-            expected_chain_id,
-            &self.eth_execution_rpc,
-            "eth_chainId",
-        )
-        .await?;
+        check_chain_id(expected_chain_id, &self.eth_execution_rpc, "eth_chainId").await?;
+        println!("DEBUG: ethereum chain id valid");
 
         let expected_chain_id = match self.network {
             Network::MAINNET => MAINNET_STARKNET_CHAINID,
             Network::SEPOLIA => SEPOLIA_STARKNET_CHAINID,
             _ => {
-                eyre::bail!(
-                    "Starknet chain id check failed: unsupported network"
-                );
+                eyre::bail!("Starknet chain id check failed: unsupported network");
             }
         };
-        check_chain_id(
-            expected_chain_id,
-            &self.starknet_rpc,
-            "starknet_chainId",
-        )
-        .await?;
+        check_chain_id(expected_chain_id, &self.starknet_rpc, "starknet_chainId").await?;
+        println!("DEBUG: starknet chain id valid");
 
         check_data_dir(&self.data_dir)
     }
@@ -128,28 +110,25 @@ impl Config {
 fn check_data_dir<P: AsRef<Path>>(path: &P) -> Result<()> {
     let path = path.as_ref();
     if !path.exists() {
+        println!("DEBUG: data dir path does not exist");
         eyre::bail!("path does not exist");
     };
 
     let meta = path.metadata().context("path metadata is missing")?;
 
     if meta.permissions().readonly() {
+        println!("DEBUG: path is readonly");
         eyre::bail!("path is readonly");
     }
 
+    println!("DEBUG: data dir valid");
     Ok(())
 }
 
-async fn check_chain_id(
-    expected_chain_id: &str,
-    url: &str,
-    method: &str,
-) -> Result<()> {
+async fn check_chain_id(expected_chain_id: &str, url: &str, method: &str) -> Result<()> {
     let chain_id = call_method(url, method).await?;
     if chain_id != expected_chain_id {
-        eyre::bail!(
-            "Invalid chain id: expected {expected_chain_id} but got {chain_id}"
-        );
+        eyre::bail!("Invalid chain id: expected {expected_chain_id} but got {chain_id}");
     }
     Ok(())
 }
@@ -202,18 +181,14 @@ mod tests {
     async fn correct_eth_url() {
         let server = MockServer::start().await;
         Mock::given(any())
-            .respond_with(ResponseTemplate::new(200)
-                .set_body_json(serde_json::json!({"jsonrpc":"2.0","id":0,"result":MAINNET_ETHEREUM_CHAINID})))
+            .respond_with(ResponseTemplate::new(200).set_body_json(
+                serde_json::json!({"jsonrpc":"2.0","id":0,"result":MAINNET_ETHEREUM_CHAINID}),
+            ))
             .expect(1)
             .mount(&server)
             .await;
 
-        let result = check_chain_id(
-            MAINNET_ETHEREUM_CHAINID,
-            &server.uri(),
-            "eth_chainId",
-        )
-        .await;
+        let result = check_chain_id(MAINNET_ETHEREUM_CHAINID, &server.uri(), "eth_chainId").await;
         assert!(result.is_ok());
     }
 
@@ -221,19 +196,15 @@ mod tests {
     async fn wrong_eth_url() {
         let server = MockServer::start().await;
         Mock::given(any())
-            .respond_with(ResponseTemplate::new(200).set_body_json(
-                serde_json::json!({"jsonrpc":"2.0","id":0,"error":"foo"}),
-            ))
+            .respond_with(
+                ResponseTemplate::new(200)
+                    .set_body_json(serde_json::json!({"jsonrpc":"2.0","id":0,"error":"foo"})),
+            )
             .expect(1)
             .mount(&server)
             .await;
 
-        let result = check_chain_id(
-            MAINNET_ETHEREUM_CHAINID,
-            &server.uri(),
-            "eth_chainId",
-        )
-        .await;
+        let result = check_chain_id(MAINNET_ETHEREUM_CHAINID, &server.uri(), "eth_chainId").await;
 
         assert!(result.is_err());
         assert_eq!(
@@ -246,19 +217,15 @@ mod tests {
     async fn wrong_starknet_url() {
         let server = MockServer::start().await;
         Mock::given(any())
-            .respond_with(ResponseTemplate::new(200).set_body_json(
-                serde_json::json!({"jsonrpc":"2.0","id":0,"error":"foo"}),
-            ))
+            .respond_with(
+                ResponseTemplate::new(200)
+                    .set_body_json(serde_json::json!({"jsonrpc":"2.0","id":0,"error":"foo"})),
+            )
             .expect(1)
             .mount(&server)
             .await;
 
-        let result = check_chain_id(
-            MAINNET_STARKNET_CHAINID,
-            &server.uri(),
-            "eth_chainId",
-        )
-        .await;
+        let result = check_chain_id(MAINNET_STARKNET_CHAINID, &server.uri(), "eth_chainId").await;
 
         assert!(result.is_err());
         assert_eq!(
@@ -271,19 +238,16 @@ mod tests {
     async fn correct_eth_url_wrong_chain_id() {
         let server = MockServer::start().await;
         Mock::given(any())
-            .respond_with(ResponseTemplate::new(200).set_body_json(
-                serde_json::json!({"jsonrpc":"2.0","id":0,"error":"foo"}),
-            ))
+            .respond_with(
+                ResponseTemplate::new(200)
+                    .set_body_json(serde_json::json!({"jsonrpc":"2.0","id":0,"error":"foo"})),
+            )
             .expect(1)
             .mount(&server)
             .await;
 
-        let result = check_chain_id(
-            MAINNET_STARKNET_CHAINID,
-            &server.uri(),
-            "starknet_chainId",
-        )
-        .await;
+        let result =
+            check_chain_id(MAINNET_STARKNET_CHAINID, &server.uri(), "starknet_chainId").await;
 
         assert!(result.is_err());
         assert_eq!(
@@ -296,19 +260,16 @@ mod tests {
     async fn correct_starknet_url_wrong_chain_id() {
         let server = MockServer::start().await;
         Mock::given(any())
-            .respond_with(ResponseTemplate::new(200).set_body_json(
-                serde_json::json!({"jsonrpc":"2.0","id":0,"error":"foo"}),
-            ))
+            .respond_with(
+                ResponseTemplate::new(200)
+                    .set_body_json(serde_json::json!({"jsonrpc":"2.0","id":0,"error":"foo"})),
+            )
             .expect(1)
             .mount(&server)
             .await;
 
-        let result = check_chain_id(
-            MAINNET_STARKNET_CHAINID,
-            &server.uri(),
-            "starknet_chainId",
-        )
-        .await;
+        let result =
+            check_chain_id(MAINNET_STARKNET_CHAINID, &server.uri(), "starknet_chainId").await;
 
         assert!(result.is_err());
         assert_eq!(

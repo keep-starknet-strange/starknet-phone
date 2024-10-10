@@ -8,6 +8,9 @@ import org.junit.runner.RunWith
 
 import org.junit.Assert.*
 
+import com.snphone.lightclientservice.BuildConfig
+
+
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -37,8 +40,7 @@ class ExampleInstrumentedTest {
 
     @Test
     fun runBeerus() {
-       val result = BeerusClient.run("", "");
+       val result = BeerusClient.run(BuildConfig.ETH_SEPOLIA_RPC_URL, BuildConfig.STARKNET_SEPOLIA_RPC_URL);
         assertEquals("Beerus client run successfully", result)
-
     }
 }

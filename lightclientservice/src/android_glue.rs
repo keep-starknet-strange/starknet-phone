@@ -1,9 +1,4 @@
-use std::{
-    net::{IpAddr, Ipv4Addr, SocketAddr},
-    path::PathBuf,
-    sync::Arc,
-    time::Duration,
-};
+use std::{net::SocketAddr, path::PathBuf, sync::Arc, time::Duration};
 
 use super::config::Config;
 use helios::config::networks::Network;
@@ -28,58 +23,70 @@ async fn run(
     poll_secs: u64,
     socket_port: u16,
 ) -> eyre::Result<()> {
-    tracing_subscriber::fmt::init();
+    println!("DEBUG: Starting run function");
 
+    println!("DEBUG: Creating config");
     let config = Config {
         network: Network::SEPOLIA, // TODO: take network as input
         eth_execution_rpc,
         starknet_rpc,
         data_dir: PathBuf::from(data_dir),
         poll_secs,
-        rpc_addr: SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), socket_port),
+        rpc_addr: SocketAddr::from(([127, 0, 0, 1], socket_port)),
     };
+    println!("DEBUG: Checking config");
     config.check().await?;
 
+    println!("DEBUG: Creating new Beerus client");
     let beerus = super::client::Client::new(&config).await?;
+    println!("DEBUG: Starting Beerus client");
     beerus.start().await?;
 
+    println!("DEBUG: Getting RPC spec version");
     let rpc_spec_version = beerus.spec_version().await?;
+    println!("DEBUG: RPC spec version: {}", rpc_spec_version);
     if rpc_spec_version != RPC_SPEC_VERSION {
+        println!("DEBUG: RPC spec version mismatch");
         eyre::bail!(
             "RPC spec version mismatch: expected {RPC_SPEC_VERSION} but got {rpc_spec_version}"
         );
     }
 
+    println!("DEBUG: Getting initial state");
     let state = beerus.get_state().await?;
-    tracing::info!(?state, "initialized");
+    println!("DEBUG: Initial state: {:?}", state);
 
     let state = Arc::new(RwLock::new(state));
 
     {
+        println!("DEBUG: Setting up state update task");
         let state = state.clone();
         let period = Duration::from_secs(config.poll_secs);
         tokio::spawn(async move {
             let mut tick = tokio::time::interval(period);
             loop {
                 tick.tick().await;
+                println!("DEBUG: Updating state");
                 match beerus.get_state().await {
                     Ok(update) => {
                         *state.write().await = update;
-                        tracing::info!(?state, "updated");
+                        println!("DEBUG: State updated successfully");
                     }
                     Err(e) => {
-                        tracing::error!(error=?e, "state update failed");
+                        println!("DEBUG: State update failed: {:?}", e);
                     }
                 }
             }
         });
     }
 
+    println!("DEBUG: Starting RPC server");
     let server = super::rpc::serve(&config.starknet_rpc, &config.rpc_addr, state).await?;
 
-    tracing::info!(port = server.port(), "rpc server started");
+    println!("DEBUG: RPC server started on port {}", server.port());
     server.done().await;
 
+    println!("DEBUG: Run function completed");
     Ok(())
 }
 
@@ -144,7 +151,7 @@ pub extern "C" fn Java_com_snphone_lightclientservice_BeerusClient_run<'local>(
             starknet_rpc,
             String::from("tmp"),
             5,
-            8080,
+            3030,
         )
         .await
         {
@@ -159,4 +166,21 @@ pub extern "C" fn Java_com_snphone_lightclientservice_BeerusClient_run<'local>(
         .expect("Couldn't create a java string!");
 
     output.into_raw()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::run;
+
+    #[tokio::test]
+    async fn test_run() {
+        let eth_execution_rpc =
+            "https://eth-sepolia.g.alchemy.com/v2/Fl4zNtN2hak5hrWq92a8pnB-ZospWX9a".to_string();
+        let starknet_rpc = "https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_7/Fl4zNtN2hak5hrWq92a8pnB-ZospWX9a".to_string();
+        let data_dir = String::from("tmp");
+
+        let run_response = run(eth_execution_rpc, starknet_rpc, data_dir, 5, 3030).await;
+
+        assert!(run_response.is_ok());
+    }
 }
