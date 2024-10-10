@@ -18,7 +18,7 @@ const RPC_SPEC_VERSION: &str = "0.6.0";
 
 // This is just for verifying async behvaior in android
 async fn sleep_and_return() {
-    tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
+    tokio::time::sleep(tokio::time::Duration::from_secs(3)).await;
 }
 
 async fn run(

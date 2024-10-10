@@ -1,7 +1,5 @@
 package com.snphone.lightclientservice;
 
-import org.astonbitecode.j4rs.api.Instance;
-
 public class BeerusClient {
 
     /**
@@ -9,13 +7,20 @@ public class BeerusClient {
      * @param starknetRpc the Starknet RPC Beerus will connect to
      * @return
      */
-    public static native String run(Instance<String> ethExecutionRpc, Instance<String> starknetRpc);
+    public static native String run(String ethExecutionRpc, String starknetRpc);
 
     /**
      * just used to test communication between rust and android side
      * @return the same string as inputted
      */
-    public static native String echo(Instance<String> message);
+    public static native String echo(String message);
+
+    /**
+     * just used to test communication between rust and android side, blocks while
+     * waiting for async return.
+     * @return the same string as inputted
+     */
+    public static native String echoBlock(String message);
 
     static {
         System.loadLibrary("beerus");

@@ -8,7 +8,6 @@ import org.junit.runner.RunWith
 
 import org.junit.Assert.*
 
-import org.astonbitecode.j4rs.api.java2rust.Java2RustUtils
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -25,8 +24,21 @@ class ExampleInstrumentedTest {
     }
 
     @Test
-    fun test_beerus_client() {
-        val msg = BeerusClient.echo(Java2RustUtils.createInstance("Hello"));
-        assertEquals(msg, "Hello")
+    fun echo() {
+        val msg = BeerusClient.echo("Hello");
+        assertEquals("hello", msg)
+    }
+
+    @Test
+    fun echoBlock() {
+        val msg = BeerusClient.echoBlock("hello");
+        assertEquals("hello", msg)
+    }
+
+    @Test
+    fun runBeerus() {
+       val result = BeerusClient.run("", "");
+        assertEquals("Beerus client run successfully", result)
+
     }
 }
