@@ -9,90 +9,18 @@ use super::config::Config;
 use helios::config::networks::Network;
 use tokio::sync::RwLock;
 
-use j4rs::prelude::*;
-use j4rs::InvocationArg;
-use j4rs_derive::*;
+use jni::objects::{JClass, JString};
+use jni::JNIEnv;
 
-use j4rs::jni_sys::{jint, JavaVM};
+use jni::sys::jstring;
 
 const RPC_SPEC_VERSION: &str = "0.6.0";
 
-const JNI_VERSION_1_6: jint = 0x00010006;
-
-#[allow(non_snake_case)]
-#[no_mangle]
-pub extern "C" fn jni_onload(env: *mut JavaVM, _reserved: jobject) -> jint {
-    j4rs::set_java_vm(env);
-    JNI_VERSION_1_6
-}
-
-#[call_from_java("com.snphone.lightclientservice.BeerusClient.run")]
-fn run_wrapper(
-    eth_execution_rpc_instance: Instance,
-    starknet_rpc_instance: Instance,
-) -> Result<Instance, String> {
-    let jvm: Jvm = Jvm::attach_thread().unwrap();
-    let eth_execution_rpc: String = jvm.to_rust(eth_execution_rpc_instance).unwrap();
-    let starknet_rpc: String = jvm.to_rust(starknet_rpc_instance).unwrap();
-
-    println!(
-        "Starting Beerus with:\nETH RPC: {}\nSTARKNET RPC: {}",
-        eth_execution_rpc, starknet_rpc
-    );
-
-    let rt = tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-        .unwrap();
-
-    let result = rt.block_on(sleep_and_return());
-    println!("Sleep function completed: {}", result);
-    InvocationArg::try_from(result)
-        .map_err(|error| format!("{}", error))
-        .and_then(|arg| Instance::try_from(arg).map_err(|error| format!("{}", error)))
-
-    /*
-    let run_response = rt.block_on(run(
-        eth_execution_rpc,
-        starknet_rpc,
-        String::from("tmp"),
-        5,
-        8080,
-    ));
-
-    match run_response {
-        Ok(_) => {
-            println!("Beerus client ran successfully");
-            InvocationArg::try_from("Beerus client started")
-                .map_err(|error| format!("{}", error))
-                .and_then(|arg| Instance::try_from(arg).map_err(|error| format!("{}", error)))
-        }
-        Err(e) => {
-            eprintln!("Error running Beerus client: {}", e);
-            Err(format!("Error running Beerus client: {}", e))
-        }
-    }
-    */
-}
-
-#[call_from_java("com.snphone.lightclientservice.BeerusClient.echo")]
-fn echo(message_instance: Instance) -> Result<Instance, String> {
-    let jvm: Jvm = Jvm::attach_thread().unwrap();
-    let message: String = jvm.to_rust(message_instance).unwrap();
-
-    let ia = InvocationArg::try_from(message)
-        .map_err(|error| format!("{}", error))
-        .unwrap();
-    Instance::try_from(ia).map_err(|error| format!("{}", error))
-}
-
 // This is just for verifying async behvaior in android
-async fn sleep_and_return() -> String {
+async fn sleep_and_return() {
     tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
-    "Slept for 5 seconds".to_string()
 }
 
-// NOTE: this should probably run in its own thread?
 async fn run(
     eth_execution_rpc: String,
     starknet_rpc: String,
@@ -155,11 +83,45 @@ async fn run(
     Ok(())
 }
 
-/*
 #[no_mangle]
-pub extern "C" fn Java_com_snphone_lightclientservice_BeerusClient_run<
-    'local,
->(
+pub extern "C" fn Java_com_snphone_lightclientservice_BeerusClient_echo<'local>(
+    mut env: JNIEnv<'local>,
+    _class: JClass<'local>,
+    msg_input: JString<'local>,
+) -> jstring {
+    let msg: String = env
+        .get_string(&msg_input)
+        .expect("Unable to get message input")
+        .into();
+
+    // creating a new java string to return to our android app
+    let output = env.new_string(msg).expect("Couldn't create a java string!");
+
+    output.into_raw()
+}
+
+#[no_mangle]
+pub extern "C" fn Java_com_snphone_lightclientservice_BeerusClient_echoBlock<'local>(
+    mut env: JNIEnv<'local>,
+    _class: JClass<'local>,
+    msg_input: JString<'local>,
+) -> jstring {
+    let msg: String = env
+        .get_string(&msg_input)
+        .expect("Unable to get message input")
+        .into();
+
+    let runtime = tokio::runtime::Runtime::new().expect("Failed to create Tokio runtime");
+    runtime.block_on(sleep_and_return());
+
+    // creating a new java string to return to our android app
+    let output = env.new_string(msg).expect("Couldn't create a java string!");
+
+    output.into_raw()
+}
+
+#[no_mangle]
+pub extern "C" fn Java_com_snphone_lightclientservice_BeerusClient_run<'local>(
     mut env: JNIEnv<'local>,
     _class: JClass<'local>,
     eth_execution_rpc: JString<'local>,
@@ -175,12 +137,26 @@ pub extern "C" fn Java_com_snphone_lightclientservice_BeerusClient_run<
         .expect("Unable to get starknet_rpc string")
         .into();
 
-    //run(eth_execution_rpc, starknet_rpc, data_dir, 5, 8080);
-    let run_result = run(eth_execution_rpc, starknet_rpc);
+    let runtime = tokio::runtime::Runtime::new().expect("Failed to create Tokio runtime");
+    let run_result = runtime.block_on(async {
+        match run(
+            eth_execution_rpc,
+            starknet_rpc,
+            String::from("tmp"),
+            5,
+            8080,
+        )
+        .await
+        {
+            Ok(_) => "Beerus client run successfully".to_string(),
+            Err(e) => format!("Error running Beerus client: {}", e),
+        }
+    });
+
     // creating a new java string to return to our android app
-    let output =
-        env.new_string(run_result).expect("Couldn't create a java string!");
+    let output = env
+        .new_string(run_result)
+        .expect("Couldn't create a java string!");
 
     output.into_raw()
 }
-*/

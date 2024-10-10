@@ -66,8 +66,8 @@ toml = "0.8.19"
 clap = { version = "4.5.13", features = ["derive"] }
 
 # for compiling for android
-j4rs = "0.17"
-j4rs_derive = "0.1"
+jni = "0.21.1"
+jni-sys = "0.4.0"
 
 [dev-dependencies]
 wiremock = "0.6.1"
