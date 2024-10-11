@@ -1,6 +1,5 @@
 package com.example.walletapp
 
-import StarknetClient
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -12,9 +11,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.hoverable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,7 +22,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -51,11 +46,12 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.*
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.swmansion.starknet.data.types.Felt
 import com.swmansion.starknet.provider.exceptions.RpcRequestFailedException
 import kotlinx.coroutines.Dispatchers
@@ -93,6 +89,19 @@ class WalletActivity : ComponentActivity() {
         val starknetClient = StarknetClient(BuildConfig.RPC_URL)
         var balance by remember { mutableStateOf("") }
 
+        val coinViewModel: CoinViewModel = viewModel()
+
+        val coinsPrices : HashMap<String,String> = rememberSaveable {
+            hashMapOf()
+        }
+
+        val prices by coinViewModel.prices
+        val errorMessage by coinViewModel.errorMessage
+
+        LaunchedEffect(Unit) {
+            coinViewModel.getTokenPrices(ids = "starknet,ethereum", vsCurrencies = "usd")  // Fetch starknet and bitcoin prices in USD
+        }
+
         LaunchedEffect (Unit){
             try {
                 // Get the balance of the account
@@ -104,6 +113,20 @@ class WalletActivity : ComponentActivity() {
                 withContext(Dispatchers.Main) { Toast.makeText(context, "${e.code}: ${e.message}", Toast.LENGTH_LONG).show() }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) { Toast.makeText(context, e.message, Toast.LENGTH_LONG).show() }
+            }
+        }
+        if (errorMessage.isNotEmpty()) {
+            Text(
+                text = errorMessage,
+                color = MaterialTheme.colors.error,
+                modifier = Modifier.padding(16.dp)
+            )
+        } else {
+            Column(modifier = Modifier.padding(16.dp)) {
+                prices.forEach { (token, price) ->
+                    coinsPrices[token] = price.toDoubleWithTwoDecimal()
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
             }
         }
 
@@ -151,7 +174,7 @@ class WalletActivity : ComponentActivity() {
 
             WalletCard(
                 icon = painterResource(id = R.drawable.ic_ethereum),
-                amount = "$11,625.7",
+                amount = coinsPrices["ethereum"]?.let { "$ $it" } ?: "",
                 exchange = balance,
                 type = "ETH"
             )
@@ -159,7 +182,7 @@ class WalletActivity : ComponentActivity() {
             // TOOD(#82): load actual balance
             WalletCard(
                 icon = painterResource(id = R.drawable.token2),
-                amount = "$1.78",
+                amount = coinsPrices["starknet"]?.let { "$ $it" } ?: "",
                 exchange ="4.44",
                 type = "STRK"
             )
@@ -225,6 +248,11 @@ fun BigDecimal.toDoubleWithTwoDecimal(): String {
     val decimalFormat = DecimalFormat("#.00")
     return decimalFormat.format(this.toDouble())
 }
+fun Double.toDoubleWithTwoDecimal(): String {
+    val decimalFormat = DecimalFormat("#.00")
+    val formattedValue = decimalFormat.format(this)
+    return if (this < 1) "0$formattedValue" else formattedValue
+}
 
     @Composable
     fun WalletCard(icon: Painter, amount: String, exchange: String, type: String) {
@@ -252,6 +280,8 @@ fun BigDecimal.toDoubleWithTwoDecimal(): String {
                         color = Color.White,
                         fontSize = 18.sp
                     )
+
+
                     Row {
                         Text(
                             text = exchange,

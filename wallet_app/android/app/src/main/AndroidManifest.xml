@@ -36,7 +36,7 @@
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
 
-        <activity android:name=".ui.activity.AccountBalanceActivity"
+        <activity android:name=".AccountBalanceActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
 

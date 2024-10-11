@@ -100,11 +100,7 @@ class CreateAccountActivity : ComponentActivity() {
 
                         )
 
-
                         Spacer(modifier = Modifier.height(5.dp))
-
-
-
                         LinearProgressIndicator(
                             progress = progress,
                             modifier = Modifier.fillMaxWidth(),
