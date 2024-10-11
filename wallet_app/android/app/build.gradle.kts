@@ -63,9 +63,11 @@ android {
 }
 dependencies {
 
-    implementation("com.swmansion.starknet:starknet:0.12.1@aar"){
+    implementation("com.swmansion.starknet:starknet:0.13.0@aar"){
         isTransitive = true
     }
+
+    implementation(libs.androidx.security.crypto.v110alpha06)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

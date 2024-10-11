@@ -18,14 +18,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,21 +37,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.walletapp.BuildConfig
 import com.example.walletapp.ui.theme.WalletappTheme
-import com.swmansion.starknet.data.types.Call
 import com.swmansion.starknet.data.types.Felt
-import com.swmansion.starknet.data.types.Uint256
 import com.swmansion.starknet.provider.exceptions.RpcRequestFailedException
-import com.swmansion.starknet.provider.rpc.JsonRpcProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.future.await
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.math.BigDecimal
-import java.math.RoundingMode
 
 
 class AccountBalanceActivity : ComponentActivity() {
@@ -65,14 +56,14 @@ class AccountBalanceActivity : ComponentActivity() {
         setContent {
             WalletappTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    AccountBalanceScreenView()
+                    AccountBalanceScreenView(this)
                 }
             }
         }
     }
 
     @Composable
-    fun AccountBalanceScreenView(){
+    fun AccountBalanceScreenView(accountBalanceActivity: AccountBalanceActivity) {
          val context = (LocalContext.current as Activity)
 
          var accountAddress by remember { mutableStateOf("0x02dc260794e4c2eeae87b1403a88385a72c18a5844d220b88117b2965a8cf3a5") }
@@ -81,7 +72,7 @@ class AccountBalanceActivity : ComponentActivity() {
 
         val scope = CoroutineScope(Dispatchers.IO)
 
-        val starknetClient = StarknetClient(BuildConfig.RPC_URL)
+        val starknetClient = StarknetClient(BuildConfig.RPC_URL,accountBalanceActivity)
 
 
         Column(modifier = Modifier

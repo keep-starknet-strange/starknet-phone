@@ -51,7 +51,8 @@ class MainActivity : ComponentActivity() {
             WalletappTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     CreateAccount(
-                        modifier = Modifier.padding(10.dp)
+                        modifier = Modifier.padding(10.dp),
+                        this
                     )
                 }
             }
@@ -68,10 +69,10 @@ fun StarknetLogo (modifier: Modifier = Modifier) {
         modifier = modifier.size(123.dp) )
 }
 @Composable
-fun CreateAccount( modifier: Modifier) {
+fun CreateAccount(modifier: Modifier, mainActivity: MainActivity) {
     val context = (LocalContext.current as Activity)
     val scope = rememberCoroutineScope()
-    val starknetClient = StarknetClient(BuildConfig.RPC_URL)
+    val starknetClient = StarknetClient(BuildConfig.RPC_URL, mainActivity)
     starknetClient.test()
 
     Column(

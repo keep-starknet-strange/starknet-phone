@@ -7,29 +7,28 @@ import com.swmansion.starknet.provider.rpc.JsonRpcProvider
 import com.swmansion.starknet.signer.StarkCurveSigner
 import kotlinx.coroutines.future.await
 import java.math.BigDecimal
-import android.security.keystore.KeyGenParameterSpec
-import android.security.keystore.KeyProperties
 import android.util.Log
-import java.security.KeyPair
-import java.security.KeyPairGenerator
-import java.security.KeyStore
-import java.security.spec.ECGenParameterSpec
-import kotlin.math.log
+import com.swmansion.starknet.data.types.CairoVersion
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKey;
+import android.content.Context
+import com.swmansion.starknet.crypto.StarknetCurve
+import com.swmansion.starknet.extensions.toFelt
+import com.swmansion.starknet.extensions.toNumAsHex
+import java.io.IOException
+import java.math.BigInteger
+import java.security.GeneralSecurityException
 
 const val ETH_ERC20_ADDRESS = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7"
 
-class StarknetClient(private val rpcUrl: String) {
+class StarknetClient(private val rpcUrl: String, private val context: Context) {
 
     private val provider = JsonRpcProvider(rpcUrl)
     private val privateKey = BuildConfig.PRIVATE_KEY
     private val accountAddress = BuildConfig.ACCOUNT_ADDRESS
+    private val tag = "StarknetClient"
 
     suspend fun deployAccount() {
-
-
-
-
-
         // Predefined values for account creation
         val privateKey = Felt.fromHex(privateKey)
         val accountAddress = Felt.fromHex(accountAddress)
@@ -41,7 +40,7 @@ class StarknetClient(private val rpcUrl: String) {
             signer = signer,
             provider = provider,
             chainId = chainId,
-            cairoVersion = Felt.ONE,
+            cairoVersion = CairoVersion.ONE,
         )
 
         // TODO: deploy account
@@ -80,32 +79,11 @@ class StarknetClient(private val rpcUrl: String) {
     }
 
     fun test() {
-        val KEY_ALIAS = "your_web3_key_alias"
-        val ANDROID_KEYSTORE = "AndroidKeyStore"
-        val keyPair = CryptoUtils.generateWeb3KeyPair()
-        if (keyPair != null) {
-            val privateKey = keyPair.private
-            val publicKey = keyPair.public
-            Log.d("STK", "private key: ${Felt.fromHex("0x123")}")
-            Log.d("STK", "public key: $publicKey")
+        val randomPrivateKey = StandardAccount.generatePrivateKey()
+        storeData(context, randomPrivateKey.value.toString())
+        val privatekey = BigInteger(retrieveData(context)).toFelt
 
-            // Use the privateKey and publicKey for your wallet operations
-        } else {
-            // Key pair already exists or an error occurred
-            Log.e("STK", "key already exist")
-            Log.d("STK", "private key: ${Felt.fromHex("0x123")}")
-
-        }
-
-        val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply {
-            load(null)
-        }
-        val privateKeyEntry = keyStore.getEntry(KEY_ALIAS, null) as? KeyStore.PrivateKeyEntry
-            ?: throw IllegalStateException("Key not found")
-
-        val publicKey = privateKeyEntry.certificate.publicKey
-
-        Log.d("STK", "access key: ${publicKey}")
+        val publicKey = StarknetCurve.getPublicKey(privatekey)
 
     }
 
@@ -114,37 +92,59 @@ class StarknetClient(private val rpcUrl: String) {
         return BigDecimal(wei.value.toString()).divide(weiInEther)
     }
 
-    object CryptoUtils {
-        private const val ANDROID_KEYSTORE = "AndroidKeyStore"
-        private const val KEY_ALIAS = "your_web3_key_alias"
-
-        fun generateWeb3KeyPair(): KeyPair? {
-            val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply {
-                load(null)
-            }
-
-            if (keyStore.containsAlias(KEY_ALIAS)) {
-                return null
-            }
-
-            val keyPairGenerator = KeyPairGenerator.getInstance(
-                KeyProperties.KEY_ALGORITHM_EC,
-                ANDROID_KEYSTORE
-            )
-
-            val keyGenParameterSpec = KeyGenParameterSpec.Builder(
-                KEY_ALIAS,
-                KeyProperties.PURPOSE_SIGN
-            )
-                .setAlgorithmParameterSpec(ECGenParameterSpec("secp256r1"))
-            // Curve used in Web3
-            .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
+    private fun storeData(context: Context, message: String) {
+        try {
+            val masterKey = MasterKey.Builder(context)
+                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
                 .build()
 
-            keyPairGenerator.initialize(keyGenParameterSpec)
+            //Creating an instance of EncryptedSharedPreferences using master key
+            val sharedPreferences = EncryptedSharedPreferences.create(
+                context,
+                "my_encrypted_prefs",
+                masterKey,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
 
+            )
 
-            return keyPairGenerator.generateKeyPair()
+            // Storing the message directly in DataStore
+            val editor = sharedPreferences.edit()
+            editor.putString("key", message.toString())
+            editor.apply()
+
+        } catch (e: GeneralSecurityException) {
+            Log.e(tag, "Security exception while storing data: ${e.message}", e)
+        } catch (e: IOException) {
+            Log.e(tag, "I/O exception while storing data: ${e.message}", e)
         }
     }
+
+    private fun retrieveData(context: Context): String {
+        try {
+            val masterKey = MasterKey.Builder(context)
+                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                .build()
+
+            val sharedPreferences = EncryptedSharedPreferences.create(
+                context,
+                "my_encrypted_prefs",
+                masterKey,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+
+            )
+
+            return sharedPreferences.getString("key", "") ?: ""
+
+        } catch (e: GeneralSecurityException) {
+            Log.e(tag, "Security exception while retrieving data: ${e.message}", e)
+            return ""
+        } catch (e: IOException) {
+            Log.e(tag, "I/O exception while retrieving data: ${e.message}", e)
+            return ""
+        }
+    }
+
+
 }
