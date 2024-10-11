@@ -43,7 +43,17 @@
         <activity android:name=".AccountPasswordActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
+
         <activity android:name=".RecoveryPhraseActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
+
+        <activity android:name=".ui.activity.CreateAccountActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
+
+
+        <activity android:name=".ui.activity.AccountInfoActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
 
