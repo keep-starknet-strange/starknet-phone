@@ -188,8 +188,6 @@ fun PrivateKeyView(modifier: Modifier = Modifier, onNext: () -> Unit) {
         Button(
             onClick = {  openBottomSheet = true },
             contentPadding = ButtonDefaults.ContentPadding,
-            enabled = accountName.isNotBlank(),
-
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt()), contentColor = Color.White),
             modifier = Modifier
