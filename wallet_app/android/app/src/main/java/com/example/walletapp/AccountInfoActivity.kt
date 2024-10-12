@@ -1,5 +1,7 @@
 package com.example.walletapp.ui.activity
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -30,6 +33,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
+import com.example.walletapp.CreatePinActivity
+import com.example.walletapp.ImportExistingKeyActivity
 import com.example.walletapp.R
 import com.example.walletapp.ui.theme.WalletappTheme
 import org.bouncycastle.math.raw.Mod
@@ -81,7 +86,7 @@ class AccountInfoActivity : ComponentActivity() {
                             .fillMaxSize()
                             .padding(paddingValues)
                             .background(color = Color("#0C0C4F".toColorInt()))
-                            .padding(top = 30.dp, start = 16.dp, end = 16.dp )
+                            .padding(top = 50.dp, start = 16.dp, end = 16.dp )
 
                     ) {
 
@@ -99,6 +104,8 @@ class AccountInfoActivity : ComponentActivity() {
 
 @Composable
 fun AccountInfoView() {
+
+    val context = (LocalContext.current as Activity)
 
     var checked by remember { mutableStateOf(true) }
 
@@ -131,7 +138,6 @@ fun AccountInfoView() {
 
                         }
                     }
-
 
                     Box(
                         modifier = Modifier
@@ -216,7 +222,7 @@ fun AccountInfoView() {
 
                 Spacer(modifier = Modifier.width(10.dp))
 
-                Text(text = "Generate new private key", style = TextStyle(color = Color("#A3A3C1".toColorInt()),  fontSize = 15.sp))
+                Text(text = "Generate new private key", style = TextStyle(color = Color("#A3A3C1".toColorInt()),  fontSize = 16.sp, fontWeight = FontWeight.Medium))
             }
         }
 
@@ -226,8 +232,9 @@ fun AccountInfoView() {
 
 
         Button(
-            onClick = {},
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent, contentColor = Color.White),
+            onClick = { val i = Intent(context, ImportExistingKeyActivity::class.java)
+                context.startActivity(i) },
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt()), contentColor = Color.White),
             modifier = Modifier.fillMaxWidth()
                 .background(color = Color("#1B1B76".toColorInt()))
                 .height(51.dp)
@@ -250,7 +257,8 @@ fun AccountInfoView() {
 
                 Spacer(modifier = Modifier.width(10.dp))
 
-                Text(text = "Use existing private key", style = TextStyle(color = Color.White, fontSize = 15.sp))
+                Text(text = "Use existing private key", style = TextStyle(color = Color.White, fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium))
             }
         }
 
@@ -280,7 +288,7 @@ fun AccountInfoView() {
 
                 Text(
                     text = "Store your private key securely. In case of its lost or stolen, access to funds will be lost without the possibility of recovery",
-                    style = TextStyle(color = Color("#E45F61".toColorInt()), fontSize = 12.sp)
+                    style = TextStyle(color = Color("#E45F61".toColorInt()), fontSize = 14.sp)
                 )
             }
         }
@@ -314,10 +322,12 @@ fun AccountInfoView() {
         }
 
 
-        Spacer(modifier = Modifier.height(72.dp))
+        Spacer(modifier = Modifier.weight(1f))
+
 
         Button(
-            onClick = {   },
+            onClick = { val i = Intent(context, CreatePinActivity::class.java)
+                context.startActivity(i) },
             contentPadding = ButtonDefaults.ContentPadding,
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt()), contentColor = Color.White),
@@ -337,6 +347,10 @@ fun AccountInfoView() {
                 )
             }
         }
+
+
+        Spacer(modifier = Modifier.height(20.dp))
+
 
     }
 

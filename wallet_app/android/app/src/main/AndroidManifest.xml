@@ -57,9 +57,21 @@
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
 
+
+        <activity android:name=".CreatePinActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
+
+
         <activity android:name=".WalletActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
+
+
+        <activity android:name=".ImportExistingKeyActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
+
     </application>
 
 </manifest>
