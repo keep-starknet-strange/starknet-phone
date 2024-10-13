@@ -80,28 +80,31 @@ impl Config {
     }
 
     pub async fn check(&self) -> Result<()> {
-        println!("DEBUG: validating config...");
+        debug!("validating config...");
         self.validate()?;
+        debug!("config validated");
 
         let expected_chain_id = match self.network {
             Network::MAINNET => MAINNET_ETHEREUM_CHAINID,
             Network::SEPOLIA => SEPOLIA_ETHEREUM_CHAINID,
             _ => {
+                debug!("ethereum chain id check failed");
                 eyre::bail!("Ethereum chain id check failed: unsupported network");
             }
         };
         check_chain_id(expected_chain_id, &self.eth_execution_rpc, "eth_chainId").await?;
-        println!("DEBUG: ethereum chain id valid");
+        debug!("DEBUG: ethereum chain id valid");
 
         let expected_chain_id = match self.network {
             Network::MAINNET => MAINNET_STARKNET_CHAINID,
             Network::SEPOLIA => SEPOLIA_STARKNET_CHAINID,
             _ => {
+                debug!("starknet chain id check failed");
                 eyre::bail!("Starknet chain id check failed: unsupported network");
             }
         };
         check_chain_id(expected_chain_id, &self.starknet_rpc, "starknet_chainId").await?;
-        println!("DEBUG: starknet chain id valid");
+        debug!("starknet chain id valid");
 
         check_data_dir(&self.data_dir)
     }
@@ -110,30 +113,32 @@ impl Config {
 fn check_data_dir<P: AsRef<Path>>(path: &P) -> Result<()> {
     let path = path.as_ref();
     if !path.exists() {
-        println!("DEBUG: data dir path does not exist");
+        debug!("data dir path does not exist");
         eyre::bail!("path does not exist");
     };
 
     let meta = path.metadata().context("path metadata is missing")?;
 
     if meta.permissions().readonly() {
-        println!("DEBUG: path is readonly");
+        debug!("path is readonly");
         eyre::bail!("path is readonly");
     }
 
-    println!("DEBUG: data dir valid");
+    debug!("data dir valid");
     Ok(())
 }
 
 async fn check_chain_id(expected_chain_id: &str, url: &str, method: &str) -> Result<()> {
     let chain_id = call_method(url, method).await?;
     if chain_id != expected_chain_id {
+        debug!("Invalid chain id: expected {expected_chain_id} but got {chain_id}");
         eyre::bail!("Invalid chain id: expected {expected_chain_id} but got {chain_id}");
     }
     Ok(())
 }
 
 async fn call_method(url: &str, method: &str) -> Result<String> {
+    debug!("Calling method {} for endpoint: {}", method, url);
     let response: serde_json::Value = reqwest::Client::new()
         .post(url)
         .json(&serde_json::json!({
@@ -146,6 +151,7 @@ async fn call_method(url: &str, method: &str) -> Result<String> {
         .await?
         .json()
         .await?;
+    debug!("Got response: {}", response);
 
     response["result"]
         .as_str()
