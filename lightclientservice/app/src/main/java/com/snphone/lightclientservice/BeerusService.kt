@@ -20,7 +20,7 @@ class BeerusService : Service() {
     private inner class ServiceHandler(looper: Looper): Handler(looper) {
         override fun handleMessage(msg: Message) {
             try {
-                val runResponse = BeerusClient.run("TODO", "TODO")
+                val runResponse = BeerusClient.run("TODO", "TODO", "TODO")
                 println(runResponse)
                 Thread.sleep(5000)
             } catch (e: InterruptedException) {

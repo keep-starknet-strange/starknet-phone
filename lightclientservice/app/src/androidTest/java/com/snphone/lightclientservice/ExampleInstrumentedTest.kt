@@ -1,15 +1,14 @@
 package com.snphone.lightclientservice
 
+import android.content.ContextWrapper
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 
 import org.junit.Test
 import org.junit.runner.RunWith
-
 import org.junit.Assert.*
 
 import com.snphone.lightclientservice.BuildConfig
-
 
 
 /**
@@ -40,7 +39,14 @@ class ExampleInstrumentedTest {
 
     @Test
     fun runBeerus() {
-       val result = BeerusClient.run(BuildConfig.ETH_SEPOLIA_RPC_URL, BuildConfig.STARKNET_SEPOLIA_RPC_URL);
+
+        val dataDir = "data/data/com.snphone.lightclientservice"
+
+        val result = BeerusClient.run(
+            BuildConfig.ETH_SEPOLIA_RPC_URL,
+            BuildConfig.STARKNET_SEPOLIA_RPC_URL,
+            dataDir
+        );
         assertEquals("Beerus client run successfully", result)
     }
 }

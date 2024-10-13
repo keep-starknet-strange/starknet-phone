@@ -7,7 +7,7 @@ public class BeerusClient {
      * @param starknetRpc the Starknet RPC Beerus will connect to
      * @return
      */
-    public static native String run(String ethExecutionRpc, String starknetRpc);
+    public static native String run(String ethExecutionRpc, String starknetRpc, String dataDir);
 
     /**
      * just used to test communication between rust and android side

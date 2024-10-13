@@ -23,70 +23,80 @@ async fn run(
     poll_secs: u64,
     socket_port: u16,
 ) -> eyre::Result<()> {
-    println!("DEBUG: Starting run function");
+    android_log::init("Beerus").unwrap();
+    debug!("Starting run function");
 
-    println!("DEBUG: Creating config");
     let config = Config {
         network: Network::SEPOLIA, // TODO: take network as input
         eth_execution_rpc,
         starknet_rpc,
-        data_dir: PathBuf::from(data_dir),
+        data_dir: PathBuf::from(&data_dir),
         poll_secs,
         rpc_addr: SocketAddr::from(([127, 0, 0, 1], socket_port)),
     };
-    println!("DEBUG: Checking config");
+    debug!("Checking config");
+    debug!("Current directory: {:?}", std::env::current_dir().unwrap());
+
+    let tmp_dir = PathBuf::from(&data_dir);
+    if !tmp_dir.exists() {
+        debug!("{} not found.", data_dir);
+        return Err(eyre::eyre!("Data directory does not exist"));
+    } else {
+        debug!("{} found!", data_dir)
+    }
+
     config.check().await?;
 
-    println!("DEBUG: Creating new Beerus client");
+    debug!("Creating new Beerus client");
     let beerus = super::client::Client::new(&config).await?;
-    println!("DEBUG: Starting Beerus client");
+    debug!("Starting Beerus client");
     beerus.start().await?;
 
-    println!("DEBUG: Getting RPC spec version");
+    debug!("Getting RPC spec version");
     let rpc_spec_version = beerus.spec_version().await?;
-    println!("DEBUG: RPC spec version: {}", rpc_spec_version);
+    debug!("RPC spec version: {}", rpc_spec_version);
     if rpc_spec_version != RPC_SPEC_VERSION {
-        println!("DEBUG: RPC spec version mismatch");
+        debug!("RPC spec version mismatch");
         eyre::bail!(
             "RPC spec version mismatch: expected {RPC_SPEC_VERSION} but got {rpc_spec_version}"
         );
     }
 
-    println!("DEBUG: Getting initial state");
+    debug!("Getting initial state");
     let state = beerus.get_state().await?;
-    println!("DEBUG: Initial state: {:?}", state);
+    debug!("Initial state: {:?}", state);
 
     let state = Arc::new(RwLock::new(state));
 
     {
-        println!("DEBUG: Setting up state update task");
+        debug!("Setting up state update task");
         let state = state.clone();
         let period = Duration::from_secs(config.poll_secs);
         tokio::spawn(async move {
             let mut tick = tokio::time::interval(period);
             loop {
                 tick.tick().await;
-                println!("DEBUG: Updating state");
+                debug!("Updating state");
                 match beerus.get_state().await {
                     Ok(update) => {
                         *state.write().await = update;
-                        println!("DEBUG: State updated successfully");
+                        debug!("State updated successfully");
                     }
                     Err(e) => {
-                        println!("DEBUG: State update failed: {:?}", e);
+                        debug!("State update failed: {:?}", e);
                     }
                 }
             }
         });
     }
 
-    println!("DEBUG: Starting RPC server");
+    debug!("Starting RPC server");
     let server = super::rpc::serve(&config.starknet_rpc, &config.rpc_addr, state).await?;
 
-    println!("DEBUG: RPC server started on port {}", server.port());
+    debug!("RPC server started on port {}", server.port());
     server.done().await;
 
-    println!("DEBUG: Run function completed");
+    debug!("Run function completed");
     Ok(())
 }
 
@@ -133,6 +143,7 @@ pub extern "C" fn Java_com_snphone_lightclientservice_BeerusClient_run<'local>(
     _class: JClass<'local>,
     eth_execution_rpc: JString<'local>,
     starknet_rpc: JString<'local>,
+    data_dir: JString<'local>,
 ) -> jstring {
     let eth_execution_rpc: String = env
         .get_string(&eth_execution_rpc)
@@ -144,17 +155,14 @@ pub extern "C" fn Java_com_snphone_lightclientservice_BeerusClient_run<'local>(
         .expect("Unable to get starknet_rpc string")
         .into();
 
+    let data_dir: String = env
+        .get_string(&data_dir)
+        .expect("Unable to get data_dir string")
+        .into();
+
     let runtime = tokio::runtime::Runtime::new().expect("Failed to create Tokio runtime");
     let run_result = runtime.block_on(async {
-        match run(
-            eth_execution_rpc,
-            starknet_rpc,
-            String::from("tmp"),
-            5,
-            3030,
-        )
-        .await
-        {
+        match run(eth_execution_rpc, starknet_rpc, data_dir, 5, 3030).await {
             Ok(_) => "Beerus client run successfully".to_string(),
             Err(e) => format!("Error running Beerus client: {}", e),
         }
@@ -177,7 +185,7 @@ mod tests {
         let eth_execution_rpc =
             "https://eth-sepolia.g.alchemy.com/v2/Fl4zNtN2hak5hrWq92a8pnB-ZospWX9a".to_string();
         let starknet_rpc = "https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_7/Fl4zNtN2hak5hrWq92a8pnB-ZospWX9a".to_string();
-        let data_dir = String::from("tmp");
+        let data_dir = String::from("/");
 
         let run_response = run(eth_execution_rpc, starknet_rpc, data_dir, 5, 3030).await;
 

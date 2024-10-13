@@ -11,3 +11,7 @@ pub mod rpc;
 pub mod util;
 
 pub mod android_glue;
+
+#[macro_use]
+extern crate log;
+extern crate android_log;
