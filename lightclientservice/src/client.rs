@@ -1,4 +1,6 @@
 use eyre::{Context, Result};
+use tracing::debug;
+use tracing_subscriber::fmt::format::debug_fn;
 
 use crate::eth::EthereumClient;
 use crate::gen::client::Client as StarknetClient;
@@ -19,8 +21,11 @@ pub struct Client {
 
 impl Client {
     pub async fn new(config: &Config) -> Result<Self> {
+        debug!("Creating new client");
         let starknet = StarknetClient::new(&config.starknet_rpc);
+        debug!("Created starknet client");
         let ethereum = EthereumClient::new(config).await?;
+        debug!("Created ethereum client");
         Ok(Self { starknet, ethereum })
     }
 

@@ -21,8 +21,7 @@ const MAINNET_CONSENSUS_RPC: &str = "https://www.lightclientdata.org";
 const MAINNET_FALLBACK_RPC: &str = "https://sync-mainnet.beaconcha.in";
 
 const SEPOLIA_CC_ADDRESS: &str = "E2Bb56ee936fd6433DC0F6e7e3b8365C906AA057";
-const SEPOLIA_CONSENSUS_RPC: &str =
-    "http://unstable.sepolia.beacon-api.nimbus.team";
+const SEPOLIA_CONSENSUS_RPC: &str = "http://unstable.sepolia.beacon-api.nimbus.team";
 const SEPOLIA_FALLBACK_RPC: &str = "https://sync-sepolia.beaconcha.in";
 
 pub struct EthereumClient {
@@ -32,7 +31,11 @@ pub struct EthereumClient {
 
 impl EthereumClient {
     pub async fn new(config: &Config) -> Result<Self> {
-        let helios = get_client(config).await?;
+        debug!("Getting helios client");
+        let helios = get_client(config)
+            .await
+            .context("Failed to initialize Helios client")?;
+        debug!("Got helios client");
         Ok(Self {
             helios: Arc::new(RwLock::new(helios)),
             starknet_core_contract_address: get_core_contract_address(config)?,
@@ -43,9 +46,7 @@ impl EthereumClient {
         let mut helios = self.helios.write().await;
         helios.start().await.context("helios start")?;
 
-        while let SyncingStatus::IsSyncing(sync) =
-            helios.syncing().await.context("helios sync")?
-        {
+        while let SyncingStatus::IsSyncing(sync) = helios.syncing().await.context("helios sync")? {
             tracing::info!(head=?sync.highest_block, "syncing");
             tokio::time::sleep(std::time::Duration::from_secs(1)).await;
         }
@@ -86,12 +87,13 @@ impl EthereumClient {
         let block_number = u64::from_be_bytes(block_number);
 
         let data = 0x382d83e3u32.to_be_bytes(); // keccak("stateBlockHash()")
-        let block_hash: H256 =
-            self.call(&data, tag).await.context("helios: state block hash")?;
+        let block_hash: H256 = self
+            .call(&data, tag)
+            .await
+            .context("helios: state block hash")?;
 
         let data = 0x9588eca2u32.to_be_bytes(); // keccak("stateRoot()")"
-        let root: H256 =
-            self.call(&data, tag).await.context("helios: state root")?;
+        let root: H256 = self.call(&data, tag).await.context("helios: state root")?;
 
         tracing::info!(block_number, ?block_hash, ?root, "starknet state");
 
@@ -129,11 +131,13 @@ impl EthereumClient {
 }
 
 async fn get_client(config: &Config) -> Result<Client<DB>> {
-    let consensus_rpc =
-        get_consensus_rpc(config).context("consensus rpc url")?;
-    let fallback_rpc =
-        get_fallback_address(config).context("fallback rpc url")?;
+    debug!("attempting to get consesus rpc, fallback rpc, checkpoint");
+    let consensus_rpc = get_consensus_rpc(config).context("consensus rpc url")?;
+    debug!("got consenus_rpc: {consensus_rpc}");
+    let fallback_rpc = get_fallback_address(config).context("fallback rpc url")?;
+    debug!("got fallback_rpc: {fallback_rpc}");
     let checkpoint = get_checkpoint(config).await.context("checkpoint")?;
+    debug!("got checkpoint: {checkpoint}");
 
     let builder = ClientBuilder::new()
         .network(config.network)
@@ -143,8 +147,12 @@ async fn get_client(config: &Config) -> Result<Client<DB>> {
         .load_external_fallback()
         .fallback(fallback_rpc);
 
+    debug!("Created builder");
+
     #[cfg(not(target_arch = "wasm32"))]
     let builder = builder.data_dir(config.data_dir.clone());
+
+    debug!("set builder data dir");
 
     builder.build()
 }
@@ -179,6 +187,7 @@ async fn get_checkpoint(config: &Config) -> Result<String> {
     }
 
     let cf = checkpoints::CheckpointFallback::new().build().await?;
+    debug!("got checkpoint fallback (cf)");
     let checkpoint = cf.fetch_latest_checkpoint(&config.network).await?;
     Ok(format!("{checkpoint:x}"))
 }

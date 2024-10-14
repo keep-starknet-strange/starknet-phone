@@ -1,6 +1,7 @@
 package com.snphone.lightclientservice
 
 import android.content.ContextWrapper
+import android.content.Intent
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 
@@ -37,7 +38,7 @@ class ExampleInstrumentedTest {
         assertEquals("hello", msg)
     }
 
-    @Test
+    @Test(timeout = 60000)
     fun runBeerus() {
 
         val dataDir = "data/data/com.snphone.lightclientservice"
@@ -49,4 +50,16 @@ class ExampleInstrumentedTest {
         );
         //assertEquals("Beerus client run successfully", result)
     }
+
+    /*
+    @Test
+    fun beerusService() {
+            println("Attempting to start the service...")
+            // Create an intent to start the service
+            val serviceIntent = Intent(this, BeerusService::class.java)
+            // Start the service
+            startService(serviceIntent)
+            println("service started?")
+    }
+     */
 }
