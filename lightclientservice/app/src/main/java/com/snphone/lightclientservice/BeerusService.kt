@@ -20,9 +20,14 @@ class BeerusService : Service() {
     private inner class ServiceHandler(looper: Looper): Handler(looper) {
         override fun handleMessage(msg: Message) {
             try {
-                val runResponse = BeerusClient.run("TODO", "TODO", "TODO")
+                val dataDir = "data/data/com.snphone.lightclientservice"
+
+                val runResponse = BeerusClient.run(
+                    BuildConfig.ETH_SEPOLIA_RPC_URL,
+                    BuildConfig.STARKNET_SEPOLIA_RPC_URL,
+                    dataDir
+                );
                 println(runResponse)
-                Thread.sleep(5000)
             } catch (e: InterruptedException) {
                 Thread.currentThread().interrupt()
             }

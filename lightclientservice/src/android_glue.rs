@@ -67,7 +67,7 @@ async fn run(
     debug!("Initial state: {:?}", state);
 
     let state = Arc::new(RwLock::new(state));
-
+    /*
     {
         debug!("Setting up state update task");
         let state = state.clone();
@@ -89,6 +89,7 @@ async fn run(
             }
         });
     }
+    */
 
     debug!("Starting RPC server");
     let server = super::rpc::serve(&config.starknet_rpc, &config.rpc_addr, state).await?;
