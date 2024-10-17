@@ -36,8 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.core.view.WindowCompat
-import com.example.walletapp.BuildConfig
 import com.example.walletapp.ui.theme.WalletappTheme
+import com.example.walletapp.utils.StarknetClient
 import com.swmansion.starknet.data.types.Felt
 import com.swmansion.starknet.provider.exceptions.RpcRequestFailedException
 import kotlinx.coroutines.CoroutineScope
