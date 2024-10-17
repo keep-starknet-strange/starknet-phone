@@ -33,8 +33,8 @@ import com.example.walletapp.ui.theme.WalletappTheme
 
 @Composable
 fun OnboardingScreen (
-    onClickCreateNewWallet: () -> Unit,
-    onClickImportExistingWallet: () -> Unit
+    onNavigateCreateAccount: () -> Unit,
+    onNavigateImportAccount: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -60,15 +60,15 @@ fun OnboardingScreen (
             verticalArrangement = Arrangement.spacedBy(8.dp) // Adjust space between buttons
         ) {
             TransparentButton(
-                label = "Create a New Wallet",
-                onClick = onClickCreateNewWallet
+                label = "Create a New Account",
+                onClick = onNavigateCreateAccount
             )
 
             Spacer(modifier = Modifier.height(10.dp))
 
             TransparentButton(
-                label = "Import Existing Wallet",
-                onClick = onClickImportExistingWallet
+                label = "Import Existing Account",
+                onClick = onNavigateImportAccount
             )
             Spacer(modifier = Modifier.height(10.dp))
         }
@@ -83,8 +83,8 @@ fun PreviewOnboardingScreen() {
     WalletappTheme {
         Surface {
            OnboardingScreen(
-               onClickCreateNewWallet = { println("create new wallet pressed") },
-               onClickImportExistingWallet = { println("import existing wallet pressed")}
+               onNavigateCreateAccount = { println("create new account pressed") },
+               onNavigateImportAccount = { println("import existing account pressed")}
            )
         }
     }

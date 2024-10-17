@@ -1,127 +1,135 @@
-package com.example.walletapp
+package com.example.walletapp.ui.onboarding
+
 import android.app.Activity
 import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.graphics.toColorInt
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.graphics.toColorInt
+import com.example.walletapp.CreatePinActivity
 import com.example.walletapp.R
-import com.example.walletapp.ui.theme.WalletappTheme
 import kotlinx.coroutines.CoroutineScope
 
-class ImportExistingKeyActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            WalletappTheme {
-                var progress by remember { mutableStateOf(0.5f) }
-                Scaffold(
-                    topBar = {
-                        TopAppBar(
-                            backgroundColor = Color("#0C0C4F".toColorInt()),
-                            contentColor = Color.White,
-                            elevation = 4.dp
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 32.dp, start = 16.dp, end = 16.dp),
+@Composable
+fun ImportAccountScreen() {
+    var progress by remember { mutableStateOf(0.5f) }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                backgroundColor = Color("#0C0C4F".toColorInt()),
+                contentColor = Color.White,
+                elevation = 4.dp
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 32.dp, start = 16.dp, end = 16.dp),
 
-                                ) {
-                                Icon(
-                                    imageVector = Icons.Filled.ArrowBack,
-                                    contentDescription = "Backward  Arrow",
-                                    modifier = Modifier.padding(start = 8.dp),
-                                    tint = Color.White
-                                )
+                    ) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = "Backward  Arrow",
+                        modifier = Modifier.padding(start = 8.dp),
+                        tint = Color.White
+                    )
 
-                                Box(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-
-                                    Text(
-                                        text = "Import existing wallet",
-                                        color = Color.White,
-                                        fontSize = 20.sp
-                                    )
-
-                                }
-
-                            }
-                        }
-                    }
-                ) { paddingValues ->
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues)
-                            .background(color = Color("#0C0C4F".toColorInt()))
-                            .padding(top = 30.dp, start = 16.dp, end = 16.dp )
-
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center,
                     ) {
 
                         Text(
-                            text = if (progress < 1.0f) "1 of 2" else "2 of 2",
-                            style = TextStyle(color = Color("#EC796B".toColorInt()), fontWeight = FontWeight.ExtraBold, fontSize = 16.sp, textAlign = TextAlign.Center )
-
+                            text = "Import existing wallet",
+                            color = Color.White,
+                            fontSize = 20.sp
                         )
-
-                        Spacer(modifier = Modifier.height(5.dp))
-                        LinearProgressIndicator(
-                            progress = progress,
-                            modifier = Modifier.fillMaxWidth(),
-                            color = Color("#EC796B".toColorInt())
-
-
-                        )
-
-                        if (progress < 1.0f) {
-                            PrivateKeyView(
-                                modifier = Modifier.padding(top = 16.dp),
-                                onNext = {
-                                    progress = 1.0f
-                                }
-                            )
-                        } else {
-                            CreateNameView(modifier = Modifier.padding(top = 16.dp))
-                        }
-
 
                     }
+
                 }
             }
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .background(color = Color("#0C0C4F".toColorInt()))
+                .padding(top = 30.dp, start = 16.dp, end = 16.dp )
+
+        ) {
+
+            Text(
+                text = if (progress < 1.0f) "1 of 2" else "2 of 2",
+                style = TextStyle(color = Color("#EC796B".toColorInt()), fontWeight = FontWeight.ExtraBold, fontSize = 16.sp, textAlign = TextAlign.Center )
+
+            )
+
+            Spacer(modifier = Modifier.height(5.dp))
+            LinearProgressIndicator(
+                progress = progress,
+                modifier = Modifier.fillMaxWidth(),
+                color = Color("#EC796B".toColorInt())
+
+
+            )
+
+            if (progress < 1.0f) {
+                PrivateKeyView(
+                    modifier = Modifier.padding(top = 16.dp),
+                    onNext = {
+                        progress = 1.0f
+                    }
+                )
+            } else {
+                CreateNameView(modifier = Modifier.padding(top = 16.dp))
+            }
+
+
         }
     }
 }
@@ -281,9 +289,9 @@ fun CreateNameView(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.weight(1f))
 
         Button(
-             onClick = { val i = Intent(context, CreatePinActivity::class.java)
+            onClick = { val i = Intent(context, CreatePinActivity::class.java)
                 context.startActivity(i) },
-                    contentPadding = ButtonDefaults.ContentPadding,
+            contentPadding = ButtonDefaults.ContentPadding,
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color("#EC796B".toColorInt()),
@@ -323,7 +331,7 @@ fun ConfirmSheet(
     onNext: () -> Unit,
     openBottomSheet: Boolean,
     onDismissRequest: () -> Unit,
-    sheetState: SheetState ,
+    sheetState: SheetState,
     scope: CoroutineScope
 ) {
 
@@ -377,4 +385,3 @@ fun ConfirmSheet(
 
 
 }
-

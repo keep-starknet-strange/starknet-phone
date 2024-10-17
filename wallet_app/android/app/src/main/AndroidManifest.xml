@@ -49,11 +49,6 @@
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
 
-        <activity android:name=".ui.activity.CreateAccountActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Walletapp"/>
-
-
         <activity android:name=".ui.activity.AccountInfoActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
@@ -68,10 +63,6 @@
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
 
-
-        <activity android:name=".ImportExistingKeyActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Walletapp"/>
 
     </application>
 
