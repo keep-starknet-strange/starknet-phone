@@ -1,3 +1,4 @@
+import kotlinx.serialization.serializer
 import java.util.Properties
 
 plugins {
@@ -5,6 +6,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
     id("org.jmailen.kotlinter")
+    kotlin("plugin.serialization") version "2.0.21"
 }
 
 android {
@@ -14,6 +16,7 @@ android {
     dataBinding {
         enable = true
     }
+
 
     buildFeatures {
         compose = true
@@ -67,12 +70,20 @@ android {
 }
 dependencies {
 
+    // Navigation stuff
+    implementation(libs.androidx.navigation.compose.v283)
+    implementation(libs.androidx.navigation.compose.v283)
+    implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.navigation.ui)
+    implementation(libs.androidx.navigation.dynamic.features.fragment)
+    androidTestImplementation(libs.androidx.navigation.testing)
+
     implementation("com.swmansion.starknet:starknet:0.12.1@aar"){
         isTransitive = true
     }
 
     // for data binding
-    implementation("android.arch.lifecycle:common:1.1.1")
+    implementation(libs.common)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
