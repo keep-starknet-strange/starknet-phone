@@ -43,13 +43,35 @@
         <activity android:name=".AccountPasswordActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
+
         <activity android:name=".RecoveryPhraseActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
 
+        <activity android:name=".ui.activity.CreateAccountActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
+
+
+        <activity android:name=".ui.activity.AccountInfoActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
+
+
+        <activity android:name=".CreatePinActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
+
+
         <activity android:name=".WalletActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
+
+
+        <activity android:name=".ImportExistingKeyActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
+
     </application>
 
 </manifest>

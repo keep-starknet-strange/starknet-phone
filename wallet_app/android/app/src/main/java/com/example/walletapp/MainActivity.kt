@@ -35,8 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.core.view.WindowCompat
+import com.example.walletapp.ui.activity.CreateAccountActivity
 import com.example.walletapp.ui.theme.WalletappTheme
-
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -97,7 +97,7 @@ fun CreateAccount( modifier: Modifier) {
             verticalArrangement = Arrangement.spacedBy(8.dp) // Adjust space between buttons
         ) {
             Button(
-                onClick = { val i = Intent(context, AccountPasswordActivity::class.java)
+                onClick = { val i = Intent(context, CreateAccountActivity::class.java)
                     context.startActivity(i) },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
                 shape = RoundedCornerShape(10.dp),
@@ -117,7 +117,7 @@ fun CreateAccount( modifier: Modifier) {
 
 
             Button(
-                onClick = { val i = Intent(context, RecoveryPhraseActivity::class.java)
+                onClick = { val i = Intent(context, ImportExistingKeyActivity::class.java)
                     context.startActivity(i) },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt())),
                 shape = RoundedCornerShape(10.dp),
