@@ -52,6 +52,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.walletapp.utils.StarknetClient
 import com.swmansion.starknet.data.types.Felt
 import com.swmansion.starknet.provider.exceptions.RpcRequestFailedException
 import kotlinx.coroutines.Dispatchers

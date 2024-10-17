@@ -1,4 +1,4 @@
-package com.example.walletapp
+package com.example.walletapp.ui
 
 import android.app.Activity
 import android.content.Intent
@@ -18,9 +18,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Surface
+import androidx.compose.material3.Button
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -35,11 +34,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.core.view.WindowCompat
+import com.example.walletapp.BuildConfig
+import com.example.walletapp.ImportExistingKeyActivity
+import com.example.walletapp.R
+import com.example.walletapp.utils.StarknetClient
 import com.example.walletapp.ui.activity.CreateAccountActivity
 import com.example.walletapp.ui.theme.WalletappTheme
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.walletapp.ui.components.TransparentButton
+import com.example.walletapp.ui.components.StarknetLogo
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,17 +62,8 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun StarknetLogo (modifier: Modifier = Modifier) {
-    Image(
-        painter = painterResource(id = R.drawable.starknet_icon  ),
-        contentDescription = "Starknet Logo",
-        modifier = modifier.size(123.dp) )
-}
-@Composable
 fun CreateAccount( modifier: Modifier) {
     val context = (LocalContext.current as Activity)
-    val scope = rememberCoroutineScope()
-    val starknetClient = StarknetClient(BuildConfig.RPC_URL)
 
     Column(
         modifier = Modifier
@@ -96,74 +89,20 @@ fun CreateAccount( modifier: Modifier) {
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp) // Adjust space between buttons
         ) {
-            Button(
+            TransparentButton(
+                label = "Create a New Wallet",
                 onClick = { val i = Intent(context, CreateAccountActivity::class.java)
-                    context.startActivity(i) },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
-                shape = RoundedCornerShape(10.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-            ) {
-                Text(
-                    text = "Create a New Wallet",
-                    fontFamily = FontFamily(Font(R.font.inter_regular)),
-                    color = Color.White,
-                    fontSize = 17.sp
-                )
-            }
+                    context.startActivity(i) }
+            )
 
             Spacer(modifier = Modifier.height(10.dp))
 
-
-            Button(
+            TransparentButton(
+                label = "Create a New Wallet",
                 onClick = { val i = Intent(context, ImportExistingKeyActivity::class.java)
                     context.startActivity(i) },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt())),
-                shape = RoundedCornerShape(10.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(49.dp)
-            ) {
-                Text(
-                    text = "Import Starknet Wallet",
-                    fontFamily = FontFamily(Font(R.font.inter_regular)),
-                    color = Color.White,
-                    fontSize = 17.sp
-                )
-            }
+            )
             Spacer(modifier = Modifier.height(10.dp))
-
-            // New button for deploying Starknet account
-            Button(
-                onClick = {
-                    scope.launch {
-                        try {
-                            starknetClient.deployAccount()
-
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(context, "Account deployed successfully!", Toast.LENGTH_LONG).show()
-                            }
-                        } catch (e: Exception) {
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(context, "Error deploying account: ${e.message}", Toast.LENGTH_LONG).show()
-                            }
-                        }
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color("#4CAF50".toColorInt())),
-                shape = RoundedCornerShape(10.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(49.dp)
-            ) {
-                Text(
-                    text = "My Starknet Wallet",
-                    fontFamily = FontFamily(Font(R.font.inter_regular)),
-                    color = Color.White,
-                    fontSize = 17.sp
-                )
-            }
         }
 
         Spacer(modifier = Modifier.height(15.dp))

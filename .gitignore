@@ -12,3 +12,5 @@ lightclientservice/local.properties
 lightclientservice/.idea
 
 **/*.so
+
+**/.idea/*

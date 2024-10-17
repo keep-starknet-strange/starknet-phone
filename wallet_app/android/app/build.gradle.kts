@@ -11,6 +11,10 @@ android {
     namespace = "com.example.walletapp"
     compileSdk = 34
 
+    dataBinding {
+        enable = true
+    }
+
     buildFeatures {
         compose = true
         buildConfig = true
@@ -66,6 +70,9 @@ dependencies {
     implementation("com.swmansion.starknet:starknet:0.12.1@aar"){
         isTransitive = true
     }
+
+    // for data binding
+    implementation("android.arch.lifecycle:common:1.1.1")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
