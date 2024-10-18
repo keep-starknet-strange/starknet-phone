@@ -54,7 +54,7 @@ import com.example.walletapp.R
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun ImportAccountScreen() {
+fun ImportAccountScreen( onFinishAccountImport: () -> Unit) {
     var progress by remember { mutableStateOf(0.5f) }
     Scaffold(
         topBar = {
@@ -125,7 +125,7 @@ fun ImportAccountScreen() {
                     }
                 )
             } else {
-                CreateNameView(modifier = Modifier.padding(top = 16.dp))
+                CreateNameView(modifier = Modifier.padding(top = 16.dp), onFinishAccountImport)
             }
 
 
@@ -193,7 +193,7 @@ fun PrivateKeyView(modifier: Modifier = Modifier, onNext: () -> Unit) {
         Spacer(modifier = Modifier.weight(1f))
 
         Button(
-            onClick = {  openBottomSheet = true },
+            onClick = onNext,
             contentPadding = ButtonDefaults.ContentPadding,
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt()), contentColor = Color.White),
@@ -212,20 +212,7 @@ fun PrivateKeyView(modifier: Modifier = Modifier, onNext: () -> Unit) {
             }
         }
 
-
         Spacer(modifier = Modifier.height(20.dp))
-
-
-
-        if (openBottomSheet) {
-            ConfirmSheet(
-                onNext = onNext,
-                openBottomSheet = openBottomSheet,
-                onDismissRequest = { openBottomSheet = false },
-                sheetState = sheetState,
-                scope = scope
-            )
-        }
     }
 }
 
@@ -233,7 +220,7 @@ fun PrivateKeyView(modifier: Modifier = Modifier, onNext: () -> Unit) {
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun CreateNameView(modifier: Modifier = Modifier) {
+fun CreateNameView(modifier: Modifier = Modifier, onFinishAccountImport: () -> Unit) {
     val borderColor = Color("#1B1B76".toColorInt())
     var accountName by remember { mutableStateOf("") }
     val context = (LocalContext.current as Activity)
@@ -288,7 +275,7 @@ fun CreateNameView(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.weight(1f))
 
         Button(
-            onClick = { /* TODO: navigate to create pin */ },
+            onClick = onFinishAccountImport,
             contentPadding = ButtonDefaults.ContentPadding,
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
@@ -323,63 +310,3 @@ fun CreateNameView(modifier: Modifier = Modifier) {
 }
 
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
-@Composable
-fun ConfirmSheet(
-    onNext: () -> Unit,
-    openBottomSheet: Boolean,
-    onDismissRequest: () -> Unit,
-    sheetState: SheetState,
-    scope: CoroutineScope
-) {
-
-    if (openBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = onDismissRequest,
-            sheetState = sheetState,
-            containerColor = Color("#141462".toColorInt()),
-            modifier= Modifier.height(364.dp),
-
-            ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .background(color = Color("#141462".toColorInt()))
-            ) {
-
-                Text( text = "Generating private key", style = TextStyle(fontWeight = FontWeight.ExtraBold, fontSize = 25.sp, textAlign = TextAlign.Center, color = Color.White))
-                Spacer(modifier = Modifier.height(8.dp))
-                Text( text = "Private key generated successfully", style = TextStyle(fontWeight = FontWeight.Medium, fontSize = 16.sp, textAlign = TextAlign.Center, color = Color("#8D8DBB".toColorInt())))
-
-                Spacer(modifier = Modifier.height(30.dp))
-
-                Image(
-                    painter = painterResource(id = R.drawable.approved),
-                    contentDescription = "QR Code",
-                    modifier = Modifier
-                        .size(93.dp)
-
-                )
-
-                Spacer(modifier = Modifier.height(40.dp))
-
-                Button(
-                    onClick = { onNext() },
-                    contentPadding = ButtonDefaults.ContentPadding,
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt()), contentColor = Color.White),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(49.dp)
-                ) {
-                    Text(text = "Continue")
-                }
-
-            }
-        }
-    }
-
-
-}

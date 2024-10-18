@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.walletapp.ui.account.AddTokenScreen
 import com.example.walletapp.ui.account.WalletScreen
+import com.example.walletapp.ui.activity.FinalizeAccountCreationScreen
 import com.example.walletapp.ui.onboarding.CreateAccountScreen
 import com.example.walletapp.ui.onboarding.CreatePinScreen
 import com.example.walletapp.ui.onboarding.ImportAccountScreen
@@ -31,6 +32,8 @@ object CreateAccount
 object ImportAccount
 @Serializable
 object CreatePin
+@Serializable
+object FinalizeAccountCreation
 
 // token transfer flow
 @Serializable
@@ -64,11 +67,18 @@ fun WalletApp() {
             }
             composable<CreateAccount> {
                 CreateAccountScreen(
+                    onContinue = { navController.navigate( route = FinalizeAccountCreation )}
+                )
+            }
+            composable<FinalizeAccountCreation> {
+                FinalizeAccountCreationScreen(
                     onContinue = { navController.navigate( route = CreatePin )}
                 )
             }
             composable<ImportAccount> {
-                ImportAccountScreen()
+                ImportAccountScreen(
+                    onFinishAccountImport = { navController.navigate( route = CreatePin ) }
+                )
             }
             composable<CreatePin> {
                 CreatePinScreen(

@@ -34,107 +34,121 @@ import kotlinx.coroutines.delay
 
 
 @Composable
-fun CreatePinScreen(modifier: Modifier = Modifier, onContinue: () -> Unit) {
+fun CreatePinScreen(onContinue: () -> Unit) {
     val context = (LocalContext.current as Activity)
     var passcode by remember { mutableStateOf("") }
     var hiddenPasscode by remember { mutableStateOf("") }
     val maxDigits = 6
     val coroutineScope = rememberCoroutineScope()
 
-    Column (
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .background(Color("#0C0C4F".toColorInt()))
-            .padding(top = 70.dp)
+    Surface(modifier = Modifier.fillMaxSize()) {
 
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ){
-            Image(
-                painter = painterResource(id = R.drawable.starknet_icon),
-                contentDescription = "starknet",
-                modifier = Modifier
-                    .size(36.dp)
-            )
-
-            Spacer(modifier = Modifier.width(10.dp))
-
-            Text(text = "Starknet Wallet", style = TextStyle(color = Color.White, fontSize = 25.sp,
-                fontWeight = FontWeight.Medium))
-        }
-
-
-        Spacer(modifier = Modifier.height(93.dp))
-
-
-
-        Text(text = "Create PIN-code", style = TextStyle(color = Color.White, fontSize = 25.sp,
-            fontWeight = FontWeight.Medium))
-        Spacer(modifier = Modifier.height(5.dp))
-
-        Text(text = "6 characters", style = TextStyle(color = Color("#A3A3C1".toColorInt()), fontSize = 13.sp,
-            fontWeight = FontWeight.Medium))
-
-
-
-
-        Spacer(modifier = Modifier.height(31.dp))
-        PasscodeCircles(passcode, hiddenPasscode, maxDigits)
-
-        Spacer(modifier = Modifier.height(48.dp))
-
-        NumericKeypad(onDigitClick = { digit ->
-            if (passcode.length < maxDigits) {
-                passcode += digit
-                hiddenPasscode += digit
-                coroutineScope.launch {
-                    delay(500L)
-                    hiddenPasscode = hiddenPasscode.dropLast(1) + "*"
-                }
-            }
-        }, onDeleteClick = {
-            if (passcode.isNotEmpty()) {
-                passcode = passcode.dropLast(1)
-                hiddenPasscode = hiddenPasscode.dropLast(1)
-            }
-        })
-
-
-
-
-        Spacer(modifier = Modifier.height(102.dp))
-
-        Button(
-            onClick = onContinue,
-            contentPadding = ButtonDefaults.ContentPadding,
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt()), contentColor = Color.White),
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .fillMaxWidth()
-                .height(49.dp)
+                .background(Color("#0C0C4F".toColorInt()))
+                .padding(top = 70.dp)
+
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ) {
-                Text("Continue")
-                Icon(
-                    imageVector = Icons.Filled.ArrowForward,
-                    contentDescription = "Forward Arrow",
-                    modifier = Modifier.padding(start = 8.dp),
-                    tint = Color.White
+                Image(
+                    painter = painterResource(id = R.drawable.starknet_icon),
+                    contentDescription = "starknet",
+                    modifier = Modifier
+                        .size(36.dp)
+                )
+
+                Spacer(modifier = Modifier.width(10.dp))
+
+                Text(
+                    text = "Starknet Wallet", style = TextStyle(
+                        color = Color.White, fontSize = 25.sp,
+                        fontWeight = FontWeight.Medium
+                    )
                 )
             }
+
+
+            Spacer(modifier = Modifier.height(93.dp))
+
+
+
+            Text(
+                text = "Create PIN-code", style = TextStyle(
+                    color = Color.White, fontSize = 25.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+
+            Text(
+                text = "6 characters", style = TextStyle(
+                    color = Color("#A3A3C1".toColorInt()), fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            )
+
+
+
+
+            Spacer(modifier = Modifier.height(31.dp))
+            PasscodeCircles(passcode, hiddenPasscode, maxDigits)
+
+            Spacer(modifier = Modifier.height(48.dp))
+
+            NumericKeypad(onDigitClick = { digit ->
+                if (passcode.length < maxDigits) {
+                    passcode += digit
+                    hiddenPasscode += digit
+                    coroutineScope.launch {
+                        delay(500L)
+                        hiddenPasscode = hiddenPasscode.dropLast(1) + "*"
+                    }
+                }
+            }, onDeleteClick = {
+                if (passcode.isNotEmpty()) {
+                    passcode = passcode.dropLast(1)
+                    hiddenPasscode = hiddenPasscode.dropLast(1)
+                }
+            })
+
+
+
+
+            Spacer(modifier = Modifier.height(102.dp))
+
+            Button(
+                onClick = onContinue,
+                contentPadding = ButtonDefaults.ContentPadding,
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color("#EC796B".toColorInt()),
+                    contentColor = Color.White
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(49.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Continue")
+                    Icon(
+                        imageVector = Icons.Filled.ArrowForward,
+                        contentDescription = "Forward Arrow",
+                        modifier = Modifier.padding(start = 8.dp),
+                        tint = Color.White
+                    )
+                }
+            }
+
         }
 
     }
-
-
-
-
-
 }
 
 

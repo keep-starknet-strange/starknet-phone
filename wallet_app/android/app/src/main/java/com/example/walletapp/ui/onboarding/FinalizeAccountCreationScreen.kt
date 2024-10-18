@@ -30,7 +30,7 @@ import androidx.core.graphics.toColorInt
 import com.example.walletapp.R
 
 @Composable
-fun FinalizeAccountCreationScreen() {
+fun FinalizeAccountCreationScreen(onContinue: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -77,7 +77,7 @@ fun FinalizeAccountCreationScreen() {
         ) {
 
             Spacer(modifier = Modifier.height(5.dp))
-            AccountInfoView()
+            AccountInfoView(onContinue)
 
 
         }
@@ -85,7 +85,7 @@ fun FinalizeAccountCreationScreen() {
 }
 
 @Composable
-fun AccountInfoView() {
+fun AccountInfoView(onContinue: () -> Unit) {
 
     val context = (LocalContext.current as Activity)
 
@@ -307,7 +307,7 @@ fun AccountInfoView() {
 
 
         Button(
-            onClick = { /* TODO */ },
+            onClick = onContinue,
             contentPadding = ButtonDefaults.ContentPadding,
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt()), contentColor = Color.White),
