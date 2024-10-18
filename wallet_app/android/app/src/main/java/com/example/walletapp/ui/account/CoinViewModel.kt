@@ -1,4 +1,4 @@
-package com.example.walletapp
+package com.example.walletapp.ui.account
 
 
 import androidx.lifecycle.ViewModel

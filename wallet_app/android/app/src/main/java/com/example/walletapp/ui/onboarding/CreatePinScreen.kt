@@ -1,11 +1,6 @@
-package com.example.walletapp
+package com.example.walletapp.ui.onboarding
 
 import android.app.Activity
-import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,37 +28,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
-import com.example.walletapp.ui.activity.AccountInfoActivity
-import com.example.walletapp.ui.theme.WalletappTheme
+import com.example.walletapp.R
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 
 
-class CreatePinActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            WalletappTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize()
-                    .background(Color("#0C0C4F".toColorInt()))
-                        .padding(20.dp)
-
-
-                    ) {
-                    CreatePinView(
-                        modifier = Modifier
-                    )
-                }
-            }
-        }
-
-    }
-}
-
 @Composable
-fun CreatePinView(modifier: Modifier = Modifier) {
+fun CreatePinScreen(modifier: Modifier = Modifier, onContinue: () -> Unit) {
     val context = (LocalContext.current as Activity)
     var passcode by remember { mutableStateOf("") }
     var hiddenPasscode by remember { mutableStateOf("") }
@@ -137,8 +108,7 @@ fun CreatePinView(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(102.dp))
 
         Button(
-            onClick = { val i = Intent(context, WalletActivity::class.java)
-                context.startActivity(i) },
+            onClick = onContinue,
             contentPadding = ButtonDefaults.ContentPadding,
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt()), contentColor = Color.White),
@@ -256,10 +226,3 @@ fun KeypadButton(text: String, onClick: () -> Unit) {
         )
     }
 }
-
-
-
-
-
-
-

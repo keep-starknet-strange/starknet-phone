@@ -50,7 +50,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
-import com.example.walletapp.CreatePinActivity
 import com.example.walletapp.R
 import kotlinx.coroutines.CoroutineScope
 
@@ -289,8 +288,7 @@ fun CreateNameView(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.weight(1f))
 
         Button(
-            onClick = { val i = Intent(context, CreatePinActivity::class.java)
-                context.startActivity(i) },
+            onClick = { /* TODO: navigate to create pin */ },
             contentPadding = ButtonDefaults.ContentPadding,
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(

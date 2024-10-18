@@ -52,11 +52,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import com.example.walletapp.R
-import com.example.walletapp.ui.activity.AccountInfoActivity
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun CreateAccountScreen() {
+fun CreateAccountScreen(
+    onContinue: () -> Unit
+) {
     var progress by remember { mutableStateOf(0.5f) }
     Scaffold(
         topBar = {
@@ -127,7 +128,7 @@ fun CreateAccountScreen() {
                     }
                 )
             } else {
-                GenerateKey(modifier = Modifier.padding(top = 16.dp))
+                GenerateKey(modifier = Modifier.padding(top = 16.dp), onContinue)
             }
 
 
@@ -220,7 +221,7 @@ fun CreateWallet(modifier: Modifier = Modifier, onNext: () -> Unit) {
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun GenerateKey(modifier: Modifier = Modifier) {
+fun GenerateKey(modifier: Modifier = Modifier, onContinue: () -> Unit) {
     val scope = rememberCoroutineScope()
     var openBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
@@ -284,7 +285,8 @@ fun GenerateKey(modifier: Modifier = Modifier) {
             openBottomSheet = openBottomSheet,
             onDismissRequest = { openBottomSheet = false },
             sheetState = sheetState,
-            scope = scope
+            scope = scope,
+            onContinue = onContinue
         )
     }
 
@@ -300,7 +302,8 @@ fun GeneratekeySheet(
     openBottomSheet: Boolean,
     onDismissRequest: () -> Unit,
     sheetState: SheetState,
-    scope: CoroutineScope
+    scope: CoroutineScope,
+    onContinue: () -> Unit
 ) {
 
     val context = (LocalContext.current as Activity)
@@ -338,8 +341,7 @@ fun GeneratekeySheet(
                 Spacer(modifier = Modifier.height(40.dp))
 
                 Button(
-                    onClick = { val i = Intent(context, AccountInfoActivity::class.java)
-                        context.startActivity(i) },
+                    onClick = onContinue,
                     contentPadding = ButtonDefaults.ContentPadding,
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt()), contentColor = Color.White),

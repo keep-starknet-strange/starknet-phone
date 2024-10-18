@@ -26,14 +26,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SendActivity"
+            android:name=".ui.transfer.SendActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
         <activity
-            android:name=".ReceiverActivity"
+            android:name=".ui.transfer.ReceiverActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
-        <activity android:name=".AddTokenActivity"
+        <activity android:name=".ui.account.AddTokenActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
 
@@ -54,12 +54,12 @@
             android:theme="@style/Theme.Walletapp"/>
 
 
-        <activity android:name=".CreatePinActivity"
+        <activity android:name=".ui.onboarding.CreatePinActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
 
 
-        <activity android:name=".WalletActivity"
+        <activity android:name=".ui.account.WalletActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
 

@@ -1,11 +1,6 @@
 package com.example.walletapp.ui.activity
 
 import android.app.Activity
-import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,73 +24,61 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
-import com.example.walletapp.CreatePinActivity
 import com.example.walletapp.R
-import com.example.walletapp.ui.theme.WalletappTheme
-import org.bouncycastle.math.raw.Mod
 
-class AccountInfoActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            WalletappTheme {
-                Scaffold(
-                    topBar = {
-                        TopAppBar(
-                            backgroundColor = Color("#0C0C4F".toColorInt()),
-                            contentColor = Color.White,
-                            elevation = 4.dp
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 32.dp, start = 16.dp, end = 16.dp),
-
-                                ) {
-                                Icon(
-                                    imageVector = Icons.Filled.ArrowBack,
-                                    contentDescription = "Backward  Arrow",
-                                    modifier = Modifier.padding(start = 8.dp),
-                                    tint = Color.White
-                                )
-                                Box(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-
-                                    Text(
-                                        text = "Create Account",
-                                        color = Color.White,
-                                        fontSize = 20.sp
-                                    )
-
-                                }
-
-                            }
-                        }
-                    }
-                ) { paddingValues ->
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues)
-                            .background(color = Color("#0C0C4F".toColorInt()))
-                            .padding(top = 50.dp, start = 16.dp, end = 16.dp )
+@Composable
+fun FinalizeAccountCreationScreen() {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                backgroundColor = Color("#0C0C4F".toColorInt()),
+                contentColor = Color.White,
+                elevation = 4.dp
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 32.dp, start = 16.dp, end = 16.dp),
 
                     ) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = "Backward  Arrow",
+                        modifier = Modifier.padding(start = 8.dp),
+                        tint = Color.White
+                    )
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center,
+                    ) {
 
-                        Spacer(modifier = Modifier.height(5.dp))
-                        AccountInfoView()
-
+                        Text(
+                            text = "Create Account",
+                            color = Color.White,
+                            fontSize = 20.sp
+                        )
 
                     }
+
                 }
             }
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .background(color = Color("#0C0C4F".toColorInt()))
+                .padding(top = 50.dp, start = 16.dp, end = 16.dp )
+
+        ) {
+
+            Spacer(modifier = Modifier.height(5.dp))
+            AccountInfoView()
+
 
         }
     }
@@ -231,8 +214,7 @@ fun AccountInfoView() {
 
 
         Button(
-            onClick = { val i = Intent(context, ImportExistingKeyActivity::class.java)
-                context.startActivity(i) },
+            onClick = { /* TOOD */ },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt()), contentColor = Color.White),
             modifier = Modifier.fillMaxWidth()
                 .background(color = Color("#1B1B76".toColorInt()))
@@ -325,8 +307,7 @@ fun AccountInfoView() {
 
 
         Button(
-            onClick = { val i = Intent(context, CreatePinActivity::class.java)
-                context.startActivity(i) },
+            onClick = { /* TODO */ },
             contentPadding = ButtonDefaults.ContentPadding,
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt()), contentColor = Color.White),
