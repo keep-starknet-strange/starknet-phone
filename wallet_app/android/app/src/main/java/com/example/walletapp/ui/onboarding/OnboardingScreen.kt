@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,10 +24,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import com.example.walletapp.R
-import com.example.walletapp.ui.Onboarding
 import com.example.walletapp.ui.components.StarknetLogo
 import com.example.walletapp.ui.components.TransparentButton
 import com.example.walletapp.ui.theme.WalletappTheme
+import com.example.walletapp.ui.theme.WhiteFlare
 
 
 @Composable
@@ -43,9 +42,10 @@ fun OnboardingScreen (
             .padding(20.dp)
     ) {
         Text(
-            text = "Starknet Wallet",
+            text = "Get Started",
             fontFamily = FontFamily(Font(R.font.inter_regular)),
             fontSize = 28.sp,
+            color = WhiteFlare,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 70.dp)

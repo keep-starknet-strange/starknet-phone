@@ -30,9 +30,77 @@ import androidx.core.graphics.toColorInt
 import com.example.walletapp.R
 
 @Composable
-fun AddTokenScreen() {
+fun AddTokenScreen(onConfirm: () -> Unit) {
     Surface(modifier = Modifier.fillMaxSize()) {
-        AddTokenScreenView(modifier = Modifier.padding(10.dp))
+        val contactAddress = rememberSaveable { mutableStateOf("") }
+        val name = rememberSaveable { mutableStateOf("") }
+        val symbol = rememberSaveable { mutableStateOf("") }
+        val decimals = rememberSaveable { mutableStateOf("") }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color("#0C0C4F".toColorInt()))
+                .padding(horizontal = 16.dp, vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            Text(
+                text = "Add Token",
+                fontFamily = FontFamily(Font(R.font.publicsans_bold)),
+                color = Color.White,
+                fontSize = 28.sp
+            )
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                SimpleTextField(
+                    value = contactAddress.value,
+                    onValueChange = { contactAddress.value = it },
+                    label = "Contact Address",
+                    placeholder = "0x123"
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                SimpleTextField(
+                    value = name.value,
+                    onValueChange = { name.value = it },
+                    label = "Name",
+                    placeholder = "Name"
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                SimpleTextField(
+                    value = symbol.value,
+                    onValueChange = { symbol.value = it },
+                    label = "Symbol",
+                    placeholder = "TOK"
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                SimpleTextField(
+                    value = decimals.value,
+                    onValueChange = { decimals.value = it },
+                    label = "Decimals",
+                    placeholder = "18"
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // TODO: handle saving the token data
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 30.dp, end = 30.dp)
+            ) {
+                Text(text = "Confirm", color = Color.White)
+            }
+        }
     }
 }
 
@@ -71,78 +139,6 @@ fun SimpleTextField(
                 fontSize = 16.sp
             )
         )
-    }
-}
-
-@Composable
-fun AddTokenScreenView(modifier: Modifier) {
-    val contactAddress = rememberSaveable { mutableStateOf("") }
-    val name = rememberSaveable { mutableStateOf("") }
-    val symbol = rememberSaveable { mutableStateOf("") }
-    val decimals = rememberSaveable { mutableStateOf("") }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color("#0C0C4F".toColorInt()))
-            .padding(horizontal = 16.dp, vertical = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-        Text(
-            text = "Add Token",
-            fontFamily = FontFamily(Font(R.font.publicsans_bold)),
-            color = Color.White,
-            fontSize = 28.sp
-        )
-
-        Spacer(modifier = Modifier.height(40.dp))
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        ) {
-            SimpleTextField(
-                value = contactAddress.value,
-                onValueChange = { contactAddress.value = it },
-                label = "Contact Address",
-                placeholder = "0x123"
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            SimpleTextField(
-                value = name.value,
-                onValueChange = { name.value = it },
-                label = "Name",
-                placeholder = "Name"
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            SimpleTextField(
-                value = symbol.value,
-                onValueChange = { symbol.value = it },
-                label = "Symbol",
-                placeholder = "TOK"
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            SimpleTextField(
-                value = decimals.value,
-                onValueChange = { decimals.value = it },
-                label = "Decimals",
-                placeholder = "18"
-            )
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Button(
-            onClick = { /* Handle confirm action */ },
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 30.dp, end = 30.dp)
-        ) {
-            Text(text = "Confirm", color = Color.White)
-        }
     }
 }
 

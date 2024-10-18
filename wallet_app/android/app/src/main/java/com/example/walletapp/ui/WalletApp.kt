@@ -77,10 +77,16 @@ fun WalletApp() {
             }
 
            composable<Wallet> {
-               WalletScreen()
+               WalletScreen(
+                   onNewTokenPress = { navController.navigate( route = AddToken ) },
+                   onReceivePress = { navController.navigate( route = Receive ) },
+                   onSendPress = { navController.navigate( route = Send ) }
+               )
            }
             composable<AddToken> {
-                AddTokenScreen()
+                AddTokenScreen(
+                    onConfirm = { navController.navigateUp() }
+                )
             }
 
             composable<Send> {

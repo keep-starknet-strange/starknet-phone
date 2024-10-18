@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import com.example.walletapp.R
 
-
 @Composable
 fun ReceiveScreen(modifier: Modifier) {
     val clipboard: ClipboardManager = LocalClipboardManager.current

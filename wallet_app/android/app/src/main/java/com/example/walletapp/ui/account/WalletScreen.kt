@@ -50,6 +50,7 @@ import com.example.walletapp.BuildConfig
 import com.example.walletapp.R
 import com.example.walletapp.utils.StarknetClient
 import com.example.walletapp.utils.toDoubleWithTwoDecimal
+import com.example.walletapp.utils.weiToEther
 import com.swmansion.starknet.data.types.Felt
 import com.swmansion.starknet.provider.exceptions.RpcRequestFailedException
 import kotlinx.coroutines.Dispatchers
@@ -57,10 +58,17 @@ import kotlinx.coroutines.withContext
 
 
 @Composable
-fun WalletScreen() {
+fun WalletScreen(
+    onNewTokenPress: () -> Unit,
+    onSendPress: () -> Unit,
+    onReceivePress: () -> Unit
+) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Wallet(
             modifier = Modifier.padding(10.dp),
+            onNewTokenPress = onNewTokenPress,
+            onSendPress = onSendPress,
+            onReceivePress = onReceivePress
         )
     }
 }
@@ -68,7 +76,7 @@ fun WalletScreen() {
 
 
 @Composable
-fun Wallet(modifier: Modifier) {
+fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -> Unit, onSendPress: () -> Unit) {
     val networkList = listOf("Starknet Mainnet", "Test Networks")
     var selectedNetworkIndex by remember { mutableStateOf(0) }
     val context = (LocalContext.current as Activity)
@@ -95,7 +103,7 @@ fun Wallet(modifier: Modifier) {
             // Get the balance of the account
             val getBalance = starknetClient.getEthBalance(accountAddress)
             withContext(Dispatchers.Main) {
-                balance = starknetClient.weiToEther(getBalance).toDoubleWithTwoDecimal()
+                balance = weiToEther(getBalance).toDoubleWithTwoDecimal()
             }
         } catch (e: RpcRequestFailedException) {
             withContext(Dispatchers.Main) { Toast.makeText(context, "${e.code}: ${e.message}", Toast.LENGTH_LONG).show() }
@@ -184,7 +192,7 @@ fun Wallet(modifier: Modifier) {
             fontSize = 14.sp,
             modifier = Modifier
                 .clickable {
-                    /* TODO */
+                    onNewTokenPress()
                 }
                 .background(Color.Transparent)
                 .padding(10.dp)
@@ -198,9 +206,7 @@ fun Wallet(modifier: Modifier) {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Button(
-                onClick = {
-                    /* TODO: receiver screen */
-                },
+                onClick = onReceivePress,
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
                 shape = RoundedCornerShape(15.dp),
             ) {
@@ -211,9 +217,7 @@ fun Wallet(modifier: Modifier) {
                 )
             }
             Button(
-                onClick = {
-                    /* TODO: sender screen */
-                },
+                onClick = onSendPress,
 
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
                 shape = RoundedCornerShape(15.dp),
