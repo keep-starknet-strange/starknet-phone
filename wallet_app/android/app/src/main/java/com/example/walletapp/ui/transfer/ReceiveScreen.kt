@@ -1,12 +1,6 @@
-package com.example.walletapp
+package com.example.walletapp.ui.transfer
 
 import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,33 +18,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
-import androidx.core.view.WindowCompat
-import com.example.walletapp.ui.theme.WalletappTheme
+import com.example.walletapp.R
 
-class ReceiverActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        WindowCompat.setDecorFitsSystemWindows(window, true)
-        setContent {
-            WalletappTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    ReceiverScreenView(
-                        modifier = Modifier.padding(10.dp)
-                    )
-                }
-            }
-        }
-    }
+@Composable
+fun ReceiveScreen(modifier: Modifier) {
+    val clipboard: ClipboardManager = LocalClipboardManager.current
 
-    @Composable
-    fun ReceiverScreenView(modifier: Modifier){
+    Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -91,12 +74,11 @@ class ReceiverActivity : ComponentActivity() {
                 color = Color.White,
                 fontSize = 15.sp,
                 modifier = Modifier.clickable {
-                    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    val clip = ClipData.newPlainText("Wallet Address", "0xfoo...123") // Replace with actual wallet address
-                    clipboard.setPrimaryClip(clip)
+                    val clip = ClipEntry(ClipData.newPlainText("Wallet Address", "0xfoo...123")) // TODO: Replace with actual wallet address
+                    clipboard.setClip(clip)
                 }
             )
         }
-
     }
+
 }

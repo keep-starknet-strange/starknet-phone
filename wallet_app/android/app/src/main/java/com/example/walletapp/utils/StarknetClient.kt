@@ -1,5 +1,6 @@
-package com.example.walletapp
+package com.example.walletapp.utils
 
+import com.example.walletapp.BuildConfig
 import com.swmansion.starknet.account.StandardAccount
 import com.swmansion.starknet.data.types.Call
 import com.swmansion.starknet.data.types.Felt
@@ -15,7 +16,7 @@ class StarknetClient(private val rpcUrl: String) {
 
     private val provider = JsonRpcProvider(rpcUrl)
     private val privateKey= BuildConfig.PRIVATE_KEY
-    private val accountAddress=BuildConfig.ACCOUNT_ADDRESS
+    private val accountAddress= BuildConfig.ACCOUNT_ADDRESS
 
     suspend fun deployAccount() {
 
@@ -69,8 +70,4 @@ class StarknetClient(private val rpcUrl: String) {
         // TODO(#24)
     }
 
-    fun weiToEther(wei: Uint256): BigDecimal {
-        val weiInEther = BigDecimal("1000000000000000000") // 10^18
-        return BigDecimal(wei.value.toString()).divide(weiInEther)
-    }
 }
