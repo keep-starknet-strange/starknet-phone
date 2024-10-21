@@ -1,13 +1,18 @@
 package com.example.walletapp.model
 
-class User {
-    private var accounts: Array<Account> = emptyArray();
+data class User (
+    val accounts: Array<Account>
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
 
-    fun hasAccount(): Boolean {
-        return accounts.isNotEmpty()
+        other as User
+
+        return accounts.contentEquals(other.accounts)
     }
 
-    fun getAccounts(): Array<Account> {
-        return accounts
+    override fun hashCode(): Int {
+        return accounts.contentHashCode()
     }
 }

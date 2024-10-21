@@ -94,8 +94,9 @@ fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -
     val prices by coinViewModel.prices
     val errorMessage by coinViewModel.errorMessage
 
+    // TODO: 
     LaunchedEffect(Unit) {
-        coinViewModel.getTokenPrices(ids = "starknet,ethereum", vsCurrencies = "usd")  // Fetch starknet and bitcoin prices in USD
+        coinViewModel.getTokenPrices(ids = "starknet,ethereum", vsCurrencies = "usd")
     }
 
     LaunchedEffect (Unit){

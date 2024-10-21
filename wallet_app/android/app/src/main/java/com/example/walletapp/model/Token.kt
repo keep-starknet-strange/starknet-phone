@@ -1,6 +1,6 @@
 package com.example.walletapp.model
 
-class Token {
-    var address: String = ""
-    var symbol: String = ""
-}
+class Token (
+    val address: String,
+    val symbol: String
+)

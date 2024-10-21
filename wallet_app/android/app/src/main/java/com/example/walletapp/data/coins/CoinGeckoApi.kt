@@ -1,4 +1,4 @@
-package com.example.walletapp.data.datasource
+package com.example.walletapp.data.coins
 
 import retrofit2.Response
 import retrofit2.http.GET

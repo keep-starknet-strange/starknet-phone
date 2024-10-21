@@ -1,6 +1,6 @@
 package com.example.walletapp.di
 
-import com.example.walletapp.data.datasource.CoinGeckoApi
+import com.example.walletapp.data.coins.CoinGeckoApi
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

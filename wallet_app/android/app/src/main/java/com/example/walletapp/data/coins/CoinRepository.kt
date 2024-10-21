@@ -1,10 +1,8 @@
-package com.example.walletapp.data.repository
+package com.example.walletapp.data.coins
 
 import com.example.walletapp.di.RetrofitClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import retrofit2.Response
-import com.example.walletapp.data.datasource.GetTokenPriceResponse
 
 class CoinRepository {
     suspend fun getTokenPrices(

@@ -1,5 +1,5 @@
 package com.example.walletapp.model
 
-class Account {
-    var address: String = ""
-}
+data class Account (
+    val address: String
+)

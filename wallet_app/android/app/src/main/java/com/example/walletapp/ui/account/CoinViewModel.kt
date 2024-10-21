@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
-import com.example.walletapp.data.repository.CoinRepository
+import com.example.walletapp.data.coins.CoinRepository
 
 class CoinViewModel : ViewModel() {
     private val repository = CoinRepository()
