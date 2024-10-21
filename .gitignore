@@ -3,3 +3,14 @@
 
 # mdBook
 docs/book/
+
+**/.gradle/*
+
+lightclientservice/app/build
+lightclientservice/target
+lightclientservice/local.properties
+lightclientservice/.idea
+
+**/*.so
+
+**/.idea/*

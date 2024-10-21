@@ -1,9 +1,5 @@
-package com.example.walletapp
+package com.example.walletapp.ui.transfer
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -42,27 +38,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
-import androidx.core.view.WindowCompat
-import com.example.walletapp.ui.theme.WalletappTheme
+import com.example.walletapp.R
 
-class SendActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        WindowCompat.setDecorFitsSystemWindows(window, true)
-        setContent {
-            WalletappTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    SendScreenView(
-                        modifier = Modifier.padding(10.dp)
-                    )
-                }
-            }
-        }
-    }
-
-    @Composable
-    fun SendScreenView(modifier: Modifier){
+@Composable
+fun SendScreen() {
+    Surface(modifier = Modifier.fillMaxSize()) {
         /* TODO(34) send tokens */
 
         var amount by rememberSaveable {
@@ -142,6 +122,5 @@ class SendActivity : ComponentActivity() {
                 Text(text = "Confirm", color = Color.White)
             }
         }
-
     }
 }

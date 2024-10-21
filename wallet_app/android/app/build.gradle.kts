@@ -5,11 +5,17 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
     id("org.jmailen.kotlinter")
+    kotlin("plugin.serialization") version "2.0.21"
 }
 
 android {
     namespace = "com.example.walletapp"
     compileSdk = 34
+
+    dataBinding {
+        enable = true
+    }
+
 
     buildFeatures {
         compose = true
@@ -46,11 +52,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -64,10 +70,22 @@ android {
 dependencies {
 
     implementation("com.swmansion.starknet:starknet:0.13.0@aar"){
+    // Navigation stuff
+    implementation(libs.androidx.navigation.compose.v283)
+    implementation(libs.androidx.navigation.compose.v283)
+    implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.navigation.ui)
+    implementation(libs.androidx.navigation.dynamic.features.fragment)
+    androidTestImplementation(libs.androidx.navigation.testing)
+
+    implementation("com.swmansion.starknet:starknet:0.12.1@aar"){
         isTransitive = true
     }
 
     implementation(libs.androidx.security.crypto.v110alpha06)
+
+    // for data binding
+    implementation(libs.common)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

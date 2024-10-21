@@ -1,3 +1,5 @@
+package com.example.walletapp.utils
+
 import com.example.walletapp.BuildConfig
 import com.swmansion.starknet.account.StandardAccount
 import com.swmansion.starknet.data.types.Call

@@ -16,7 +16,8 @@
         android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
+            android:theme="@style/Theme.Walletapp"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,31 +26,44 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SendActivity"
+            android:name=".ui.transfer.SendActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
         <activity
-            android:name=".ReceiverActivity"
+            android:name=".ui.transfer.ReceiverActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
-        <activity android:name=".AddTokenActivity"
+        <activity android:name=".ui.account.AddTokenActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
 
-        <activity android:name=".ui.activity.AccountBalanceActivity"
+        <activity android:name=".AccountBalanceActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
 
         <activity android:name=".AccountPasswordActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
+
         <activity android:name=".RecoveryPhraseActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
 
-        <activity android:name=".WalletActivity"
+        <activity android:name=".ui.activity.AccountInfoActivity"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
+
+
+        <activity android:name=".ui.onboarding.CreatePinActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
+
+
+        <activity android:name=".ui.account.WalletActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Walletapp"/>
+
+
     </application>
 
 </manifest>
