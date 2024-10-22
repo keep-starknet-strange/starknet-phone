@@ -45,7 +45,7 @@ object Receive
 fun WalletApp() {
     WalletappTheme {
 
-        // TODO: get this information from a data store
+        // TODO(#109): get this information from a data store
         val hasAccount = false
 
         fun getStart(): Any {

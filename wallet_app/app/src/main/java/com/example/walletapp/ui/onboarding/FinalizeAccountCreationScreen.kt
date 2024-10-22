@@ -306,7 +306,7 @@ fun AccountInfoView(onContinue: () -> Unit) {
 
         Spacer(modifier = Modifier.weight(1f))
 
-
+        // TODO(#109): pressing continue on this screen should save the account information to the device
         Button(
             onClick = onContinue,
             contentPadding = ButtonDefaults.ContentPadding,
