@@ -21,7 +21,6 @@ class CoinViewModel : ViewModel() {
                        vsCurrencies: String) {
         viewModelScope.launch {
             try {
-                // Fetch prices for starknet and bitcoin in USD
                 val response = repository.getTokenPrices(ids,vsCurrencies)
                 if (response.isSuccessful) {
                     response.body()?.let { priceMap ->

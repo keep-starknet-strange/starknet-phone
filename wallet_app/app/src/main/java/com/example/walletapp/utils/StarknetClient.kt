@@ -7,7 +7,9 @@ import com.swmansion.starknet.data.types.Felt
 import com.swmansion.starknet.data.types.Uint256
 import com.swmansion.starknet.provider.rpc.JsonRpcProvider
 import com.swmansion.starknet.signer.StarkCurveSigner
+import com.swmansion.starknet.account.Account
 import kotlinx.coroutines.future.await
+
 import java.math.BigDecimal
 
 const val ETH_ERC20_ADDRESS = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7"
@@ -35,9 +37,12 @@ class StarknetClient(private val rpcUrl: String) {
             cairoVersion = Felt.ONE,
         )
 
-        // TODO: deploy account
+        // TODO(#99): add account deployment logic
+
     }
 
+    // TODO(#107): change name to getBalance, support getting balance for any token
+    // follow example: https://github.com/software-mansion/starknet-jvm/blob/main/androiddemo/src/main/java/com/example/androiddemo/MainActivity.kt
     suspend fun getEthBalance(accountAddress: Felt): Uint256 {
         val erc20ContractAddress = Felt.fromHex(ETH_ERC20_ADDRESS)
 
@@ -66,8 +71,11 @@ class StarknetClient(private val rpcUrl: String) {
         )
     }
 
-    suspend fun sendERC20() {
-        // TODO(#24)
+    suspend fun transferFunds(account: Account, toAddress: Felt, amount: Uint256) {
+        // TODO(#102): add logic to transfer funds here
+        // follow the example: https://github.com/software-mansion/starknet-jvm/blob/main/androiddemo/src/main/java/com/example/androiddemo/MainActivity.kt
     }
+
+
 
 }

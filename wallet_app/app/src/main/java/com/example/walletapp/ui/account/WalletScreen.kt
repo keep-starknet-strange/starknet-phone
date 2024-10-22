@@ -94,14 +94,14 @@ fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -
     val prices by coinViewModel.prices
     val errorMessage by coinViewModel.errorMessage
 
-    // TODO: 
+    // TODO(#106): use the accounts stored tokens instead of hardcoding
     LaunchedEffect(Unit) {
         coinViewModel.getTokenPrices(ids = "starknet,ethereum", vsCurrencies = "usd")
     }
 
     LaunchedEffect (Unit){
+        // TODO(#107): fetch all token balances
         try {
-            // Get the balance of the account
             val getBalance = starknetClient.getEthBalance(accountAddress)
             withContext(Dispatchers.Main) {
                 balance = weiToEther(getBalance).toDoubleWithTwoDecimal()
