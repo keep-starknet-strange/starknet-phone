@@ -5,7 +5,9 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
     id("org.jmailen.kotlinter")
-    kotlin("plugin.serialization") version "2.0.21"
+    kotlin("plugin.serialization") version "2.0.0-RC1"
+    alias(libs.plugins.compose.compiler)
+
 }
 
 android {
@@ -59,7 +61,7 @@ android {
         jvmTarget = "17"
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
     packaging {
         resources {
@@ -70,6 +72,8 @@ android {
 dependencies {
 
     implementation("com.swmansion.starknet:starknet:0.13.0@aar"){
+        isTransitive = true
+    }
     // Navigation stuff
     implementation(libs.androidx.navigation.compose.v283)
     implementation(libs.androidx.navigation.compose.v283)
@@ -78,9 +82,6 @@ dependencies {
     implementation(libs.androidx.navigation.dynamic.features.fragment)
     androidTestImplementation(libs.androidx.navigation.testing)
 
-    implementation("com.swmansion.starknet:starknet:0.12.1@aar"){
-        isTransitive = true
-    }
 
     implementation(libs.androidx.security.crypto.v110alpha06)
 

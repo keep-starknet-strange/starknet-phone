@@ -23,17 +23,23 @@ import java.security.GeneralSecurityException
 
 const val ETH_ERC20_ADDRESS = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7"
 
-class StarknetClient(private val rpcUrl: String, private val context: Context) {
+class StarknetClient(private val rpcUrl: String) {
 
     private val provider = JsonRpcProvider(rpcUrl)
     private val privateKey = BuildConfig.PRIVATE_KEY
     private val accountAddress = BuildConfig.ACCOUNT_ADDRESS
     private val tag = "StarknetClient"
+    private val keystore = Keystore()
 
     suspend fun deployAccount() {
         // Predefined values for account creation
-        val privateKey = Felt.fromHex(privateKey)
-        val accountAddress = Felt.fromHex(accountAddress)
+
+        val randomPrivateKey = StandardAccount.generatePrivateKey()
+        keystore.storeData(randomPrivateKey.value.toString())       // save the key generated
+        val data = keystore.retrieveData()                          // retrieve it to generate public key
+        val privateKey = BigInteger(data).toFelt
+
+        val accountAddress = StarknetCurve.getPublicKey(privateKey)
 
         val signer = StarkCurveSigner(privateKey)
         val chainId = provider.getChainId().sendAsync().await()
@@ -80,73 +86,8 @@ class StarknetClient(private val rpcUrl: String, private val context: Context) {
         // TODO(#24)
     }
 
-    fun test() {
-        val randomPrivateKey = StandardAccount.generatePrivateKey()
-        storeData(context, randomPrivateKey.value.toString())
-        val privatekey = BigInteger(retrieveData(context)).toFelt
-
-        val publicKey = StarknetCurve.getPublicKey(privatekey)
-
-    }
-
     fun weiToEther(wei: Uint256): BigDecimal {
         val weiInEther = BigDecimal("1000000000000000000") // 10^18
         return BigDecimal(wei.value.toString()).divide(weiInEther)
     }
-
-    private fun storeData(context: Context, message: String) {
-        try {
-            val masterKey = MasterKey.Builder(context)
-                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                .build()
-
-            //Creating an instance of EncryptedSharedPreferences using master key
-            val sharedPreferences = EncryptedSharedPreferences.create(
-                context,
-                "my_encrypted_prefs",
-                masterKey,
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-
-            )
-
-            // Storing the message directly in DataStore
-            val editor = sharedPreferences.edit()
-            editor.putString("key", message.toString())
-            editor.apply()
-
-        } catch (e: GeneralSecurityException) {
-            Log.e(tag, "Security exception while storing data: ${e.message}", e)
-        } catch (e: IOException) {
-            Log.e(tag, "I/O exception while storing data: ${e.message}", e)
-        }
-    }
-
-    private fun retrieveData(context: Context): String {
-        try {
-            val masterKey = MasterKey.Builder(context)
-                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                .build()
-
-            val sharedPreferences = EncryptedSharedPreferences.create(
-                context,
-                "my_encrypted_prefs",
-                masterKey,
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-
-            )
-
-            return sharedPreferences.getString("key", "") ?: ""
-
-        } catch (e: GeneralSecurityException) {
-            Log.e(tag, "Security exception while retrieving data: ${e.message}", e)
-            return ""
-        } catch (e: IOException) {
-            Log.e(tag, "I/O exception while retrieving data: ${e.message}", e)
-            return ""
-        }
-    }
-
-
 }

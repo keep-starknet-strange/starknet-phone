@@ -11,7 +11,7 @@ import com.example.walletapp.ui.activity.FinalizeAccountCreationScreen
 import com.example.walletapp.ui.onboarding.CreateAccountScreen
 import com.example.walletapp.ui.onboarding.CreatePinScreen
 import com.example.walletapp.ui.onboarding.ImportAccountScreen
-import com.example.walletapp.ui.onboarding.border.OnboardingScreen
+import com.example.walletapp.ui.onboarding.OnboardingScreen
 import com.example.walletapp.ui.theme.WalletappTheme
 import com.example.walletapp.ui.transfer.ReceiveScreen
 import com.example.walletapp.ui.transfer.SendScreen

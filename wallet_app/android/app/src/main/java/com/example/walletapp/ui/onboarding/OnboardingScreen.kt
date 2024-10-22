@@ -1,8 +1,7 @@
 package com.example.walletapp.ui.onboarding
 
-.border
 
-import android.app.Activity
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
