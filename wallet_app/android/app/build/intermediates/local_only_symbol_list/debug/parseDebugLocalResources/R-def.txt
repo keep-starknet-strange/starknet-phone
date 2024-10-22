@@ -1,0 +1,35 @@
+R_DEF: Internal format may change without notice
+local
+color black
+color white
+drawable approved
+drawable arrow_back_ios
+drawable check_circle
+drawable check_symbol
+drawable content_copy
+drawable copy
+drawable ic_ethereum
+drawable ic_launcher_background
+drawable ic_launcher_foreground
+drawable ic_strike
+drawable progress_1
+drawable progress_2
+drawable scanner
+drawable starknet_icon
+drawable token2
+drawable visibility
+drawable visibility_off
+drawable warning_sign
+font inter_regular
+font nohemi_medium
+font publicsans_bold
+font publicsans_regular
+font publicsans_semibold
+mipmap ic_launcher
+mipmap ic_launcher_round
+string app_name
+style Base.Theme.Walletapp
+style Theme.Walletapp
+xml backup_rules
+xml data_extraction_rules
+xml network_security_config
