@@ -1,1 +1,0 @@
-{"version":1,"contracts":[{"id":"p7r4f53rlah9k","package_name":"contracts","contract_name":"StarknetPhoneAccount","module_path":"contracts::account::account::StarknetPhoneAccount","artifacts":{"sierra":"contracts_StarknetPhoneAccount.contract_class.json","casm":null}}]}
