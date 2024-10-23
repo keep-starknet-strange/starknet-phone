@@ -11,21 +11,37 @@ import com.swmansion.starknet.account.Account
 import kotlinx.coroutines.future.await
 
 import java.math.BigDecimal
+import android.util.Log
+import com.swmansion.starknet.data.types.CairoVersion
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKey;
+import android.content.Context
+import com.swmansion.starknet.crypto.StarknetCurve
+import com.swmansion.starknet.extensions.toFelt
+import com.swmansion.starknet.extensions.toNumAsHex
+import java.io.IOException
+import java.math.BigInteger
+import java.security.GeneralSecurityException
 
 const val ETH_ERC20_ADDRESS = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7"
 
 class StarknetClient(private val rpcUrl: String) {
 
     private val provider = JsonRpcProvider(rpcUrl)
-    private val privateKey= BuildConfig.PRIVATE_KEY
-    private val accountAddress= BuildConfig.ACCOUNT_ADDRESS
+    private val privateKey = BuildConfig.PRIVATE_KEY
+    private val accountAddress = BuildConfig.ACCOUNT_ADDRESS
+    private val tag = "StarknetClient"
+    private val keystore = Keystore()
 
     suspend fun deployAccount() {
-
-
         // Predefined values for account creation
-        val privateKey = Felt.fromHex(privateKey)
-        val accountAddress = Felt.fromHex(accountAddress)
+
+        val randomPrivateKey = StandardAccount.generatePrivateKey()
+        keystore.storeData(randomPrivateKey.value.toString())       // save the key generated
+        val data = keystore.retrieveData()                          // retrieve it to generate public key
+        val privateKey = BigInteger(data).toFelt
+
+        val accountAddress = StarknetCurve.getPublicKey(privateKey)
 
         val signer = StarkCurveSigner(privateKey)
         val chainId = provider.getChainId().sendAsync().await()
@@ -34,7 +50,7 @@ class StarknetClient(private val rpcUrl: String) {
             signer = signer,
             provider = provider,
             chainId = chainId,
-            cairoVersion = Felt.ONE,
+            cairoVersion = CairoVersion.ONE,
         )
 
         // TODO(#99): add account deployment logic
