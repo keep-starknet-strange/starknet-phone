@@ -17,5 +17,3 @@ lightclientservice/.idea
 **/*.so
 
 **/.idea/*
-
-app/build
