@@ -87,6 +87,15 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "mubarak23",
+      "name": "Mubarak Muhammad Aminu",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7858376?v=4",
+      "profile": "https://github.com/mubarak23",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
