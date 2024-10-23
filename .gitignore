@@ -4,6 +4,9 @@
 # mdBook
 docs/book/
 
+target
+
+
 **/.gradle/*
 
 lightclientservice/app/build
