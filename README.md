@@ -41,6 +41,7 @@ We live on contributions. If you'd like to contribute please follow the [guide](
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Gift-Naomi"><img src="https://avatars.githubusercontent.com/u/149405096?v=4?s=100" width="100px;" alt="Mystic"/><br /><sub><b>Mystic</b></sub></a><br /><a href="#design-Gift-Naomi" title="Design">🎨</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/mubarak23"><img src="https://avatars.githubusercontent.com/u/7858376?v=4?s=100" width="100px;" alt="Mubarak Muhammad Aminu"/><br /><sub><b>Mubarak Muhammad Aminu</b></sub></a><br /><a href="https://github.com/keep-starknet-strange/starknet-phone/commits?author=mubarak23" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
