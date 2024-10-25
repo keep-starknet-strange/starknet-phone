@@ -24,13 +24,8 @@ fn ALICE() -> ContractAddress {
     'ALICE'.try_into().unwrap()
 }
 
-fn declare_erc20_mock() -> ContractClass {
-    declare("ERC20Mock")
-}
-
-fn deploy_erc20_mock(
-    class: ContractClass, name: ByteArray, symbol: ByteArray,
-) -> IERC20Dispatcher {
+fn deploy_erc20_mock(name: ByteArray, symbol: ByteArray,) -> IERC20Dispatcher {
+    let class = declare("ERC20Mock");
     let mut calldata = array![];
     name.serialize(ref calldata);
     symbol.serialize(ref calldata);
@@ -49,18 +44,24 @@ fn deploy_wallet() -> IStarknetPhoneAccountDispatcher {
     wallet
 }
 
-fn _setup() -> (IStarknetPhoneAccountDispatcher, IERC20Dispatcher, IERC20Dispatcher) {
-    let mock_erc20_class = declare_erc20_mock();
-    let mock_erc20_dispatcher_1 = deploy_erc20_mock(mock_erc20_class, "mock one", "MCK1");
-    let mock_erc20_dispatcher_2 = deploy_erc20_mock(mock_erc20_class, "mock two", "MCK2");
+fn _setup() -> (IStarknetPhoneAccountDispatcher, IERC20Dispatcher) {
+    let mock_erc20_dispatcher = deploy_erc20_mock("mock one", "MCK1");
     let wallet_dispatcher = deploy_wallet();
 
-    (wallet_dispatcher, mock_erc20_dispatcher_1, mock_erc20_dispatcher_2)
+    (wallet_dispatcher, mock_erc20_dispatcher)
+}
+
+fn craft_call(to: ContractAddress, recipient: ContractAddress, amount: u256) -> Call {
+    let mut calldata = array![];
+    recipient.serialize(ref calldata);
+    amount.serialize(ref calldata);
+
+    Call { to, selector: selector!("transfer"), calldata: calldata.span() }
 }
 
 #[test]
 fn test_deploy() {
-    let (wallet, _, _) = _setup();
+    let (wallet, _) = _setup();
 
     let pub_key = wallet.get_public_key();
     assert(pub_key == PUB_KEY, 'Pub key not set');
@@ -69,7 +70,7 @@ fn test_deploy() {
 // Test that only the contract owner can change the public key
 #[test]
 fn test_only_account_can_change_public_key() {
-    let (wallet, _, _) = _setup();
+    let (wallet, _) = _setup();
 
     // Other contract calls function
     let new_pub_key = 'new_pub_key';
@@ -85,7 +86,7 @@ fn test_only_account_can_change_public_key() {
 #[test]
 #[should_panic]
 fn test_other_account_cannot_change_public_key() {
-    let (wallet, _, _) = _setup();
+    let (wallet, _) = _setup();
 
     // Other contract calls function
     let not_wallet = contract_address_const::<'not_wallet'>();
@@ -106,7 +107,7 @@ fn test_is_valid_signature() { // TODO: Test is_valid_signature() works as expec
 #[test]
 #[should_panic(expected: ('invalid caller',))]
 fn test_execute_with_invalid_caller() {
-    let (wallet, mock_erc20, _) = _setup();
+    let (wallet, mock_erc20) = _setup();
 
     // Other contract calls function
     let not_wallet = contract_address_const::<'not_wallet'>();
@@ -131,7 +132,7 @@ fn test_execute_with_invalid_caller() {
 
 #[test]
 fn test_execute() {
-    let (wallet, mock_erc20, _) = _setup();
+    let (wallet, mock_erc20) = _setup();
 
     // fund wallet
     start_prank(CheatTarget::One(mock_erc20.contract_address), OWNER());
@@ -140,13 +141,7 @@ fn test_execute() {
 
     // Craft call and add to calls array
     let amount = 200_u256;
-    let mut calldata = array![];
-    RECIPIENT().serialize(ref calldata);
-    amount.serialize(ref calldata);
-
-    let call = Call {
-        to: mock_erc20.contract_address, selector: selector!("transfer"), calldata: calldata.span()
-    };
+    let call = craft_call(mock_erc20.contract_address, RECIPIENT(), amount);
 
     let calls = array![call];
 
@@ -154,6 +149,7 @@ fn test_execute() {
 
     let wallet_ballance_before = mock_erc20.balance_of(wallet.contract_address);
 
+    // execute
     start_prank(CheatTarget::One(wallet.contract_address), zero);
     wallet.__execute__(calls);
     stop_prank(CheatTarget::One(wallet.contract_address));
@@ -164,17 +160,9 @@ fn test_execute() {
     assert(mock_erc20.balance_of(RECIPIENT()) == amount, 'wrong recipient balance');
 }
 
-fn craft_call(to: ContractAddress, recipient: ContractAddress, amount: u256) -> Call {
-    let mut calldata = array![];
-    recipient.serialize(ref calldata);
-    amount.serialize(ref calldata);
-
-    Call { to, selector: selector!("transfer"), calldata: calldata.span() }
-}
-
 #[test]
 fn test_multicall() {
-    let (wallet, mock_erc20, _) = _setup();
+    let (wallet, mock_erc20) = _setup();
 
     // fund wallet
     start_prank(CheatTarget::One(mock_erc20.contract_address), OWNER());
@@ -196,6 +184,7 @@ fn test_multicall() {
 
     let zero = contract_address_const::<0>();
 
+    // execute
     start_prank(CheatTarget::One(wallet.contract_address), zero);
     wallet.__execute__(calls);
     stop_prank(CheatTarget::One(wallet.contract_address));
