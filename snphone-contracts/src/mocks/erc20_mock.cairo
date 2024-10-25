@@ -1,6 +1,6 @@
 #[starknet::contract]
 pub mod ERC20Mock {
-    use openzeppelin::erc20::{ERC20Component, ERC20HooksEmptyImpl};
+    use openzeppelin::token::erc20::{ERC20Component};
     use starknet::ContractAddress;
 
     component!(path: ERC20Component, storage: erc20, event: ERC20Event);
@@ -31,6 +31,6 @@ pub mod ERC20Mock {
         recipient: ContractAddress
     ) {
         self.erc20.initializer(name, symbol);
-        self.erc20.mint(recipient, initial_supply);
+        self.erc20._mint(recipient, initial_supply);
     }
 }
