@@ -117,6 +117,9 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.fragment)
     implementation (libs.androidx.hilt.navigation.compose.v100alpha03)
 
+    implementation("androidx.room:room-runtime:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
 
     implementation(libs.androidx.ui.tooling.preview)
     debugImplementation(libs.androidx.ui.tooling)

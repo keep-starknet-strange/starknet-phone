@@ -59,12 +59,13 @@ class StarknetClient(private val rpcUrl: String) {
 
     // TODO(#107): change name to getBalance, support getting balance for any token
     // follow example: https://github.com/software-mansion/starknet-jvm/blob/main/androiddemo/src/main/java/com/example/androiddemo/MainActivity.kt
-    suspend fun getEthBalance(accountAddress: Felt): Uint256 {
+    suspend fun getBalance(accountAddress: Felt,contractAddress:Felt): Uint256 {
         val erc20ContractAddress = Felt.fromHex(ETH_ERC20_ADDRESS)
+
 
         // Create a call to Starknet ERC-20 ETH contract
         val call = Call(
-            contractAddress = erc20ContractAddress,
+            contractAddress = contractAddress,
             entrypoint = "balanceOf", // entrypoint can be passed both as a string name and Felt value
             calldata = listOf(accountAddress), // calldata is List<Felt>, so we wrap accountAddress in listOf()
         )

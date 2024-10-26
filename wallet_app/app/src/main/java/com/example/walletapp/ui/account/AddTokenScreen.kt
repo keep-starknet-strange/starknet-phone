@@ -1,5 +1,7 @@
 package com.example.walletapp.ui.account
 
+import android.app.Activity
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,20 +24,24 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import com.example.walletapp.R
+import com.example.walletapp.model.Token
+import com.swmansion.starknet.data.types.Felt
 
 @Composable
-fun AddTokenScreen(onConfirm: () -> Unit) {
+fun AddTokenScreen(tokenViewModel:TokenViewModel,onConfirm: () -> Unit) {
     Surface(modifier = Modifier.fillMaxSize()) {
         val contactAddress = rememberSaveable { mutableStateOf("") }
         val name = rememberSaveable { mutableStateOf("") }
         val symbol = rememberSaveable { mutableStateOf("") }
         val decimals = rememberSaveable { mutableStateOf("") }
+        val context = (LocalContext.current as Activity)
 
         Column(
             modifier = Modifier
@@ -92,7 +98,36 @@ fun AddTokenScreen(onConfirm: () -> Unit) {
 
             // TODO: handle saving the token data
             Button(
-                onClick = onConfirm,
+                onClick = {
+                    val decimalValue = decimals.value.toIntOrNull()
+                    val addressPattern = Regex("^0x[a-fA-F0-9]{64}$")
+                    if (!addressPattern.matches(contactAddress.value)) {
+                        Toast.makeText(context, "Please enter a valid address", Toast.LENGTH_LONG).show()
+                    }
+                    else if (name.value.isEmpty()) {
+                        Toast.makeText(context, "Please enter name", Toast.LENGTH_LONG)
+                            .show()
+                    }
+                     else if (symbol.value.isEmpty()) {
+                        Toast.makeText(context, "Please enter symbol", Toast.LENGTH_LONG)
+                            .show()
+                    } else if (decimalValue == null || decimalValue !in 0..18) {
+                        Toast.makeText(context, "Please enter valid decimal", Toast.LENGTH_LONG)
+                            .show()
+                    }else{
+                        onConfirm()
+                        // Save data to local storage here
+                        val address=Felt.fromHex(contactAddress.value)
+                        val newToken = Token(
+                            contactAddress = address,
+                            name = name.value,
+                            symbol = symbol.value,
+                            decimals = decimalValue
+                        )
+                        tokenViewModel.insertToken(newToken) // Insert the new token
+                        Toast.makeText(context, "Token added!", Toast.LENGTH_LONG).show()
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -135,10 +170,11 @@ fun SimpleTextField(
             shape = RoundedCornerShape(15.dp),
             modifier = Modifier.fillMaxWidth(),
             textStyle = TextStyle(
-                color = Color.Black,
+                color = Color.White,
                 fontSize = 16.sp
             )
         )
     }
 }
+
 
