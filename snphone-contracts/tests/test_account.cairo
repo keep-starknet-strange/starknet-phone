@@ -100,11 +100,9 @@ fn test_other_account_cannot_change_public_key() {
 
     assert(wallet.get_public_key() != new_pub_key, 'Pub key should not change');
 }
-
-// #[test]
-fn test_is_valid_signature() { // TODO: Test is_valid_signature() works as expected (valid returns true, anything else returns false (check 0 hash and empty sigs as well))
-}
-
+//#[test]
+//fn test_is_valid_signature() { // TODO: Test is_valid_signature() works as expected (valid returns true, anything else returns false (check 0 hash and empty sigs as well))
+//}
 
 #[test]
 #[should_panic(expected: ('invalid caller',))]
