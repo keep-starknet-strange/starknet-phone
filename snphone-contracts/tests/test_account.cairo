@@ -51,7 +51,9 @@ fn _setup() -> (IStarknetPhoneAccountDispatcher, IERC20Dispatcher) {
     (wallet_dispatcher, mock_erc20_dispatcher)
 }
 
-fn craft_call(to: ContractAddress, recipient: ContractAddress, amount: u256) -> Call {
+fn craft_erc20_transfer_call(
+    to: ContractAddress, recipient: ContractAddress, amount: u256
+) -> Call {
     let mut calldata = array![];
     recipient.serialize(ref calldata);
     amount.serialize(ref calldata);
@@ -141,7 +143,7 @@ fn test_execute() {
 
     // Craft call and add to calls array
     let amount = 200_u256;
-    let call = craft_call(mock_erc20.contract_address, RECIPIENT(), amount);
+    let call = craft_erc20_transfer_call(mock_erc20.contract_address, RECIPIENT(), amount);
 
     let calls = array![call];
 
@@ -175,10 +177,14 @@ fn test_multicall() {
     let forth_amount = 50_u256;
 
     // Craft call and add to calls array
-    let first_call = craft_call(mock_erc20.contract_address, RECIPIENT(), first_amount);
-    let second_call = craft_call(mock_erc20.contract_address, OWNER(), second_amount);
-    let third_call = craft_call(mock_erc20.contract_address, BOB(), third_amount);
-    let forth_call = craft_call(mock_erc20.contract_address, ALICE(), forth_amount);
+    let first_call = craft_erc20_transfer_call(
+        mock_erc20.contract_address, RECIPIENT(), first_amount
+    );
+    let second_call = craft_erc20_transfer_call(
+        mock_erc20.contract_address, OWNER(), second_amount
+    );
+    let third_call = craft_erc20_transfer_call(mock_erc20.contract_address, BOB(), third_amount);
+    let forth_call = craft_erc20_transfer_call(mock_erc20.contract_address, ALICE(), forth_amount);
 
     let calls = array![first_call, second_call, third_call, forth_call];
 
