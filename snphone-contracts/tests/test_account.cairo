@@ -105,6 +105,32 @@ fn test_other_account_cannot_change_public_key() {
 //}
 
 #[test]
+fn test_is_not_valid_signature() {
+    let class_hash = declare("StarknetPhoneAccount");
+    let _pub_key = 'pub_key';
+    let contract_address = class_hash.deploy(@array![_pub_key]).unwrap();
+    let wallet = IStarknetPhoneAccountDispatcher { contract_address };
+    assert(
+        wallet.is_valid_signature(0x0, array!['starknet', 'phone'].span()) == 0, 'Valid signature'
+    );
+}
+#[test]
+fn test_empty_signature() {
+    let class_hash = declare("StarknetPhoneAccount");
+    let _pub_key = 'pub_key';
+    let contract_address = class_hash.deploy(@array![_pub_key]).unwrap();
+    let wallet = IStarknetPhoneAccountDispatcher { contract_address };
+    assert(
+        wallet.is_valid_signature('test', array![].span()) == 'invalid signature', 'Empty signature'
+    );
+}
+//#[test]
+//fn test_execute() { // TODO: Test __execute__() works as expected (solo and multi-calls should work as expected)
+//        - Might need to create a mock erc20 contract to test calls (see if the wallet is able to do a multi call (try sending eth to 2 accounts from the 
+//          deployed wallet, both accounts' balance should update)
+//}
+
+#[test]
 #[should_panic(expected: ('invalid caller',))]
 fn test_execute_with_invalid_caller() {
     let (wallet, mock_erc20) = _setup();
