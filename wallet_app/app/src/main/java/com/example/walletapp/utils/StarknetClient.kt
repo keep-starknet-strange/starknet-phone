@@ -2,15 +2,15 @@ package com.example.walletapp.utils
 
 import com.example.walletapp.BuildConfig
 import com.swmansion.starknet.account.StandardAccount
+import com.swmansion.starknet.data.ContractAddressCalculator
 import com.swmansion.starknet.data.types.Call
 import com.swmansion.starknet.data.types.Felt
 import com.swmansion.starknet.data.types.Uint256
 import com.swmansion.starknet.provider.rpc.JsonRpcProvider
 import com.swmansion.starknet.signer.StarkCurveSigner
 import com.swmansion.starknet.account.Account
-import com.swmansion.starknet.deployercontract.StandardDeployer
-import com.swmansion.starknet.data.selectorFromName
 import kotlinx.coroutines.future.await
+import java.security.SecureRandom
 
 import java.math.BigDecimal
 import android.util.Log
@@ -26,6 +26,7 @@ import java.math.BigInteger
 import java.security.GeneralSecurityException
 
 const val ETH_ERC20_ADDRESS = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7"
+const val ACCOUNT_CLASS_HASH = "0x04c6d6cf894f8bc96bb9c525e6853e5483177841f7388f74a46cfda6f028c755"
 
 class StarknetClient(private val rpcUrl: String) {
 
@@ -37,37 +38,46 @@ class StarknetClient(private val rpcUrl: String) {
 
     suspend fun deployAccount() {
         // Predefined values for account creation
-
         val randomPrivateKey = StandardAccount.generatePrivateKey()
         keystore.storeData(randomPrivateKey.value.toString())       // save the key generated
         val data = keystore.retrieveData()                          // retrieve it to generate public key
         val privateKey = BigInteger(data).toFelt
 
-        val accountAddress = StarknetCurve.getPublicKey(privateKey)
+        val publicKey = StarknetCurve.getPublicKey(privateKey)
 
         val signer = StarkCurveSigner(privateKey)
+
         val chainId = provider.getChainId().sendAsync().await()
 
+        val salt = BigInteger(250, SecureRandom()).toFelt
+
+        val accountContractClassHash = Felt.fromHex(ACCOUNT_CLASS_HASH)
+
+        val address = ContractAddressCalculator.calculateAddressFromHash(
+            classHash = accountContractClassHash,
+            calldata = listOf(publicKey),
+            salt = salt,
+        )
+
         val account = StandardAccount(
-            address = accountAddress,
+            address = address,
             signer = signer,
             provider = provider,
             chainId = chainId,
             cairoVersion = CairoVersion.ONE,
         )
 
-        val deployer =  StandardDeployer(
-            accountAddress,
-            provider,
-            account,
+        // Fund address first
+        // how to approach this, we need the user to fund the address
+
+        val payload = account.signDeployAccountV1(
+            classHash = accountContractClassHash,
+            calldata = listOf(publicKey),
+            salt = salt,
+            // 10*fee from estimate deploy account fee
+            maxFee = Felt.fromHex("0x11fcc58c7f7000"),
         )
-
-        val deployment = deployer.deployContractV1(
-            classHash =  selectorFromName("Account"),
-            constructorCalldata = listOf(signer.publicKey)
-        ).sendAsync().await()
-
-        deployer.findContractAddress(deployment).send()
+        provider.deployAccount(payload).send()
     }
 
     // TODO(#107): change name to getBalance, support getting balance for any token
