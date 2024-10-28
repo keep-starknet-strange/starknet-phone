@@ -1,5 +1,6 @@
 package com.example.walletapp.ui.transfer
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,17 +39,92 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
+import com.example.walletapp.BuildConfig
 import com.example.walletapp.R
+import com.example.walletapp.ui.account.WalletViewModel
+import android.widget.Toast
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import com.example.walletapp.utils.etherToWei
+import com.example.walletapp.utils.isValidEthereumAddress
+import com.swmansion.starknet.account.StandardAccount
+import com.swmansion.starknet.data.types.CairoVersion
+import com.swmansion.starknet.data.types.Felt
+import com.swmansion.starknet.extensions.toFelt
+import com.swmansion.starknet.provider.rpc.JsonRpcProvider
+import com.swmansion.starknet.signer.StarkCurveSigner
+import kotlinx.coroutines.future.await
+import java.math.BigDecimal
+
 
 @Composable
-fun SendScreen() {
+fun SendScreen(walletViewModel: WalletViewModel) {
+
+    val balance by walletViewModel.balance.collectAsState()
+    val address= BuildConfig.ACCOUNT_ADDRESS
+    val accountAddress = Felt.fromHex(address)
+    var amount by rememberSaveable { mutableStateOf("0.00") }
+    var destinationWallet by rememberSaveable { mutableStateOf("") }
+    val context = (LocalContext.current as Activity)
+
+    suspend fun handleOnClick(amount: String, destinationWallet: String) {
+        try {
+            val amountValue = amount.toBigDecimalOrNull()
+            val balanceValue = balance
+
+            if (!isValidEthereumAddress(destinationWallet)){
+                Toast.makeText(
+                    context,
+                    "Invalid address",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            else if (amountValue == null || amountValue.equals(BigDecimal(0))) {
+                Toast.makeText(
+                    context,
+                    "Amount cannot be empty",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+            else if (balanceValue.isBlank() && amount.toDouble() <= balanceValue.toDouble()) {
+                Toast.makeText(context, "Insufficient balance", Toast.LENGTH_LONG).show()
+            }
+            else {
+                val provider = JsonRpcProvider("https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_7/yPM6Zsiftub_GVxfcKGpDzoS1J89DrnZ")
+                val privateKey = "0x0647d2592a17db05fe60d079ca3336cc5ae984729a7ff63cef3ed1edf3a44bb4".toFelt
+
+                val signer = StarkCurveSigner(privateKey)
+                val chainId = provider.getChainId().sendAsync().await()
+                val standardAccount = StandardAccount(
+                    address = accountAddress,
+                    signer = signer,
+                    provider = provider,
+                    chainId = chainId,
+                    cairoVersion = CairoVersion.ONE,
+                )
+                val toAddress = destinationWallet.toFelt
+                val amountUint256 = etherToWei(amountValue)
+                walletViewModel.transferFunds(standardAccount, toAddress, amountUint256)
+            }
+        } catch (e: Exception) {
+            println(e);
+        }
+    }
+
+    var activateHandleOnClick by remember { mutableStateOf(false) }
+
+    if (activateHandleOnClick) {
+        LaunchedEffect(Unit) {
+            handleOnClick(amount, destinationWallet)
+            activateHandleOnClick = false
+        }
+    }
+
     Surface(modifier = Modifier.fillMaxSize()) {
         /* TODO(34) send tokens */
-
-        var amount by rememberSaveable {
-            mutableStateOf("0.00")
-        }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -58,6 +134,74 @@ fun SendScreen() {
             verticalArrangement = Arrangement.Center
         ) {
             Spacer(modifier = Modifier.height(40.dp))
+
+            // "From" label above the wallet address field (readonly)
+            Text(
+                text = "From",
+                fontFamily = FontFamily(Font(R.font.publicsans_regular)),
+                color = Color.White,
+                fontSize = 14.sp
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // From Address TextField (Read-only)
+            TextField(
+                value = address,
+                onValueChange = {},
+                textStyle = TextStyle(
+                    fontFamily = FontFamily(Font(R.font.publicsans_regular)),
+                    color = Color.White,
+                    textAlign = TextAlign.Start,
+                    fontSize = 16.sp
+                ),
+                enabled = false, // Read-only
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "To",
+                fontFamily = FontFamily(Font(R.font.publicsans_regular)),
+                color = Color.White,
+                fontSize = 14.sp
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Wallet Address TextField
+            TextField(
+                value = destinationWallet,
+                onValueChange = { newValue ->
+                    destinationWallet = newValue
+                },
+                placeholder = { Text("Enter public address (0x)", color = Color.Gray) }, // Placeholder text
+                textStyle = TextStyle(
+                    fontFamily = FontFamily(Font(R.font.publicsans_regular)),
+                    color = Color.White,
+                    textAlign = TextAlign.Start,
+                    fontSize = 16.sp
+                ),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text, // Text keyboard for wallet address
+                    imeAction = ImeAction.Done
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Description Text
+            Text(
+                text = "Amount to send",
+                fontFamily = FontFamily(Font(R.font.publicsans_regular)),
+                color = Color.White,
+                fontSize = 14.sp
+            )
+
             // Dropdown button for selecting currency
             Button(
                 onClick = { /* Handle currency selection */ },
@@ -79,7 +223,7 @@ fun SendScreen() {
                 )
             }
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Amount Text
             TextField(
@@ -99,21 +243,11 @@ fun SendScreen() {
                 singleLine = true,
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Description Text
-            Text(
-                text = "Amount to send",
-                fontFamily = FontFamily(Font(R.font.publicsans_regular)),
-                color = Color.White,
-                fontSize = 14.sp
-            )
-
             Spacer(modifier = Modifier.weight(1f))
 
             // Confirm Button
             Button(
-                onClick = { /* Handle confirm action */ },
+                onClick = { activateHandleOnClick = true },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
                 modifier = Modifier
                     .fillMaxWidth()

@@ -6,8 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.WindowCompat
-import com.example.walletapp.BuildConfig
-import com.example.walletapp.utils.StarknetClient
 
 class MainActivity : ComponentActivity() {
     init {

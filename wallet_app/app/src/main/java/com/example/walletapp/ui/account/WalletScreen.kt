@@ -48,7 +48,6 @@ import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.walletapp.BuildConfig
 import com.example.walletapp.R
-import com.example.walletapp.utils.StarknetClient
 import com.example.walletapp.utils.toDoubleWithTwoDecimal
 import com.example.walletapp.utils.weiToEther
 import com.swmansion.starknet.data.types.Felt
@@ -61,14 +60,16 @@ import kotlinx.coroutines.withContext
 fun WalletScreen(
     onNewTokenPress: () -> Unit,
     onSendPress: () -> Unit,
-    onReceivePress: () -> Unit
+    onReceivePress: () -> Unit,
+    walletViewModel: WalletViewModel
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Wallet(
             modifier = Modifier.padding(10.dp),
             onNewTokenPress = onNewTokenPress,
             onSendPress = onSendPress,
-            onReceivePress = onReceivePress
+            onReceivePress = onReceivePress,
+            walletViewModel = walletViewModel
         )
     }
 }
@@ -76,14 +77,13 @@ fun WalletScreen(
 
 
 @Composable
-fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -> Unit, onSendPress: () -> Unit) {
+fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -> Unit, onSendPress: () -> Unit, walletViewModel: WalletViewModel) {
     val networkList = listOf("Starknet Mainnet", "Test Networks")
     var selectedNetworkIndex by remember { mutableStateOf(0) }
     val context = (LocalContext.current as Activity)
     val address= BuildConfig.ACCOUNT_ADDRESS
     val accountAddress = Felt.fromHex(address)
-    val starknetClient = StarknetClient(BuildConfig.RPC_URL)
-    var balance by remember { mutableStateOf("") }
+    val balance by walletViewModel.balance.collectAsState()
 
     val coinViewModel: CoinViewModel = viewModel()
 
@@ -92,29 +92,21 @@ fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -
     }
 
     val prices by coinViewModel.prices
-    val errorMessage by coinViewModel.errorMessage
+    val errorMessageCoinViewModel by coinViewModel.errorMessage
+    val errorMessageWalletViewModel by walletViewModel.errorMessage;
 
     // TODO(#106): use the accounts stored tokens instead of hardcoding
     LaunchedEffect(Unit) {
         coinViewModel.getTokenPrices(ids = "starknet,ethereum", vsCurrencies = "usd")
     }
 
-    LaunchedEffect (Unit){
-        // TODO(#107): fetch all token balances
-        try {
-            val getBalance = starknetClient.getEthBalance(accountAddress)
-            withContext(Dispatchers.Main) {
-                balance = weiToEther(getBalance).toDoubleWithTwoDecimal()
-            }
-        } catch (e: RpcRequestFailedException) {
-            withContext(Dispatchers.Main) { Toast.makeText(context, "${e.code}: ${e.message}", Toast.LENGTH_LONG).show() }
-        } catch (e: Exception) {
-            withContext(Dispatchers.Main) { Toast.makeText(context, e.message, Toast.LENGTH_LONG).show() }
-        }
+    LaunchedEffect(Unit) {
+        walletViewModel.fetchBalance(accountAddress)
     }
-    if (errorMessage.isNotEmpty()) {
+
+    if (errorMessageCoinViewModel.isNotEmpty()) {
         Text(
-            text = errorMessage,
+            text = errorMessageCoinViewModel,
             color = MaterialTheme.colors.error,
             modifier = Modifier.padding(16.dp)
         )
@@ -125,6 +117,10 @@ fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
+    }
+
+    if(errorMessageWalletViewModel.isNotEmpty()) {
+        Toast.makeText(context, errorMessageWalletViewModel, Toast.LENGTH_LONG).show()
     }
 
     Column(
@@ -143,7 +139,7 @@ fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -
                 selectedNetworkIndex,
                 modifier = Modifier,
                 onItemClick = { index ->
-                   selectedNetworkIndex = index
+                    selectedNetworkIndex = index
                 }
             )
         }
@@ -331,7 +327,7 @@ fun SwitchNetwork(
                     ) {
 
                         Image(
-                          painter = painterResource(id = R.drawable.token2),
+                            painter = painterResource(id = R.drawable.token2),
                             contentDescription = "Logo",
                             modifier = Modifier.size(20.dp)
                         )
@@ -362,84 +358,92 @@ fun SwitchNetwork(
                 properties = PopupProperties(excludeFromSystemGesture = true),
                 onDismissRequest = { isVisible = false } // Close dropdown when clicking outside
             ) {
-               Box(
-                   modifier = Modifier
-                       .padding(top = 70.dp)
-               ){
-                   Box(
-                       modifier = Modifier
+                Box(
+                    modifier = Modifier
+                        .padding(top = 70.dp)
+                ){
+                    Box(
+                        modifier = Modifier
 
-                           .height(140.dp)
-                           .width(260.dp)
-                   ) {
-                       Box(
-                           modifier = Modifier
-                               .fillMaxSize()
-                               .clip(RoundedCornerShape(10.dp))
-                               .background(Color("#1B1B76".toColorInt()))
-                       )
-                       Box(
-                           modifier = Modifier
-                               .fillMaxSize()
-                               .border(1.dp, Color("#5A5A5A".toColorInt()), RoundedCornerShape(10.dp))
-                       )
+                            .height(140.dp)
+                            .width(260.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color("#1B1B76".toColorInt()))
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .border(
+                                    1.dp,
+                                    Color("#5A5A5A".toColorInt()),
+                                    RoundedCornerShape(10.dp)
+                                )
+                        )
 
-                       Column(
-                           modifier = Modifier
-                               .fillMaxSize()
-                               .padding(4.dp),
-                       ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(4.dp),
+                        ) {
 
-                           Row(
-                               modifier = Modifier.fillMaxWidth(),
-                               horizontalArrangement = Arrangement.End
-                           ) {
-                               IconButton(onClick = { isVisible = false }) {
-                                   Icon(
-                                       imageVector = Icons.Default.Close,
-                                       contentDescription = "Close Popup",
-                                       tint = Color.White
-                                   )
-                               }
-                           }
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                IconButton(onClick = { isVisible = false }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = "Close Popup",
+                                        tint = Color.White
+                                    )
+                                }
+                            }
 
-                           itemList.forEachIndexed { index, item ->
-                               Box(
-                                   modifier = Modifier
-                                       .fillMaxWidth()
-                                       .background(if (index == selectedIndex) Color("#6D6CA7".toColorInt()) else Color("#1B1B76".toColorInt()))
-                                       .clickable {
-                                           onItemClick(index)
-                                           isVisible = false
-                                       }
-                                       .padding(vertical = 5.dp)
-                                       .padding(bottom = 10.dp),
-                                   contentAlignment = Alignment.Center
-                               ) {
-                                   Row(
-                                       modifier = Modifier.fillMaxWidth(),
-                                       horizontalArrangement = Arrangement.Center
+                            itemList.forEachIndexed { index, item ->
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(
+                                            if (index == selectedIndex) Color("#6D6CA7".toColorInt()) else Color(
+                                                "#1B1B76".toColorInt()
+                                            )
+                                        )
+                                        .clickable {
+                                            onItemClick(index)
+                                            isVisible = false
+                                        }
+                                        .padding(vertical = 5.dp)
+                                        .padding(bottom = 10.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.Center
 
-                                   ) {
-                                       Image(
-                                           painter = painterResource(id = R.drawable.token2),
-                                           contentDescription = "Logo",
-                                           modifier = Modifier.size(20.dp)
-                                       )
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.token2),
+                                            contentDescription = "Logo",
+                                            modifier = Modifier.size(20.dp)
+                                        )
 
-                                       Spacer(modifier = Modifier.width(10.dp)) // Add horizontal space between the Image and Text
+                                        Spacer(modifier = Modifier.width(10.dp)) // Add horizontal space between the Image and Text
 
-                                       Text(
-                                           text = item,
-                                           color = Color.White
-                                       )
-                                   }
-                               }
-                           }
+                                        Text(
+                                            text = item,
+                                            color = Color.White
+                                        )
+                                    }
+                                }
+                            }
 
-                       }
-                   }
-               }
+                        }
+                    }
+                }
             }
         }
 
