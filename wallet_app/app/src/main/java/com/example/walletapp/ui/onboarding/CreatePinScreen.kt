@@ -35,9 +35,12 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun CreatePinScreen(onContinue: () -> Unit) {
-    val context = (LocalContext.current as Activity)
+    val context = (LocalContext.current as? Activity)
     var passcode by remember { mutableStateOf("") }
     var hiddenPasscode by remember { mutableStateOf("") }
+    var isConfirming by remember {mutableStateOf(false)}
+    var createdPasscode by remember { mutableStateOf("") }
+    var isError by remember{ mutableStateOf(false) }
     val maxDigits = 6
     val coroutineScope = rememberCoroutineScope()
 
@@ -78,7 +81,8 @@ fun CreatePinScreen(onContinue: () -> Unit) {
 
 
             Text(
-                text = "Create PIN-code", style = TextStyle(
+                text = if (isConfirming)"Confirm PIN-code" else "Create PIN-code",
+                style = TextStyle(
                     color = Color.White, fontSize = 25.sp,
                     fontWeight = FontWeight.Medium
                 )
@@ -92,11 +96,24 @@ fun CreatePinScreen(onContinue: () -> Unit) {
                 )
             )
 
+            //Error Message when pins do not match
+            if (isError){
+                Text(
+                    text = "PINs don't match. Please try again.",
+                    style = TextStyle(
+                        color = Color.Red,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium
+                    ),
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+
 
 
 
             Spacer(modifier = Modifier.height(31.dp))
-            PasscodeCircles(passcode, hiddenPasscode, maxDigits)
+            PasscodeCircles(passcode, hiddenPasscode, maxDigits, isError)
 
             Spacer(modifier = Modifier.height(48.dp))
 
@@ -109,6 +126,31 @@ fun CreatePinScreen(onContinue: () -> Unit) {
                         hiddenPasscode = hiddenPasscode.dropLast(1) + "*"
                     }
                 }
+
+                if(passcode.length == maxDigits){
+                    if (isConfirming){
+                        if(passcode == createdPasscode){onContinue()}
+                        else{
+                            isError = true
+                            passcode = ""
+                            hiddenPasscode = ""
+                            isConfirming = false
+                            createdPasscode = ""
+                            coroutineScope.launch{
+                                delay(5000)
+                                isError = false
+                            }
+
+
+                        }
+                    } else {
+                        createdPasscode = passcode
+                        passcode = ""
+                        hiddenPasscode = ""
+                        isConfirming = true
+                    }
+                }
+
             }, onDeleteClick = {
                 if (passcode.isNotEmpty()) {
                     passcode = passcode.dropLast(1)
@@ -153,7 +195,7 @@ fun CreatePinScreen(onContinue: () -> Unit) {
 
 
 @Composable
-fun PasscodeCircles(passcode: String, hiddenPasscode: String, maxDigits: Int) {
+fun PasscodeCircles(passcode: String, hiddenPasscode: String, maxDigits: Int, isError: Boolean) {
     Row(
         modifier = Modifier
             .width(160.dp),
@@ -164,9 +206,20 @@ fun PasscodeCircles(passcode: String, hiddenPasscode: String, maxDigits: Int) {
             Box(
                 modifier = Modifier
                     .size(20.dp)
-                    .border(BorderStroke(2.dp, Color("#A3A3C1".toColorInt())), CircleShape)
+                    .border(
+                        BorderStroke(
+                            2.dp,
+                            if (isError) Color.Red else Color("#A3A3C1".toColorInt())
+                        ),
+                        CircleShape
+                    )
                     .background(
-                        if (isFilled) Color("#A3A3C1".toColorInt()) else Color.Transparent,
+                        when {
+                            isError && isFilled -> Color.Red
+                            isFilled -> Color("#A3A3C1".toColorInt())
+                            else -> Color.Transparent
+                        },
+//                        if (isFilled) Color("#A3A3C1".toColorInt()) else Color.Transparent,
                         CircleShape
                     ),
                 contentAlignment = Alignment.Center
