@@ -8,6 +8,8 @@ import com.swmansion.starknet.data.types.Uint256
 import com.swmansion.starknet.provider.rpc.JsonRpcProvider
 import com.swmansion.starknet.signer.StarkCurveSigner
 import com.swmansion.starknet.account.Account
+import com.swmansion.starknet.deployercontract.StandardDeployer
+import com.swmansion.starknet.data.selectorFromName
 import kotlinx.coroutines.future.await
 
 import java.math.BigDecimal
@@ -45,6 +47,7 @@ class StarknetClient(private val rpcUrl: String) {
 
         val signer = StarkCurveSigner(privateKey)
         val chainId = provider.getChainId().sendAsync().await()
+
         val account = StandardAccount(
             address = accountAddress,
             signer = signer,
@@ -53,8 +56,18 @@ class StarknetClient(private val rpcUrl: String) {
             cairoVersion = CairoVersion.ONE,
         )
 
-        // TODO(#99): add account deployment logic
+        val deployer =  StandardDeployer(
+            accountAddress,
+            provider,
+            account,
+        )
 
+        val deployment = deployer.deployContractV1(
+            classHash =  selectorFromName("Account"),
+            constructorCalldata = listOf(signer.publicKey)
+        ).sendAsync().await()
+
+        deployer.findContractAddress(deployment).send()
     }
 
     // TODO(#107): change name to getBalance, support getting balance for any token
