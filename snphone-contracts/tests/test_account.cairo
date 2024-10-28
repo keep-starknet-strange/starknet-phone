@@ -1,13 +1,12 @@
-use snforge_std::{declare, ContractClassTrait};
-use snforge_std::{start_prank, stop_prank, CheatTarget};
+use snforge_std::{declare, ContractClassTrait, DeclareResultTrait, start_cheat_caller_address, stop_cheat_caller_address};
 use starknet::contract_address_const;
 use contracts::account::{IStarknetPhoneAccountDispatcher, IStarknetPhoneAccountDispatcherTrait};
 
 #[test]
 fn test_deploy() {
-    let class_hash = declare("StarknetPhoneAccount");
+    let class_hash = declare("StarknetPhoneAccount").unwrap().contract_class();
     let _pub_key = 'pub_key';
-    let contract_address = class_hash.deploy(@array![_pub_key]).unwrap();
+    let (contract_address, _) = class_hash.deploy(@array![_pub_key]).unwrap();
     let wallet = IStarknetPhoneAccountDispatcher { contract_address };
 
     let pub_key = wallet.get_public_key();
@@ -17,17 +16,17 @@ fn test_deploy() {
 // Test that only the contract owner can change the public key
 #[test]
 fn test_only_account_can_change_public_key() {
-    let class_hash = declare("StarknetPhoneAccount");
+    let class_hash = declare("StarknetPhoneAccount").unwrap().contract_class();
     let _pub_key = 'pub_key';
-    let contract_address = class_hash.deploy(@array![_pub_key]).unwrap();
+    let (contract_address, _) = class_hash.deploy(@array![_pub_key]).unwrap();
     let wallet = IStarknetPhoneAccountDispatcher { contract_address };
 
     // Other contract calls function
     let new_pub_key = 'new_pub_key';
 
-    start_prank(CheatTarget::One(wallet.contract_address), contract_address);
+    start_cheat_caller_address(wallet.contract_address, contract_address);
     wallet.set_public_key(new_pub_key);
-    stop_prank(CheatTarget::One(wallet.contract_address));
+    stop_cheat_caller_address(wallet.contract_address);
 
     assert(wallet.get_public_key() == new_pub_key, 'Pub key should change');
 }
@@ -36,18 +35,18 @@ fn test_only_account_can_change_public_key() {
 #[test]
 #[should_panic]
 fn test_other_account_cannot_change_public_key() {
-    let class_hash = declare("StarknetPhoneAccount");
+    let class_hash = declare("StarknetPhoneAccount").unwrap().contract_class();
     let _pub_key = 'pub_key';
-    let contract_address = class_hash.deploy(@array![_pub_key]).unwrap();
+    let (contract_address, _) = class_hash.deploy(@array![_pub_key]).unwrap();
     let wallet = IStarknetPhoneAccountDispatcher { contract_address };
 
     // Other contract calls function
     let not_wallet = contract_address_const::<'not_wallet'>();
     let new_pub_key = 'new_pub_key';
 
-    start_prank(CheatTarget::One(wallet.contract_address), not_wallet);
+    start_cheat_caller_address(wallet.contract_address, contract_address);
     wallet.set_public_key(new_pub_key);
-    stop_prank(CheatTarget::One(wallet.contract_address));
+    stop_cheat_caller_address(wallet.contract_address);
 
     assert(wallet.get_public_key() != new_pub_key, 'Pub key should not change');
 }
