@@ -269,15 +269,23 @@ fun AccountInfoView(onContinue: () -> Unit) {
         }
 
         Spacer(modifier = Modifier.weight(1f))
-
-        Button(
-            onClick = onContinue,
-            contentPadding = ButtonDefaults.ContentPadding,
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt()), contentColor = Color.White),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(49.dp)
+ onClick = {
+        // Save the account information to DataStore when the button is clicked
+        scope.launch {
+            context.dataStore.edit { preferences ->
+                // Set hasAccount to true when the account creation is finalized
+                preferences[hasAccountKey] = true
+            }
+        }
+        // Navigate to the next screen
+        onContinue()
+    },
+    contentPadding = ButtonDefaults.ContentPadding,
+    shape = RoundedCornerShape(8.dp),
+    colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt()), contentColor = Color.White),
+    modifier = Modifier
+        .fillMaxWidth()
+        .height(49.dp
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("Continue")
