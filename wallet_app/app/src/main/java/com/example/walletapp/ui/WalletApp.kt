@@ -17,6 +17,9 @@ import com.example.walletapp.ui.transfer.ReceiveScreen
 import com.example.walletapp.ui.transfer.SendScreen
 import kotlinx.serialization.Serializable
 
+// Create DataStore instance for saving account preferences
+private val Context.dataStore by preferencesDataStore(name = "account_preferences")
+
 // main user account view
 @Serializable
 object Wallet
@@ -44,10 +47,31 @@ object Receive
 @Composable
 fun WalletApp() {
     WalletappTheme {
+        val context = LocalContext.current
+        val scope = rememberCoroutineScope()
+        // Key for storing account creation status
+        val hasAccountKey = booleanPreferencesKey("has_account")
 
-        // TODO(#109): get this information from a data store
-        val hasAccount = false
+        // State to track whether an account has been created
+        var hasAccount by remember { mutableStateOf(false) }
 
+        // Launch effect to load account creation status from DataStore
+        LaunchedEffect(Unit) {
+            context.dataStore.data.catch { exception ->
+                    // Handle exceptions during data reading, such as IO exceptions
+                    if (exception is IOException) {
+                        emit(emptyPreferences())
+                    } else {
+                        throw exception
+                    }
+                }.map { preferences ->
+                    // Retrieve the account creation status, defaulting to false if not set
+                    preferences[hasAccountKey] ?: false
+                }.collect { value ->
+                    hasAccount = value
+                }
+        }
+        
         fun getStart(): Any {
             return if (hasAccount) {
                 Wallet
