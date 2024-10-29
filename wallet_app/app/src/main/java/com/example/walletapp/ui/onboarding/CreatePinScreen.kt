@@ -38,9 +38,11 @@ fun CreatePinScreen(onContinue: () -> Unit) {
     val context = (LocalContext.current as? Activity)
     var passcode by remember { mutableStateOf("") }
     var hiddenPasscode by remember { mutableStateOf("") }
+
     var isConfirming by remember {mutableStateOf(false)}
     var createdPasscode by remember { mutableStateOf("") }
     var isError by remember{ mutableStateOf(false) }
+    
     val maxDigits = 6
     val coroutineScope = rememberCoroutineScope()
 
