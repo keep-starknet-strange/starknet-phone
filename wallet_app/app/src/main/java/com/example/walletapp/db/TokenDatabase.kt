@@ -50,8 +50,8 @@ abstract class TokenDatabase : RoomDatabase() {
 
         suspend fun populateDatabase(tokenDao: TokenDao) {
             // Add default tokens
-            val token1 = Token(contactAddress = Felt.fromHex("0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7"), name = "ethereum", symbol = "ETH", decimals = 18)
-            val token2 = Token(contactAddress = Felt.fromHex("0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d"), name = "starknet", symbol = "STRK", decimals = 18)
+            val token1 = Token(contactAddress = Felt.fromHex("0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7"), name = "ethereum", symbol = "eth", decimals = 18,tokenId="ethereum")
+            val token2 = Token(contactAddress = Felt.fromHex("0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d"), name = "starknet", symbol = "strk", decimals = 18,tokenId="starknet")
             tokenDao.insert(token1)
             tokenDao.insert(token2)
         }

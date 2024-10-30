@@ -10,5 +10,6 @@ data class Token(
     val contactAddress: Felt,
     val name: String,
     val symbol: String,
-    val decimals: Int
+    val decimals: Int,
+    val tokenId:String
 )

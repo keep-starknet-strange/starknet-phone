@@ -23,8 +23,6 @@ import java.io.IOException
 import java.math.BigInteger
 import java.security.GeneralSecurityException
 
-const val ETH_ERC20_ADDRESS = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7"
-
 class StarknetClient(private val rpcUrl: String) {
 
     private val provider = JsonRpcProvider(rpcUrl)
@@ -57,11 +55,7 @@ class StarknetClient(private val rpcUrl: String) {
 
     }
 
-    // TODO(#107): change name to getBalance, support getting balance for any token
-    // follow example: https://github.com/software-mansion/starknet-jvm/blob/main/androiddemo/src/main/java/com/example/androiddemo/MainActivity.kt
     suspend fun getBalance(accountAddress: Felt,contractAddress:Felt): Uint256 {
-        val erc20ContractAddress = Felt.fromHex(ETH_ERC20_ADDRESS)
-
 
         // Create a call to Starknet ERC-20 ETH contract
         val call = Call(

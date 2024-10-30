@@ -18,8 +18,11 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,8 +33,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.walletapp.R
 import com.example.walletapp.model.Token
+import com.example.walletapp.model.TokenIdsResponse
 import com.swmansion.starknet.data.types.Felt
 
 @Composable
@@ -42,6 +47,13 @@ fun AddTokenScreen(tokenViewModel:TokenViewModel,onConfirm: () -> Unit) {
         val symbol = rememberSaveable { mutableStateOf("") }
         val decimals = rememberSaveable { mutableStateOf("") }
         val context = (LocalContext.current as Activity)
+        val coinViewModel: CoinViewModel = viewModel()
+        var ids by rememberSaveable { mutableStateOf(TokenIdsResponse()) }
+        ids=coinViewModel.tokenIds.value
+
+        LaunchedEffect(Unit) {
+            coinViewModel.getTokenIds()
+        }
 
         Column(
             modifier = Modifier
@@ -96,7 +108,6 @@ fun AddTokenScreen(tokenViewModel:TokenViewModel,onConfirm: () -> Unit) {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // TODO: handle saving the token data
             Button(
                 onClick = {
                     val decimalValue = decimals.value.toIntOrNull()
@@ -118,11 +129,13 @@ fun AddTokenScreen(tokenViewModel:TokenViewModel,onConfirm: () -> Unit) {
                         onConfirm()
                         // Save data to local storage here
                         val address=Felt.fromHex(contactAddress.value)
+                        val tokenId= ids.find { it.name.equals(name.value, ignoreCase = true) }?.id?:""
                         val newToken = Token(
                             contactAddress = address,
                             name = name.value,
                             symbol = symbol.value,
-                            decimals = decimalValue
+                            decimals = decimalValue,
+                            tokenId =tokenId
                         )
                         tokenViewModel.insertToken(newToken) // Insert the new token
                         Toast.makeText(context, "Token added!", Toast.LENGTH_LONG).show()

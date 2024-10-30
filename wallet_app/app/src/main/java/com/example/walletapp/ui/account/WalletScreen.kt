@@ -5,7 +5,6 @@ import android.app.Activity
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -46,15 +45,21 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.example.walletapp.BuildConfig
 import com.example.walletapp.R
+import com.example.walletapp.model.CoinData
 import com.example.walletapp.utils.StarknetClient
 import com.example.walletapp.utils.toDoubleWithTwoDecimal
 import com.example.walletapp.utils.weiToEther
@@ -93,47 +98,53 @@ fun WalletScreen(
 fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -> Unit, onSendPress: () -> Unit,tokenViewModel: TokenViewModel) {
     val networkList = listOf("Starknet Mainnet", "Test Networks")
     var selectedNetworkIndex by remember { mutableStateOf(0) }
+    val coinViewModel: CoinViewModel = viewModel()
     val tokens by tokenViewModel.tokens.observeAsState(initial = emptyList())
     val context = (LocalContext.current as Activity)
     val address= BuildConfig.ACCOUNT_ADDRESS
     val accountAddress = Felt.fromHex(address)
     val starknetClient = StarknetClient(BuildConfig.RPC_URL)
-    var balances by remember { mutableStateOf<List<HashMap<String, String>>>(emptyList()) }
-    val coinViewModel: CoinViewModel = viewModel()
-    val coinsPrices by rememberSaveable { mutableStateOf<HashMap<String, String>>(hashMapOf()) }
+
+    var tokenImages by rememberSaveable { mutableStateOf<HashMap<String, String>>(hashMapOf()) }
+    var balances by remember { mutableStateOf<List<HashMap<String, Double>>>(emptyList()) }
+    val tokenIds = remember { mutableStateListOf<String>() }
+    val coinsPrices by rememberSaveable { mutableStateOf<HashMap<String, Double>>(hashMapOf()) }
     var prices by rememberSaveable { mutableStateOf(mapOf<String, Double>()) }
+
+
     prices = coinViewModel.prices.value
+    tokenImages=coinViewModel.tokenImages.value
     val errorMessage by coinViewModel.errorMessage
 
     LaunchedEffect(tokens) {
-        try {
-            // TODO(#106): use the accounts stored tokens instead of hardcoding
-            coinViewModel.getTokenPrices(ids = tokens.joinToString(",") { it.name.toLowerCase() }, vsCurrencies = "usd")
-
-            // TODO(#107): fetch all token balances
-            val balanceDeferred: List<Deferred<HashMap<String, String>>> = tokens.map { token ->
-                async(Dispatchers.IO) {
-                    try {
-                        val balanceInWei = starknetClient.getBalance(accountAddress, token.contactAddress)
-                        val balanceInEther = weiToEther(balanceInWei).toDoubleWithTwoDecimal()
-                        hashMapOf(token.name to balanceInEther)
-                    } catch (e: RpcRequestFailedException) {
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(context, "${e.code}: ${e.message}", Toast.LENGTH_LONG).show()
+        if(tokens.isNotEmpty()){
+            tokenIds.addAll(tokens.map { it.tokenId })
+            coinViewModel.fetchTokenImages(tokenIds)
+            try {
+                coinViewModel.getTokenPrices(ids = tokenIds.joinToString(",") { it }, vsCurrencies = "usd")
+                val balanceDeferred: List<Deferred<HashMap<String, Double>>> = tokens.map { token ->
+                    async(Dispatchers.IO) {
+                        try {
+                            val balanceInWei = starknetClient.getBalance(accountAddress, token.contactAddress)
+                            val balanceInEther = weiToEther(balanceInWei).toDoubleWithTwoDecimal()
+                            hashMapOf(token.name to balanceInEther)
+                        } catch (e: RpcRequestFailedException) {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(context, "${e.code}: ${e.message}", Toast.LENGTH_LONG).show()
+                            }
+                            hashMapOf(token.name to 0.0)
                         }
-                        hashMapOf(token.name to "0.0")
                     }
                 }
-            }
-
-            // Wait for all balance fetching to complete
-            balances = balanceDeferred.awaitAll()
-
-        } catch (e: Exception) {
-            withContext(Dispatchers.Main) {
-                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+                // Wait for all balance fetching to complete
+                balances = balanceDeferred.awaitAll()
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+                }
             }
         }
+
     }
     if (errorMessage.isNotEmpty()) {
         Text(
@@ -188,23 +199,34 @@ fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -
             fontSize = 14.sp,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
-
         Spacer(modifier = Modifier.height(32.dp))
         val configuration = LocalConfiguration.current
         val screenHeight = configuration.screenHeightDp.dp/2
-        LazyColumn(modifier=Modifier.height(screenHeight)) {
-            items(tokens.size) { index->
-                WalletCard(
-                    icon = painterResource(id = R.drawable.ic_ethereum),
-                    amount = coinsPrices[tokens[index].name]?.let { "$ $it" } ?: "",
-                    name=tokens[index].name,
-                    balance = balances.firstOrNull { balanceMap ->
+        if(tokens.isNotEmpty() && tokenImages.isNotEmpty()){
+            LazyColumn(modifier=Modifier.height(screenHeight)) {
+                items(tokens.size) { index->
+                    val tokenBalance=balances.firstOrNull { balanceMap ->
                         balanceMap.containsKey(tokens[index].name)
-                    }?.get(tokens[index].name)?: "0.0",
-                    type = tokens[index].symbol.toUpperCase()
-                )
+                    }?.get(tokens[index].name)?: 0.0
+                    val price = coinsPrices[tokens[index].tokenId]?.let { it * tokenBalance }
+                        ?.toDoubleWithTwoDecimal()
+                        ?: 0.0
+                    WalletCard(
+                            imageUrl = tokenImages[tokens[index].tokenId]?:"",
+                            amount = "$$price",
+                            name=tokens[index].name,
+                            balance = tokenBalance.toString(),
+                            type = tokens[index].symbol.uppercase()
+                        )
+
+                }
             }
+
+        }else{
+            CircularProgressIndicator(modifier = Modifier.height(screenHeight).align(Alignment.CenterHorizontally))
+
         }
+
 
         Spacer(modifier = Modifier.height(32.dp))
         Text(
@@ -256,10 +278,8 @@ fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -
 }
 
 
-
-
 @Composable
-fun WalletCard(icon: Painter,name:String, amount: String, balance: String, type: String) {
+fun WalletCard(imageUrl: String,name:String, amount: String, balance: String, type: String) {
     Card(
         backgroundColor = Color(0xFF1E1E96),
         modifier = Modifier
@@ -273,10 +293,28 @@ fun WalletCard(icon: Painter,name:String, amount: String, balance: String, type:
                 .fillMaxWidth()
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = icon, // replace with your Ethereum icon
-                    contentDescription = null,
+                val painter = rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(data = imageUrl) // Set default image here
+                        .apply { crossfade(true) }
+                        .build()
                 )
+
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(
+                            Color(0xFF1E1E96)
+                        )
+                ){Image(
+                    painter = painter,// replace with your Ethereum icon
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .size(40.dp)
+                )
+                }
+
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
                     text = name.replaceFirstChar { it.uppercase() },
