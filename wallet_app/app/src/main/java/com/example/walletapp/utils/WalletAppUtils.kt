@@ -5,14 +5,14 @@ import java.math.BigDecimal
 import java.text.DecimalFormat
 
 // Function to format BigDecimal to Double with 2 decimal places
-fun BigDecimal.toDoubleWithTwoDecimal(): String {
+fun BigDecimal.toDoubleWithTwoDecimal(): Double {
     val decimalFormat = DecimalFormat("#.00")
-    return decimalFormat.format(this.toDouble())
+    return decimalFormat.format(this.toDouble()).toDouble()
 }
-fun Double.toDoubleWithTwoDecimal(): String {
+fun Double.toDoubleWithTwoDecimal(): Double {
     val decimalFormat = DecimalFormat("#.00")
     val formattedValue = decimalFormat.format(this)
-    return if (this < 1) "0$formattedValue" else formattedValue
+    return if (this < 1) "0$formattedValue".toDouble() else formattedValue.toDouble()
 }
 
 fun weiToEther(wei: Uint256): BigDecimal {

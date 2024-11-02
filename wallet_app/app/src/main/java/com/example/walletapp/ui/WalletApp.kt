@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.walletapp.BuildConfig
 import com.example.walletapp.ui.account.AddTokenScreen
+import com.example.walletapp.ui.account.TokenViewModel
 import com.example.walletapp.ui.account.WalletScreen
 import com.example.walletapp.ui.account.WalletViewModel
 import com.example.walletapp.ui.activity.FinalizeAccountCreationScreen
@@ -45,9 +46,8 @@ object Send
 object Receive
 
 @Composable
-fun WalletApp() {
+fun WalletApp(tokenViewModel: TokenViewModel) {
     val walletViewModel: WalletViewModel = viewModel()
-
     WalletappTheme {
 
         // TODO(#109): get this information from a data store
@@ -91,16 +91,18 @@ fun WalletApp() {
                 )
             }
 
-            composable<Wallet> {
-                WalletScreen(
-                    onNewTokenPress = { navController.navigate( route = AddToken ) },
-                    onReceivePress = { navController.navigate( route = Receive ) },
-                    onSendPress = { navController.navigate( route = Send ) },
-                    walletViewModel = walletViewModel
-                )
-            }
+           composable<Wallet> {
+               WalletScreen(
+                   onNewTokenPress = { navController.navigate( route = AddToken ) },
+                   onReceivePress = { navController.navigate( route = Receive ) },
+                   onSendPress = { navController.navigate( route = Send ) },
+                   tokenViewModel = tokenViewModel,
+                   walletViewModel = walletViewModel
+               )
+           }
             composable<AddToken> {
                 AddTokenScreen(
+                    tokenViewModel=tokenViewModel,
                     onConfirm = { navController.navigateUp() }
                 )
             }
