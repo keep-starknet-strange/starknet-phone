@@ -51,15 +51,14 @@ fn test_other_account_cannot_change_public_key() {
 
     assert(wallet.get_public_key() != new_pub_key, 'Pub key should not change');
 }
+//#[test]
+//fn test_is_valid_signature() { // TODO: Test is_valid_signature() works as expected (valid returns true, anything else returns false (check 0 hash and empty sigs as well))
+//}
 
-#[test]
-fn test_is_valid_signature() { // TODO: Test is_valid_signature() works as expected (valid returns true, anything else returns false (check 0 hash and empty sigs as well))
-}
-
-
-#[test]
-fn test_execute() { // TODO: Test __execute__() works as expected (solo and multi-calls should work as expected)
+//#[test]
+//fn test_execute() { // TODO: Test __execute__() works as expected (solo and multi-calls should work as expected)
 //        - Might need to create a mock erc20 contract to test calls (see if the wallet is able to do a multi call (try sending eth to 2 accounts from the 
 //          deployed wallet, both accounts' balance should update)
-}
+//}
+
 
