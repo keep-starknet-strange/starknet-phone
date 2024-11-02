@@ -51,7 +51,6 @@ fun FinalizeAccountCreationScreen(
                         .padding(top = 32.dp, start = 16.dp, end = 16.dp),
 
                     ) {
-                    // TODO(#100): add back navigation
                     IconButton(onClick = onBackButtonPressed) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
