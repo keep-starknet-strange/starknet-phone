@@ -1,13 +1,11 @@
 package com.example.walletapp.ui.account
 
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import com.example.walletapp.BuildConfig
 import com.example.walletapp.model.Token
 import com.example.walletapp.utils.StarknetClient
@@ -75,6 +73,7 @@ class WalletViewModel : ViewModel() {
     fun transferFunds(account: Account, toAddress: Felt, amount: Uint256) {
         viewModelScope.launch {
             try {
+                //TODO Handle the transaction hash if transaction was successfully
                 starknetClient.transferFunds(account, toAddress, amount)
             } catch (e: Exception) {
                 println(e)
