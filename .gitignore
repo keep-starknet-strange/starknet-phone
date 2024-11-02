@@ -13,6 +13,8 @@ lightclientservice/app/build
 lightclientservice/target
 lightclientservice/local.properties
 lightclientservice/.idea
+wallet_app/local.properties
+
 
 **/*.so
 
