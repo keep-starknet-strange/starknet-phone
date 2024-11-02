@@ -17,3 +17,5 @@ lightclientservice/.idea
 **/*.so
 
 **/.idea/*
+
+**/local.properties
