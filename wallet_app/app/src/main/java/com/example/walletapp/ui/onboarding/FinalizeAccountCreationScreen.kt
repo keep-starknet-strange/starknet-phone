@@ -34,7 +34,10 @@ import androidx.core.graphics.toColorInt
 import com.example.walletapp.R
 
 @Composable
-fun FinalizeAccountCreationScreen(onContinue: () -> Unit) {
+fun FinalizeAccountCreationScreen(
+    onContinue: () -> Unit,
+    onBackButtonPressed: () -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -49,26 +52,29 @@ fun FinalizeAccountCreationScreen(onContinue: () -> Unit) {
 
                     ) {
                     // TODO(#100): add back navigation
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Backward  Arrow",
-                        modifier = Modifier.padding(start = 8.dp),
-                        tint = Color.White
-                    )
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-
-                        Text(
-                            text = "Create Account",
-                            color = Color.White,
-                            fontSize = 20.sp
+                    IconButton(onClick = onBackButtonPressed) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Backward  Arrow",
+                            modifier = Modifier.padding(start = 8.dp),
+                            tint = Color.White
                         )
-
                     }
 
-                }
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+
+                            Text(
+                                text = "Create Account",
+                                color = Color.White,
+                                fontSize = 20.sp
+                            )
+
+                        }
+
+                    }
             }
         }
     ) { paddingValues ->
