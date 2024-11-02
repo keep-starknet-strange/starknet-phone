@@ -71,6 +71,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
+import java.text.NumberFormat
+import java.util.Locale
 
 
 @Composable
@@ -183,8 +185,16 @@ fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -
         }
 
 
+        val totalBalance = balances.flatMap { balanceMap ->
+            balanceMap.entries.map { (token, balance) ->
+                val price = coinsPrices[token] ?: 0.0
+                balance * price
+            }
+
+        }.sum()
+        val formatter = NumberFormat.getCurrencyInstance(Locale.US)
         Text(
-            text ="$11,625.48",
+            text = formatter.format(totalBalance),
             fontFamily = FontFamily(Font(R.font.publicsans_bold)),
             color = Color.White,
             fontSize = 24.sp,

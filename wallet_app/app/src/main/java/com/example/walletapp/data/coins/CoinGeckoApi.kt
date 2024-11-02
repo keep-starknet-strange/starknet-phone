@@ -27,7 +27,7 @@ interface CoinGeckoApi {
         "x-cg-demo-api-key: CG-mRdWfNFoZnKVan4GNdTrhZjL"
     )
     @GET("coins/list")
-    suspend fun getTokenIds(@Query("include_platform") include_platform:Boolean):TokenIdsResponse
+    suspend fun getTokenIds(@Query("include_platform") includePlatform:Boolean):TokenIdsResponse
 
     @Headers("accept: application/json", "x-cg-demo-api-key: CG-mRdWfNFoZnKVan4GNdTrhZjL")
     @GET("coins/{id}")
