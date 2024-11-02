@@ -1,5 +1,6 @@
 package com.example.walletapp.ui.account
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
@@ -106,58 +107,19 @@ fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -
     val context = (LocalContext.current as Activity)
     val address= BuildConfig.ACCOUNT_ADDRESS
     val accountAddress = Felt.fromHex(address)
-    val balance by walletViewModel.balance.collectAsState()
 
     var tokenImages by rememberSaveable { mutableStateOf<HashMap<String, String>>(hashMapOf()) }
-    var balances by remember { mutableStateOf<List<HashMap<String, Double>>>(emptyList()) }
-    val tokenIds = remember { mutableStateListOf<String>() }
+    val balances by walletViewModel.balances.collectAsState()
     val coinsPrices by rememberSaveable { mutableStateOf<HashMap<String, Double>>(hashMapOf()) }
     var prices by rememberSaveable { mutableStateOf(mapOf<String, Double>()) }
-
-
-    val prices by coinViewModel.prices
-    val errorMessageCoinViewModel by coinViewModel.errorMessage
-    val errorMessageWalletViewModel by walletViewModel.errorMessage;
     prices = coinViewModel.prices.value
     tokenImages=coinViewModel.tokenImages.value
-    val errorMessage by coinViewModel.errorMessage
+
+    val errorMessageCoinViewModel by coinViewModel.errorMessage
+    val errorMessageWalletViewModel by walletViewModel.errorMessage;
 
     LaunchedEffect(tokens) {
-        if(tokens.isNotEmpty()){
-            tokenIds.addAll(tokens.map { it.tokenId })
-            coinViewModel.fetchTokenImages(tokenIds)
-            try {
-                coinViewModel.getTokenPrices(ids = tokenIds.joinToString(",") { it }, vsCurrencies = "usd")
-                val balanceDeferred: List<Deferred<HashMap<String, Double>>> = tokens.map { token ->
-                    async(Dispatchers.IO) {
-                        try {
-                            val balanceInWei = starknetClient.getBalance(accountAddress, token.contactAddress)
-                            val balanceInEther = weiToEther(balanceInWei).toDoubleWithTwoDecimal()
-                            hashMapOf(token.name to balanceInEther)
-                        } catch (e: RpcRequestFailedException) {
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(context, "${e.code}: ${e.message}", Toast.LENGTH_LONG).show()
-                            }
-                            hashMapOf(token.name to 0.0)
-                        }
-                    }
-                }
-                // Wait for all balance fetching to complete
-                balances = balanceDeferred.awaitAll()
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
-                }
-            }
-        }
-
-    // TODO(#106): use the accounts stored tokens instead of hardcoding
-    LaunchedEffect(Unit) {
-        coinViewModel.getTokenPrices(ids = "starknet,ethereum", vsCurrencies = "usd")
-    }
-
-    LaunchedEffect(Unit) {
-        walletViewModel.fetchBalance(accountAddress)
+        walletViewModel.fetchBalance(accountAddress, tokens, coinViewModel)
     }
 
     if (errorMessageCoinViewModel.isNotEmpty()) {
