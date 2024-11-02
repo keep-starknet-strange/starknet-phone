@@ -269,6 +269,7 @@ fun AccountInfoView(onContinue: () -> Unit) {
         }
 
         Spacer(modifier = Modifier.weight(1f))
+         Button(
  onClick = {
         // Save the account information to DataStore when the button is clicked
         scope.launch {
@@ -279,25 +280,23 @@ fun AccountInfoView(onContinue: () -> Unit) {
         }
         // Navigate to the next screen
         onContinue()
-    },
+   },
     contentPadding = ButtonDefaults.ContentPadding,
     shape = RoundedCornerShape(8.dp),
     colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt()), contentColor = Color.White),
     modifier = Modifier
         .fillMaxWidth()
-        .height(49.dp
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Continue")
-                Icon(
-                    imageVector = Icons.Filled.ArrowForward,
-                    contentDescription = "Forward Arrow",
-                    modifier = Modifier.padding(start = 8.dp),
-                    tint = Color.White
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
+        .height(49.dp)
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text("Continue")
+        Icon(
+            imageVector = Icons.Filled.ArrowForward,
+            contentDescription = "Forward Arrow",
+            modifier = Modifier.padding(start = 8.dp),
+            tint = Color.White
+        )
     }
 }
+
+Spacer(modifier = Modifier.height(20.dp))
