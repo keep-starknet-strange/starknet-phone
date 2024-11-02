@@ -117,6 +117,14 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.fragment)
     implementation (libs.androidx.hilt.navigation.compose.v100alpha03)
 
+    implementation("androidx.room:room-runtime:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+
+    // image loader
+    implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation("com.github.skydoves:landscapist-glide:1.3.7")
+    implementation("io.coil-kt:coil-gif:2.6.0")
 
     implementation(libs.androidx.ui.tooling.preview)
     debugImplementation(libs.androidx.ui.tooling)
@@ -129,6 +137,7 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
 
     implementation(libs.androidx.navigation.compose)
+
 
 
     implementation(libs.androidx.core.ktx)

@@ -1,9 +1,10 @@
 package com.example.walletapp.ui.account
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -40,77 +42,111 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.*
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.toLowerCase
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.example.walletapp.BuildConfig
 import com.example.walletapp.R
+import com.example.walletapp.model.CoinData
 import com.example.walletapp.utils.StarknetClient
 import com.example.walletapp.utils.toDoubleWithTwoDecimal
 import com.example.walletapp.utils.weiToEther
+import com.swmansion.starknet.crypto.starknetKeccak
 import com.swmansion.starknet.data.types.Felt
 import com.swmansion.starknet.provider.exceptions.RpcRequestFailedException
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
+import java.text.NumberFormat
+import java.util.Locale
 
 
 @Composable
 fun WalletScreen(
     onNewTokenPress: () -> Unit,
     onSendPress: () -> Unit,
-    onReceivePress: () -> Unit
+    onReceivePress: () -> Unit,
+    tokenViewModel: TokenViewModel
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Wallet(
             modifier = Modifier.padding(10.dp),
             onNewTokenPress = onNewTokenPress,
             onSendPress = onSendPress,
-            onReceivePress = onReceivePress
+            onReceivePress = onReceivePress,
+            tokenViewModel = tokenViewModel
         )
     }
 }
 
 
 
+@SuppressLint("MutableCollectionMutableState")
 @Composable
-fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -> Unit, onSendPress: () -> Unit) {
+fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -> Unit, onSendPress: () -> Unit,tokenViewModel: TokenViewModel) {
     val networkList = listOf("Starknet Mainnet", "Test Networks")
     var selectedNetworkIndex by remember { mutableStateOf(0) }
+    val coinViewModel: CoinViewModel = viewModel()
+    val tokens by tokenViewModel.tokens.observeAsState(initial = emptyList())
     val context = (LocalContext.current as Activity)
     val address= BuildConfig.ACCOUNT_ADDRESS
     val accountAddress = Felt.fromHex(address)
     val starknetClient = StarknetClient(BuildConfig.RPC_URL)
-    var balance by remember { mutableStateOf("") }
 
-    val coinViewModel: CoinViewModel = viewModel()
+    var tokenImages by rememberSaveable { mutableStateOf<HashMap<String, String>>(hashMapOf()) }
+    var balances by remember { mutableStateOf<List<HashMap<String, Double>>>(emptyList()) }
+    val tokenIds = remember { mutableStateListOf<String>() }
+    val coinsPrices by rememberSaveable { mutableStateOf<HashMap<String, Double>>(hashMapOf()) }
+    var prices by rememberSaveable { mutableStateOf(mapOf<String, Double>()) }
 
-    val coinsPrices : HashMap<String,String> = rememberSaveable {
-        hashMapOf()
-    }
 
-    val prices by coinViewModel.prices
+    prices = coinViewModel.prices.value
+    tokenImages=coinViewModel.tokenImages.value
     val errorMessage by coinViewModel.errorMessage
 
-    // TODO(#106): use the accounts stored tokens instead of hardcoding
-    LaunchedEffect(Unit) {
-        coinViewModel.getTokenPrices(ids = "starknet,ethereum", vsCurrencies = "usd")
-    }
-
-    LaunchedEffect (Unit){
-        // TODO(#107): fetch all token balances
-        try {
-            val getBalance = starknetClient.getEthBalance(accountAddress)
-            withContext(Dispatchers.Main) {
-                balance = weiToEther(getBalance).toDoubleWithTwoDecimal()
+    LaunchedEffect(tokens) {
+        if(tokens.isNotEmpty()){
+            tokenIds.addAll(tokens.map { it.tokenId })
+            coinViewModel.fetchTokenImages(tokenIds)
+            try {
+                coinViewModel.getTokenPrices(ids = tokenIds.joinToString(",") { it }, vsCurrencies = "usd")
+                val balanceDeferred: List<Deferred<HashMap<String, Double>>> = tokens.map { token ->
+                    async(Dispatchers.IO) {
+                        try {
+                            val balanceInWei = starknetClient.getBalance(accountAddress, token.contactAddress)
+                            val balanceInEther = weiToEther(balanceInWei).toDoubleWithTwoDecimal()
+                            hashMapOf(token.name to balanceInEther)
+                        } catch (e: RpcRequestFailedException) {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(context, "${e.code}: ${e.message}", Toast.LENGTH_LONG).show()
+                            }
+                            hashMapOf(token.name to 0.0)
+                        }
+                    }
+                }
+                // Wait for all balance fetching to complete
+                balances = balanceDeferred.awaitAll()
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+                }
             }
-        } catch (e: RpcRequestFailedException) {
-            withContext(Dispatchers.Main) { Toast.makeText(context, "${e.code}: ${e.message}", Toast.LENGTH_LONG).show() }
-        } catch (e: Exception) {
-            withContext(Dispatchers.Main) { Toast.makeText(context, e.message, Toast.LENGTH_LONG).show() }
         }
+
     }
     if (errorMessage.isNotEmpty()) {
         Text(
@@ -149,8 +185,16 @@ fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -
         }
 
 
+        val totalBalance = balances.flatMap { balanceMap ->
+            balanceMap.entries.map { (token, balance) ->
+                val price = coinsPrices[token] ?: 0.0
+                balance * price
+            }
+
+        }.sum()
+        val formatter = NumberFormat.getCurrencyInstance(Locale.US)
         Text(
-            text ="$11,625.48",
+            text = formatter.format(totalBalance),
             fontFamily = FontFamily(Font(R.font.publicsans_bold)),
             color = Color.White,
             fontSize = 24.sp,
@@ -165,38 +209,47 @@ fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -
             fontSize = 14.sp,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
+        Spacer(modifier = Modifier.height(32.dp))
+        val configuration = LocalConfiguration.current
+        val screenHeight = configuration.screenHeightDp.dp/2
+        if(tokens.isNotEmpty() && tokenImages.isNotEmpty()){
+            LazyColumn(modifier=Modifier.height(screenHeight)) {
+                items(tokens.size) { index->
+                    val tokenBalance=balances.firstOrNull { balanceMap ->
+                        balanceMap.containsKey(tokens[index].name)
+                    }?.get(tokens[index].name)?: 0.0
+                    val price = coinsPrices[tokens[index].tokenId]?.let { it * tokenBalance }
+                        ?.toDoubleWithTwoDecimal()
+                        ?: 0.0
+                    WalletCard(
+                            imageUrl = tokenImages[tokens[index].tokenId]?:"",
+                            amount = "$$price",
+                            name=tokens[index].name,
+                            balance = tokenBalance.toString(),
+                            type = tokens[index].symbol.uppercase()
+                        )
+
+                }
+            }
+
+        }else{
+            CircularProgressIndicator(modifier = Modifier.height(screenHeight).align(Alignment.CenterHorizontally))
+
+        }
+
 
         Spacer(modifier = Modifier.height(32.dp))
-
-
-        WalletCard(
-            icon = painterResource(id = R.drawable.ic_ethereum),
-            amount = coinsPrices["ethereum"]?.let { "$ $it" } ?: "",
-            exchange = balance,
-            type = "ETH"
-        )
-
-        // TOOD(#82): load actual balance
-        WalletCard(
-            icon = painterResource(id = R.drawable.token2),
-            amount = coinsPrices["starknet"]?.let { "$ $it" } ?: "",
-            exchange ="4.44",
-            type = "STRK"
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
         Text(
             text = "+ New Token",
             fontFamily = FontFamily(Font(R.font.publicsans_bold)),
             color = Color.White,
             fontSize = 14.sp,
-            modifier = Modifier
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
                 .clickable {
                     onNewTokenPress()
                 }
                 .background(Color.Transparent)
-                .padding(10.dp)
                 .align(Alignment.CenterHorizontally)
         )
 
@@ -235,10 +288,8 @@ fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -
 }
 
 
-
-
 @Composable
-fun WalletCard(icon: Painter, amount: String, exchange: String, type: String) {
+fun WalletCard(imageUrl: String,name:String, amount: String, balance: String, type: String) {
     Card(
         backgroundColor = Color(0xFF1E1E96),
         modifier = Modifier
@@ -251,10 +302,39 @@ fun WalletCard(icon: Painter, amount: String, exchange: String, type: String) {
                 .padding(16.dp)
                 .fillMaxWidth()
         ) {
-            Image(
-                painter = icon, // replace with your Ethereum icon
-                contentDescription = null,
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                val painter = rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(data = imageUrl) // Set default image here
+                        .apply { crossfade(true) }
+                        .build()
+                )
+
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(
+                            Color(0xFF1E1E96)
+                        )
+                ){Image(
+                    painter = painter,// replace with your Ethereum icon
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .size(40.dp)
+                )
+                }
+
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = name.replaceFirstChar { it.uppercase() },
+                    fontFamily = FontFamily(Font(R.font.publicsans_semibold)),
+                    color = Color.White,
+                    fontSize = 18.sp
+                )
+
+            }
+
             Spacer(modifier = Modifier.weight(1f))
             Column(modifier = Modifier, horizontalAlignment = Alignment.End) {
                 Text(
@@ -267,7 +347,7 @@ fun WalletCard(icon: Painter, amount: String, exchange: String, type: String) {
 
                 Row {
                     Text(
-                        text = exchange,
+                        text = balance,
                         fontFamily = FontFamily(Font(R.font.publicsans_bold)),
                         color = Color.White,
                         fontSize = 14.sp
@@ -442,8 +522,5 @@ fun SwitchNetwork(
                }
             }
         }
-
-
-
     }
 }
