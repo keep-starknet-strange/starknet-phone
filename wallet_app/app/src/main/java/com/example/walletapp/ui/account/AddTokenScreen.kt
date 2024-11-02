@@ -1,5 +1,4 @@
 package com.example.walletapp.ui.account
-
 import android.app.Activity
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -13,10 +12,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,13 +37,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.walletapp.R
 import com.example.walletapp.model.Token
 import com.example.walletapp.model.TokenIdsResponse
 import com.swmansion.starknet.data.types.Felt
 
 @Composable
-fun AddTokenScreen(tokenViewModel:TokenViewModel,onConfirm: () -> Unit) {
+fun AddTokenScreen(tokenViewModel:TokenViewModel, onConfirm: () -> Unit, navController: NavController,
+) {
+    
     Surface(modifier = Modifier.fillMaxSize()) {
         val contactAddress = rememberSaveable { mutableStateOf("") }
         val name = rememberSaveable { mutableStateOf("") }
@@ -63,6 +69,20 @@ fun AddTokenScreen(tokenViewModel:TokenViewModel,onConfirm: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
+
+
+            // Back Button
+            IconButton(
+                onClick = { navController.navigateUp() },
+                modifier = Modifier.align(Alignment.Start)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.White
+                )
+            }
+            
             Text(
                 text = "Add Token",
                 fontFamily = FontFamily(Font(R.font.publicsans_bold)),
@@ -119,7 +139,7 @@ fun AddTokenScreen(tokenViewModel:TokenViewModel,onConfirm: () -> Unit) {
                         Toast.makeText(context, "Please enter name", Toast.LENGTH_LONG)
                             .show()
                     }
-                     else if (symbol.value.isEmpty()) {
+                    else if (symbol.value.isEmpty()) {
                         Toast.makeText(context, "Please enter symbol", Toast.LENGTH_LONG)
                             .show()
                     } else if (decimalValue == null || decimalValue !in 0..18) {
