@@ -6,7 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
@@ -109,7 +109,9 @@ fun AccountInfoView(onContinue: () -> Unit) {
         Spacer(modifier = Modifier.height(10.dp))
 
         Card(
-            backgroundColor = Color("#141462".toColorInt()),
+            colors = CardDefaults.cardColors(
+                containerColor = Color("#141462".toColorInt())
+            ),
             shape = RoundedCornerShape(size = 8.dp),
             modifier = Modifier
                 .fillMaxWidth()
@@ -179,7 +181,10 @@ fun AccountInfoView(onContinue: () -> Unit) {
 
         Button(
             onClick = {},
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt()), contentColor = Color.White),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color("#1B1B76".toColorInt()),
+                contentColor = Color.White
+            ),
             modifier = Modifier.fillMaxWidth()
                 .background(color = Color("#141462".toColorInt()))
                 .height(51.dp)
@@ -205,7 +210,10 @@ fun AccountInfoView(onContinue: () -> Unit) {
 
         Button(
             onClick = { /* TODO */ },
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt()), contentColor = Color.White),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color("#1B1B76".toColorInt()),
+                contentColor = Color.White
+            ),
             modifier = Modifier.fillMaxWidth()
                 .background(color = Color("#1B1B76".toColorInt()))
                 .height(51.dp)
@@ -274,7 +282,10 @@ fun AccountInfoView(onContinue: () -> Unit) {
             onClick = onContinue,
             contentPadding = ButtonDefaults.ContentPadding,
             shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt()), contentColor = Color.White),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color("#EC796B".toColorInt()),
+                contentColor = Color.White
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(49.dp)

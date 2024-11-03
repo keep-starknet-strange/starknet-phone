@@ -16,23 +16,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -134,7 +133,7 @@ fun ImportAccountScreen( onFinishAccountImport: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 
 @Composable
 fun PrivateKeyView(modifier: Modifier = Modifier, onNext: () -> Unit) {
@@ -182,10 +181,11 @@ fun PrivateKeyView(modifier: Modifier = Modifier, onNext: () -> Unit) {
                         .background(Color.Transparent),
                     shape = RoundedCornerShape(8.dp),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        backgroundColor = Color(0xFF1B1B76),
+                        containerColor = Color(0xFF1B1B76),
                         focusedBorderColor = borderColor,
-                        textColor = Color.White,
-                        unfocusedBorderColor = borderColor
+                        unfocusedBorderColor = borderColor,
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White
                     )
                 )
             }
@@ -197,7 +197,10 @@ fun PrivateKeyView(modifier: Modifier = Modifier, onNext: () -> Unit) {
             onClick = onNext,
             contentPadding = ButtonDefaults.ContentPadding,
             shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt()), contentColor = Color.White),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color("#EC796B".toColorInt()),
+                contentColor = Color.White
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(49.dp)
@@ -219,7 +222,7 @@ fun PrivateKeyView(modifier: Modifier = Modifier, onNext: () -> Unit) {
 
 
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateNameView(modifier: Modifier = Modifier, onFinishAccountImport: () -> Unit) {
     val borderColor = Color("#1B1B76".toColorInt())
@@ -261,8 +264,9 @@ fun CreateNameView(modifier: Modifier = Modifier, onFinishAccountImport: () -> U
                     .background(Color.Transparent),
                 shape = RoundedCornerShape(8.dp),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    backgroundColor = Color(0xFF1B1B76),
-                    textColor = Color.White,
+                    containerColor = Color(0xFF1B1B76),
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
                     focusedBorderColor = borderColor,
                     unfocusedBorderColor = borderColor
                 )
@@ -280,7 +284,7 @@ fun CreateNameView(modifier: Modifier = Modifier, onFinishAccountImport: () -> U
             contentPadding = ButtonDefaults.ContentPadding,
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color("#EC796B".toColorInt()),
+                containerColor = Color("#EC796B".toColorInt()),
                 contentColor = Color.White
             ),
             modifier = Modifier
