@@ -24,7 +24,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -53,6 +54,7 @@ import androidx.core.graphics.toColorInt
 import com.example.walletapp.R
 import kotlinx.coroutines.CoroutineScope
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateAccountScreen(
     onContinue: () -> Unit
@@ -61,39 +63,20 @@ fun CreateAccountScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                backgroundColor = Color("#0C0C4F".toColorInt()),
-                contentColor = Color.White,
-                elevation = 4.dp
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 32.dp, start = 16.dp, end = 16.dp),
-
-                    ) {
-                    // TODO(#100): add back navigation
+                title = { Text("Create Account", color = Color.White, fontSize = 20.sp) },
+                navigationIcon = {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Backward  Arrow",
+                        contentDescription = "Backward Arrow",
                         modifier = Modifier.padding(start = 8.dp),
                         tint = Color.White
                     )
-
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-
-                        Text(
-                            text = "Create Account",
-                            color = Color.White,
-                            fontSize = 20.sp
-                        )
-
-                    }
-
-                }
-            }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color("#0C0C4F".toColorInt()),
+                    titleContentColor = Color.White
+                )
+            )
         }
     ) { paddingValues ->
         Column(
@@ -101,14 +84,16 @@ fun CreateAccountScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .background(color = Color("#0C0C4F".toColorInt()))
-                .padding(top = 30.dp, start = 16.dp, end = 16.dp )
-
+                .padding(top = 30.dp, start = 16.dp, end = 16.dp)
         ) {
-
             Text(
                 text = if (progress < 1.0f) "1 of 2" else "2 of 2",
-                style = TextStyle(color = Color("#EC796B".toColorInt()), fontWeight = FontWeight.ExtraBold, fontSize = 16.sp, textAlign = TextAlign.Center )
-
+                style = TextStyle(
+                    color = Color("#EC796B".toColorInt()),
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center
+                )
             )
 
             Spacer(modifier = Modifier.height(5.dp))
@@ -116,8 +101,6 @@ fun CreateAccountScreen(
                 progress = progress,
                 modifier = Modifier.fillMaxWidth(),
                 color = Color("#EC796B".toColorInt())
-
-
             )
 
             if (progress < 1.0f) {
@@ -128,13 +111,15 @@ fun CreateAccountScreen(
                     }
                 )
             } else {
-                GenerateKey(modifier = Modifier.padding(top = 16.dp), onContinue)
+                GenerateKey(
+                    modifier = Modifier.padding(top = 16.dp),
+                    onContinue
+                )
             }
-
-
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

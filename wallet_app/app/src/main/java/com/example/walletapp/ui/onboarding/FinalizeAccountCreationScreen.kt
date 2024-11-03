@@ -33,43 +33,26 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.core.graphics.toColorInt
 import com.example.walletapp.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FinalizeAccountCreationScreen(onContinue: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                backgroundColor = Color("#0C0C4F".toColorInt()),
-                contentColor = Color.White,
-                elevation = 4.dp
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 32.dp, start = 16.dp, end = 16.dp),
-
-                    ) {
-                    // TODO(#100): add back navigation
+                title = { Text("Create Account", color = Color.White, fontSize = 20.sp) },
+                navigationIcon = {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Backward  Arrow",
+                        contentDescription = "Backward Arrow",
                         modifier = Modifier.padding(start = 8.dp),
                         tint = Color.White
                     )
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-
-                        Text(
-                            text = "Create Account",
-                            color = Color.White,
-                            fontSize = 20.sp
-                        )
-
-                    }
-
-                }
-            }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color("#0C0C4F".toColorInt()),
+                    titleContentColor = Color.White
+                )
+            )
         }
     ) { paddingValues ->
         Column(
@@ -77,17 +60,14 @@ fun FinalizeAccountCreationScreen(onContinue: () -> Unit) {
                 .fillMaxSize()
                 .padding(paddingValues)
                 .background(color = Color("#0C0C4F".toColorInt()))
-                .padding(top = 50.dp, start = 16.dp, end = 16.dp )
-
+                .padding(top = 50.dp, start = 16.dp, end = 16.dp)
         ) {
-
             Spacer(modifier = Modifier.height(5.dp))
             AccountInfoView(onContinue)
-
-
         }
     }
 }
+
 
 @Composable
 fun AccountInfoView(onContinue: () -> Unit) {

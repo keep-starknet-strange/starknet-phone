@@ -151,7 +151,7 @@ fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -
     if (errorMessage.isNotEmpty()) {
         Text(
             text = errorMessage,
-            color = MaterialTheme.colors.error,
+            color = MaterialTheme.colorScheme.error,
             modifier = Modifier.padding(16.dp)
         )
     } else {
@@ -261,7 +261,9 @@ fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -
         ) {
             Button(
                 onClick = onReceivePress,
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color("#1B1B76".toColorInt())
+                ),
                 shape = RoundedCornerShape(15.dp),
             ) {
                 Text(
@@ -272,8 +274,9 @@ fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -
             }
             Button(
                 onClick = onSendPress,
-
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color("#1B1B76".toColorInt())
+                ),
                 shape = RoundedCornerShape(15.dp),
             ) {
                 Text(
@@ -291,7 +294,9 @@ fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -
 @Composable
 fun WalletCard(imageUrl: String,name:String, amount: String, balance: String, type: String) {
     Card(
-        backgroundColor = Color(0xFF1E1E96),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF1E1E96)
+        ),
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
