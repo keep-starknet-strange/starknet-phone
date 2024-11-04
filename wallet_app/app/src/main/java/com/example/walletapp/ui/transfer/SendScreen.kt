@@ -13,12 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.Composable
@@ -246,7 +246,7 @@ fun SendScreen(walletViewModel: WalletViewModel) {
             // Confirm Button
             Button(
                 onClick = { activateHandleOnClick = true },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
+                colors = ButtonDefaults.buttonColors(containerColor  = Color("#1B1B76".toColorInt())),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 30.dp, end = 30.dp)
@@ -273,7 +273,7 @@ fun TokenDropdown(
     Box(modifier = modifier) {
         Button(
             onClick = { expanded = true },
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF1E1E96)),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E1E96)),
             modifier = Modifier.padding(8.dp)
         ) {
             if (selectedToken == "ethereum") {

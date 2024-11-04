@@ -8,7 +8,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
@@ -126,7 +126,7 @@ fun CreatePinScreen(onContinue: () -> Unit) {
                 contentPadding = ButtonDefaults.ContentPadding,
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color("#EC796B".toColorInt()),
+                    containerColor = Color("#EC796B".toColorInt()),
                     contentColor = Color.White
                 ),
                 modifier = Modifier
@@ -227,7 +227,10 @@ fun NumericKeypad(onDigitClick: (String) -> Unit, onDeleteClick: () -> Unit) {
 fun KeypadButton(text: String, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt()), contentColor = Color.White),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color("#1B1B76".toColorInt()),
+            contentColor = Color.White
+        ),
         shape = CircleShape,
                 modifier = Modifier
             .size(50.dp)
