@@ -1,6 +1,5 @@
-use snforge_std::{declare, ContractClassTrait, ContractClass};
-use snforge_std::{start_prank, stop_prank, CheatTarget, prank, CheatSpan};
-use openzeppelin::token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
+use snforge_std::{declare, ContractClassTrait, DeclareResultTrait, start_cheat_caller_address, stop_cheat_caller_address};
+use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 use starknet::contract_address_const;
 use starknet::{ContractAddress, {account::Call}};
 use contracts::account::{IStarknetPhoneAccountDispatcher, IStarknetPhoneAccountDispatcherTrait};
@@ -25,21 +24,21 @@ fn ALICE() -> ContractAddress {
 }
 
 fn deploy_erc20_mock(name: ByteArray, symbol: ByteArray,) -> IERC20Dispatcher {
-    let class = declare("ERC20Mock");
+    let class = declare("ERC20Mock").unwrap().contract_class();
     let mut calldata = array![];
     name.serialize(ref calldata);
     symbol.serialize(ref calldata);
     INITIAL_SUPPLY.serialize(ref calldata);
     OWNER().serialize(ref calldata);
 
-    let contract_address = class.deploy(@calldata).unwrap();
+    let (contract_address, _)  = class.deploy(@calldata).unwrap();
 
     IERC20Dispatcher { contract_address }
 }
 
 fn deploy_wallet() -> IStarknetPhoneAccountDispatcher {
-    let class_hash = declare("StarknetPhoneAccount");
-    let contract_address = class_hash.deploy(@array![PUB_KEY]).unwrap();
+    let class_hash = declare("StarknetPhoneAccount").unwrap().contract_class();
+    let (contract_address, _) = class_hash.deploy(@array![PUB_KEY]).unwrap();
     let wallet = IStarknetPhoneAccountDispatcher { contract_address };
     wallet
 }
@@ -77,9 +76,9 @@ fn test_only_account_can_change_public_key() {
     // Other contract calls function
     let new_pub_key = 'new_pub_key';
 
-    start_prank(CheatTarget::One(wallet.contract_address), wallet.contract_address);
+    start_cheat_caller_address(wallet.contract_address, wallet.contract_address);
     wallet.set_public_key(new_pub_key);
-    stop_prank(CheatTarget::One(wallet.contract_address));
+    stop_cheat_caller_address(wallet.contract_address);
 
     assert(wallet.get_public_key() == new_pub_key, 'Pub key should change');
 }
@@ -94,9 +93,9 @@ fn test_other_account_cannot_change_public_key() {
     let not_wallet = contract_address_const::<'not_wallet'>();
     let new_pub_key = 'new_pub_key';
 
-    start_prank(CheatTarget::One(wallet.contract_address), not_wallet);
+    start_cheat_caller_address(wallet.contract_address, not_wallet);
     wallet.set_public_key(new_pub_key);
-    stop_prank(CheatTarget::One(wallet.contract_address));
+    stop_cheat_caller_address(wallet.contract_address);
 
     assert(wallet.get_public_key() != new_pub_key, 'Pub key should not change');
 }
@@ -151,9 +150,9 @@ fn test_execute_with_invalid_caller() {
 
     let calls = array![call];
 
-    start_prank(CheatTarget::One(wallet.contract_address), not_wallet);
+    start_cheat_caller_address(wallet.contract_address, wallet.contract_address);
     wallet.__execute__(calls);
-    stop_prank(CheatTarget::One(wallet.contract_address));
+    stop_cheat_caller_address(wallet.contract_address);
 }
 
 #[test]
@@ -161,9 +160,9 @@ fn test_execute() {
     let (wallet, mock_erc20) = _setup();
 
     // fund wallet
-    start_prank(CheatTarget::One(mock_erc20.contract_address), OWNER());
+    start_cheat_caller_address(mock_erc20.contract_address, OWNER());
     mock_erc20.transfer(wallet.contract_address, INITIAL_SUPPLY);
-    stop_prank(CheatTarget::One(mock_erc20.contract_address));
+    stop_cheat_caller_address(mock_erc20.contract_address);
 
     // Craft call and add to calls array
     let amount = 200_u256;
@@ -176,9 +175,9 @@ fn test_execute() {
     let wallet_ballance_before = mock_erc20.balance_of(wallet.contract_address);
 
     // execute
-    start_prank(CheatTarget::One(wallet.contract_address), zero);
+    start_cheat_caller_address(wallet.contract_address, zero);
     wallet.__execute__(calls);
-    stop_prank(CheatTarget::One(wallet.contract_address));
+    stop_cheat_caller_address(wallet.contract_address);
 
     let wallet_ballance_after = mock_erc20.balance_of(wallet.contract_address);
 
@@ -191,9 +190,9 @@ fn test_multicall() {
     let (wallet, mock_erc20) = _setup();
 
     // fund wallet
-    start_prank(CheatTarget::One(mock_erc20.contract_address), OWNER());
+    start_cheat_caller_address(mock_erc20.contract_address, OWNER());
     mock_erc20.transfer(wallet.contract_address, INITIAL_SUPPLY);
-    stop_prank(CheatTarget::One(mock_erc20.contract_address));
+    stop_cheat_caller_address(mock_erc20.contract_address);
 
     let first_amount = 300_u256;
     let second_amount = 100_u256;
@@ -215,9 +214,9 @@ fn test_multicall() {
     let zero = contract_address_const::<0>();
 
     // execute
-    start_prank(CheatTarget::One(wallet.contract_address), zero);
+    start_cheat_caller_address(wallet.contract_address, zero);
     wallet.__execute__(calls);
-    stop_prank(CheatTarget::One(wallet.contract_address));
+    stop_cheat_caller_address(wallet.contract_address);
 
     let wallet_ballance_after = mock_erc20.balance_of(wallet.contract_address);
     let expected_wallet_balance = INITIAL_SUPPLY
