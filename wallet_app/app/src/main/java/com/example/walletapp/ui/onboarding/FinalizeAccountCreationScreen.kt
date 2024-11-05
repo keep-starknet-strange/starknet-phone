@@ -6,7 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
@@ -33,8 +33,12 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.core.graphics.toColorInt
 import com.example.walletapp.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FinalizeAccountCreationScreen(onContinue: () -> Unit) {
+fun FinalizeAccountCreationScreen(
+    onContinue: () -> Unit,
+    onBackButtonPressed: () -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -48,28 +52,44 @@ fun FinalizeAccountCreationScreen(onContinue: () -> Unit) {
                         .padding(top = 32.dp, start = 16.dp, end = 16.dp),
 
                     ) {
-                    // TODO(#100): add back navigation
+                    IconButton(onClick = onBackButtonPressed) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Backward  Arrow",
+                            modifier = Modifier.padding(start = 8.dp),
+                            tint = Color.White
+                        )
+                    }
+
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+
+                            Text(
+                                text = "Create Account",
+                                color = Color.White,
+                                fontSize = 20.sp
+                            )
+
+                        }
+
+                    }
+            }
+                title = { Text("Create Account", color = Color.White, fontSize = 20.sp) },
+                navigationIcon = {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Backward  Arrow",
+                        contentDescription = "Backward Arrow",
                         modifier = Modifier.padding(start = 8.dp),
                         tint = Color.White
                     )
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-
-                        Text(
-                            text = "Create Account",
-                            color = Color.White,
-                            fontSize = 20.sp
-                        )
-
-                    }
-
-                }
-            }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color("#0C0C4F".toColorInt()),
+                    titleContentColor = Color.White
+                )
+            )
         }
     ) { paddingValues ->
         Column(
@@ -77,17 +97,14 @@ fun FinalizeAccountCreationScreen(onContinue: () -> Unit) {
                 .fillMaxSize()
                 .padding(paddingValues)
                 .background(color = Color("#0C0C4F".toColorInt()))
-                .padding(top = 50.dp, start = 16.dp, end = 16.dp )
-
+                .padding(top = 50.dp, start = 16.dp, end = 16.dp)
         ) {
-
             Spacer(modifier = Modifier.height(5.dp))
             AccountInfoView(onContinue)
-
-
         }
     }
 }
+
 
 @Composable
 fun AccountInfoView(onContinue: () -> Unit) {
@@ -109,7 +126,9 @@ fun AccountInfoView(onContinue: () -> Unit) {
         Spacer(modifier = Modifier.height(10.dp))
 
         Card(
-            backgroundColor = Color("#141462".toColorInt()),
+            colors = CardDefaults.cardColors(
+                containerColor = Color("#141462".toColorInt())
+            ),
             shape = RoundedCornerShape(size = 8.dp),
             modifier = Modifier
                 .fillMaxWidth()
@@ -179,7 +198,10 @@ fun AccountInfoView(onContinue: () -> Unit) {
 
         Button(
             onClick = {},
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt()), contentColor = Color.White),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color("#1B1B76".toColorInt()),
+                contentColor = Color.White
+            ),
             modifier = Modifier.fillMaxWidth()
                 .background(color = Color("#141462".toColorInt()))
                 .height(51.dp)
@@ -205,7 +227,10 @@ fun AccountInfoView(onContinue: () -> Unit) {
 
         Button(
             onClick = { /* TODO */ },
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt()), contentColor = Color.White),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color("#1B1B76".toColorInt()),
+                contentColor = Color.White
+            ),
             modifier = Modifier.fillMaxWidth()
                 .background(color = Color("#1B1B76".toColorInt()))
                 .height(51.dp)
@@ -274,7 +299,10 @@ fun AccountInfoView(onContinue: () -> Unit) {
             onClick = onContinue,
             contentPadding = ButtonDefaults.ContentPadding,
             shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color("#EC796B".toColorInt()), contentColor = Color.White),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color("#EC796B".toColorInt()),
+                contentColor = Color.White
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(49.dp)

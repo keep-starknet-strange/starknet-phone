@@ -20,6 +20,13 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -161,8 +168,9 @@ fun AddTokenScreen(tokenViewModel:TokenViewModel, onConfirm: () -> Unit, navCont
                         Toast.makeText(context, "Token added!", Toast.LENGTH_LONG).show()
                     }
                 },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color("#1B1B76".toColorInt())),
-                modifier = Modifier
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color("#1B1B76".toColorInt())
+                ), modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 30.dp, end = 30.dp)
             ) {
@@ -193,12 +201,15 @@ fun SimpleTextField(
             value = value,
             onValueChange = onValueChange,
             placeholder = { Text(text = placeholder) },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                backgroundColor = Color("#1B1B76".toColorInt()),
-                focusedBorderColor = Color.Transparent,
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedContainerColor = Color("#1B1B76".toColorInt()),
+                focusedContainerColor = Color("#1B1B76".toColorInt()),
                 unfocusedBorderColor = Color.Transparent,
-                textColor = Color.Black,
-                placeholderColor = Color("#A9A9A9".toColorInt())
+                focusedBorderColor = Color.Transparent,
+                unfocusedTextColor = Color.Black,
+                focusedTextColor = Color.Black,
+                unfocusedPlaceholderColor = Color("#A9A9A9".toColorInt()),
+                focusedPlaceholderColor = Color("#A9A9A9".toColorInt())
             ),
             shape = RoundedCornerShape(15.dp),
             modifier = Modifier.fillMaxWidth(),

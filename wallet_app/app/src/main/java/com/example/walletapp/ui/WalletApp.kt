@@ -68,17 +68,20 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
             }
             composable<CreateAccount> {
                 CreateAccountScreen(
-                    onContinue = { navController.navigate( route = FinalizeAccountCreation )}
+                    onContinue = { navController.navigate( route = FinalizeAccountCreation )},
+                    onBackButtonPressed = {navController.navigateUp()}
                 )
             }
             composable<FinalizeAccountCreation> {
                 FinalizeAccountCreationScreen(
-                    onContinue = { navController.navigate( route = CreatePin )}
+                    onContinue = { navController.navigate( route = CreatePin )},
+                    onBackButtonPressed = { navController.navigateUp() }
                 )
             }
             composable<ImportAccount> {
                 ImportAccountScreen(
-                    onFinishAccountImport = { navController.navigate( route = CreatePin ) }
+                    onFinishAccountImport = { navController.navigate( route = CreatePin ) },
+                    onBackButtonPressed = { navController.navigateUp() }
                 )
             }
             composable<CreatePin> {
