@@ -1,4 +1,7 @@
-use snforge_std::{declare, ContractClassTrait, DeclareResultTrait, start_cheat_caller_address, stop_cheat_caller_address};
+use snforge_std::{
+    declare, ContractClassTrait, DeclareResultTrait, start_cheat_caller_address,
+    stop_cheat_caller_address
+};
 use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 use starknet::contract_address_const;
 use starknet::{ContractAddress, {account::Call}};
@@ -31,7 +34,7 @@ fn deploy_erc20_mock(name: ByteArray, symbol: ByteArray,) -> IERC20Dispatcher {
     INITIAL_SUPPLY.serialize(ref calldata);
     OWNER().serialize(ref calldata);
 
-    let (contract_address, _)  = class.deploy(@calldata).unwrap();
+    let (contract_address, _) = class.deploy(@calldata).unwrap();
 
     IERC20Dispatcher { contract_address }
 }
@@ -99,35 +102,23 @@ fn test_other_account_cannot_change_public_key() {
 
     assert(wallet.get_public_key() != new_pub_key, 'Pub key should not change');
 }
-//#[test]
-//fn test_is_valid_signature() { // TODO: Test is_valid_signature() works as expected (valid returns true, anything else returns false (check 0 hash and empty sigs as well))
-//}
+
 
 #[test]
 fn test_is_not_valid_signature() {
-    let class_hash = declare("StarknetPhoneAccount");
-    let _pub_key = 'pub_key';
-    let contract_address = class_hash.deploy(@array![_pub_key]).unwrap();
-    let wallet = IStarknetPhoneAccountDispatcher { contract_address };
+    let wallet = deploy_wallet();
     assert(
-        wallet.is_valid_signature(0x0, array!['starknet', 'phone'].span()) == 0, 'Valid signature'
+        wallet.is_valid_signature('test', array!['starknet', 'phone'].span()) == 0,
+        'Valid signature'
     );
 }
 #[test]
+#[should_panic(expected: ('invalid signature',))]
 fn test_empty_signature() {
-    let class_hash = declare("StarknetPhoneAccount");
-    let _pub_key = 'pub_key';
-    let contract_address = class_hash.deploy(@array![_pub_key]).unwrap();
-    let wallet = IStarknetPhoneAccountDispatcher { contract_address };
-    assert(
-        wallet.is_valid_signature('test', array![].span()) == 'invalid signature', 'Empty signature'
-    );
+    let wallet = deploy_wallet();
+    wallet.is_valid_signature('test', array![].span());
 }
-//#[test]
-//fn test_execute() { // TODO: Test __execute__() works as expected (solo and multi-calls should work as expected)
-//        - Might need to create a mock erc20 contract to test calls (see if the wallet is able to do a multi call (try sending eth to 2 accounts from the 
-//          deployed wallet, both accounts' balance should update)
-//}
+
 
 #[test]
 #[should_panic(expected: ('invalid caller',))]
