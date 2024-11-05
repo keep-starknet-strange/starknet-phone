@@ -35,10 +35,47 @@ import com.example.walletapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FinalizeAccountCreationScreen(onContinue: () -> Unit) {
+fun FinalizeAccountCreationScreen(
+    onContinue: () -> Unit,
+    onBackButtonPressed: () -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
+                backgroundColor = Color("#0C0C4F".toColorInt()),
+                contentColor = Color.White,
+                elevation = 4.dp
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 32.dp, start = 16.dp, end = 16.dp),
+
+                    ) {
+                    IconButton(onClick = onBackButtonPressed) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Backward  Arrow",
+                            modifier = Modifier.padding(start = 8.dp),
+                            tint = Color.White
+                        )
+                    }
+
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+
+                            Text(
+                                text = "Create Account",
+                                color = Color.White,
+                                fontSize = 20.sp
+                            )
+
+                        }
+
+                    }
+            }
                 title = { Text("Create Account", color = Color.White, fontSize = 20.sp) },
                 navigationIcon = {
                     Icon(

@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.TopAppBarDefaults
@@ -57,12 +58,47 @@ import kotlinx.coroutines.CoroutineScope
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateAccountScreen(
-    onContinue: () -> Unit
+    onContinue: () -> Unit,
+    onBackButtonPressed: () -> Unit
 ) {
     var progress by remember { mutableStateOf(0.5f) }
     Scaffold(
         topBar = {
             TopAppBar(
+                backgroundColor = Color("#0C0C4F".toColorInt()),
+                contentColor = Color.White,
+                elevation = 4.dp
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 32.dp, start = 16.dp, end = 16.dp),
+
+                    ) {
+                    IconButton(onClick = onBackButtonPressed) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Backward  Arrow",
+                            modifier = Modifier.padding(start = 8.dp),
+                            tint = Color.White
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+
+                        Text(
+                            text = "Create Account",
+                            color = Color.White,
+                            fontSize = 20.sp
+                        )
+
+                    }
+
+                }
+            }
                 title = { Text("Create Account", color = Color.White, fontSize = 20.sp) },
                 navigationIcon = {
                     Icon(

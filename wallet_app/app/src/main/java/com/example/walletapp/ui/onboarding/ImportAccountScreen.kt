@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -55,11 +56,49 @@ import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+fun ImportAccountScreen(
+    onFinishAccountImport: () -> Unit,
+    onBackButtonPressed: () -> Unit
+) {
 fun ImportAccountScreen(onFinishAccountImport: () -> Unit) {
     var progress by remember { mutableStateOf(0.5f) }
     Scaffold(
         topBar = {
             TopAppBar(
+                backgroundColor = Color("#0C0C4F".toColorInt()),
+                contentColor = Color.White,
+                elevation = 4.dp
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 32.dp, start = 16.dp, end = 16.dp),
+
+                    ) {
+                    IconButton(onClick = onBackButtonPressed) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Backward  Arrow",
+                            modifier = Modifier.padding(start = 8.dp),
+                            tint = Color.White
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+
+                        Text(
+                            text = "Import existing wallet",
+                            color = Color.White,
+                            fontSize = 20.sp
+                        )
+
+                    }
+
+                }
+            }
                 title = { Text("Import existing wallet", color = Color.White, fontSize = 20.sp) },
                 navigationIcon = {
                     Icon(
