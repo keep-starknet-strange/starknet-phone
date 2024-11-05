@@ -19,3 +19,14 @@ fun weiToEther(wei: Uint256): BigDecimal {
     val weiInEther = BigDecimal("1000000000000000000") // 10^18
     return BigDecimal(wei.value.toString()).divide(weiInEther)
 }
+
+fun etherToWei(ether: BigDecimal): Uint256 {
+    val weiInEther = BigDecimal("1000000000000000000") // 10^18
+    val weiValue = ether.multiply(weiInEther).toBigInteger()
+    return Uint256(weiValue)
+}
+
+fun isValidEthereumAddress(address: String): Boolean {
+    val regex = Regex("^0x[a-fA-F0-9]+\$")
+    return regex.matches(address)
+}

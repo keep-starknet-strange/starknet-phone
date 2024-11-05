@@ -2,12 +2,15 @@ package com.example.walletapp.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.walletapp.BuildConfig
 import com.example.walletapp.ui.account.AddTokenScreen
 import com.example.walletapp.ui.account.TokenViewModel
 import com.example.walletapp.ui.account.WalletScreen
+import com.example.walletapp.ui.account.WalletViewModel
 import com.example.walletapp.ui.activity.FinalizeAccountCreationScreen
 import com.example.walletapp.ui.onboarding.CreateAccountScreen
 import com.example.walletapp.ui.onboarding.CreatePinScreen
@@ -44,6 +47,7 @@ object Receive
 
 @Composable
 fun WalletApp(tokenViewModel: TokenViewModel) {
+    val walletViewModel: WalletViewModel = viewModel()
     WalletappTheme {
 
         // TODO(#109): get this information from a data store
@@ -95,7 +99,8 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
                    onNewTokenPress = { navController.navigate( route = AddToken ) },
                    onReceivePress = { navController.navigate( route = Receive ) },
                    onSendPress = { navController.navigate( route = Send ) },
-                   tokenViewModel = tokenViewModel
+                   tokenViewModel = tokenViewModel,
+                   walletViewModel = walletViewModel
                )
            }
             composable<AddToken> {
@@ -106,7 +111,7 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
             }
 
             composable<Send> {
-                SendScreen()
+                SendScreen(walletViewModel)
             }
             composable<Receive> {
                 ReceiveScreen(modifier = Modifier)

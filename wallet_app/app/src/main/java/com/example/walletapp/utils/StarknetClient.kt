@@ -108,9 +108,19 @@ class StarknetClient(private val rpcUrl: String) {
         )
     }
 
-    suspend fun transferFunds(account: Account, toAddress: Felt, amount: Uint256) {
-        // TODO(#102): add logic to transfer funds here
-        // follow the example: https://github.com/software-mansion/starknet-jvm/blob/main/androiddemo/src/main/java/com/example/androiddemo/MainActivity.kt
+    suspend fun transferFunds(account: Account, toAddress: Felt, amount: Uint256): Felt {
+        //TODO: Add support to starknet
+        val erc20ContractAddress = Felt.fromHex(ETH_ERC20_ADDRESS)
+        val calldata = listOf(toAddress) + amount.toCalldata()
+        val call = Call(
+            contractAddress = erc20ContractAddress,
+            entrypoint = "transfer",
+            calldata = calldata,
+        )
+        val request = account.executeV3(call)
+        val future = request.sendAsync()
+        val response =  future.await()
+        return response.transactionHash
     }
 
 

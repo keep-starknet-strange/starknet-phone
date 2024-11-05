@@ -27,11 +27,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.transfer.SendActivity"
+            android:name=".ui.transfer.SendScreen"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
         <activity
-            android:name=".ui.transfer.ReceiverActivity"
+            android:name=".ui.transfer.ReceiverScreen"
             android:exported="true"
             android:theme="@style/Theme.Walletapp"/>
         <activity android:name=".ui.account.AddTokenActivity"
