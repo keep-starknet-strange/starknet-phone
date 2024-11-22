@@ -1,8 +1,8 @@
 
 # Android Development Crash Course 
 
-Because GrapheneOS (and thus Starknet Phone) is based on android, it is compatiable 
-with Android native applications. This will be a broad overview on how Android 
+Because GrapheneOS (and thus Starknet Phone) is based on android, it is compatible 
+with Android native applications. This will be a broad overview of how Android 
 development is approached in this project. 
 
 ## Environment/Android Studio setup
