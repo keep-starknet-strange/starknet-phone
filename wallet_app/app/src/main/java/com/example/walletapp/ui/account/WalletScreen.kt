@@ -2,7 +2,7 @@ package com.example.walletapp.ui.account
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.util.Log
+import androidx.compose.ui.platform.ClipboardManager
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -45,12 +45,13 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.toLowerCase
+import android.content.ClipData
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
@@ -108,6 +109,8 @@ fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -
     val address= BuildConfig.ACCOUNT_ADDRESS
     val accountAddress = Felt.fromHex(address)
 
+
+    val clipboard: ClipboardManager = LocalClipboardManager.current
     var tokenImages by rememberSaveable { mutableStateOf<HashMap<String, String>>(hashMapOf()) }
     val balances by walletViewModel.balances.collectAsState()
     val coinsPrices by rememberSaveable { mutableStateOf<HashMap<String, Double>>(hashMapOf()) }
@@ -175,18 +178,33 @@ fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -
             text = formatter.format(totalBalance),
             fontFamily = FontFamily(Font(R.font.publicsans_bold)),
             color = Color.White,
-            fontSize = 24.sp,
+            fontSize = 26.sp,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 70.dp)
         )
-        Text(
-            text = address.take(10) + ".....",
-            fontFamily = FontFamily(Font(R.font.inter_regular)),
-            color = Color.White,
-            fontSize = 14.sp,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
+        Row(
+            modifier = Modifier.align(Alignment.CenterHorizontally)) {
+            Text(
+                text = address.take(8) + "....",
+                fontFamily = FontFamily(Font(R.font.inter_regular)),
+                color = Color.White,
+                fontSize = 12.sp,
+            )
+            Icon(
+                painter = painterResource(R.drawable.copy),// replace with your Ethereum icon
+                contentDescription = null,
+                tint=Color.White,
+                modifier = Modifier.padding(start=5.dp)
+                    .size(15.dp).clickable {
+                        val clip = ClipEntry(ClipData.newPlainText("Wallet Address", address))
+                        clipboard.setClip(clip)
+                        Toast.makeText(context, "Address Copied", Toast.LENGTH_LONG).show()
+                    }
+            )
+
+        }
+
         Spacer(modifier = Modifier.height(32.dp))
         val configuration = LocalConfiguration.current
         val screenHeight = configuration.screenHeightDp.dp/2

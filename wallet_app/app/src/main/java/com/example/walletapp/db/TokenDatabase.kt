@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.walletapp.model.Token
 import com.example.walletapp.utils.Converters
@@ -19,10 +20,28 @@ abstract class TokenDatabase : RoomDatabase() {
 
     abstract fun tokenDao(): TokenDao
 
+
+
     companion object {
         @Volatile
         private var INSTANCE: TokenDatabase? = null
 
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Create the Token table if it is new
+                database.execSQL(
+                    """
+            CREATE TABLE IF NOT EXISTS Token (
+                contactAddress TEXT NOT NULL PRIMARY KEY,
+                name TEXT NOT NULL,
+                symbol TEXT NOT NULL,
+                decimals INTEGER NOT NULL,
+                tokenId TEXT NOT NULL
+            )
+            """.trimIndent()
+                )
+            }
+        }
         fun getDatabase(context: Context): TokenDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -30,13 +49,15 @@ abstract class TokenDatabase : RoomDatabase() {
                     TokenDatabase::class.java,
                     "token_database"
                 )
-                    .addCallback(DatabaseCallback())  // Add callback here
+                    .addCallback(DatabaseCallback())
+                    .addMigrations(MIGRATION_1_2)
                     .build()
                 INSTANCE = instance
                 instance
             }
         }
     }
+
 
     private class DatabaseCallback : RoomDatabase.Callback() {
         override fun onCreate(db: SupportSQLiteDatabase) {

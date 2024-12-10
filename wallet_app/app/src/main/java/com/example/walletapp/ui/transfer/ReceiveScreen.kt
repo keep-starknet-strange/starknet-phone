@@ -1,6 +1,7 @@
 package com.example.walletapp.ui.transfer
 
 import android.content.ClipData
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,17 +22,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
+import com.example.walletapp.BuildConfig
 import com.example.walletapp.R
 
 @Composable
 fun ReceiveScreen(modifier: Modifier) {
     val clipboard: ClipboardManager = LocalClipboardManager.current
+    val context= LocalContext.current
+    val address= BuildConfig.ACCOUNT_ADDRESS
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -59,7 +64,7 @@ fun ReceiveScreen(modifier: Modifier) {
 
             // Wallet Address
             Text(
-                text = "0xfoo...123", // Replace with actual wallet address
+                text = address.take(8) + "....",
                 fontFamily = FontFamily(Font(R.font.publicsans_bold)),
                 color = Color.White,
                 fontSize = 40.sp
@@ -74,8 +79,9 @@ fun ReceiveScreen(modifier: Modifier) {
                 color = Color.White,
                 fontSize = 15.sp,
                 modifier = Modifier.clickable {
-                    val clip = ClipEntry(ClipData.newPlainText("Wallet Address", "0xfoo...123")) // TODO: Replace with actual wallet address
+                    val clip = ClipEntry(ClipData.newPlainText("Wallet Address", address))
                     clipboard.setClip(clip)
+                    Toast.makeText(context, "Address Copied", Toast.LENGTH_LONG).show()
                 }
             )
         }
