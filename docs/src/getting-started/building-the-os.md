@@ -21,7 +21,7 @@ echo 'export PATH=$PATH:/sbin:/usr/sbin:/usr/local/sbin' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-More detailed dependiencies and build guide can be found
+More detailed dependencies and build guide can be found
 [here](https://grapheneos.org/build)
 
 ## Downloading the source code
