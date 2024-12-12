@@ -104,6 +104,8 @@ dependencies {
     // Material Design 3
     implementation(libs.androidx.material3)
 
+    implementation("com.google.android.material:material:1.11.0")
+
     // Retrofit for network requests
     implementation(libs.retrofit)
     implementation(libs.converter.gson)

@@ -41,11 +41,6 @@ fun FinalizeAccountCreationScreen(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                backgroundColor = Color("#0C0C4F".toColorInt()),
-                contentColor = Color.White,
-                elevation = 4.dp
-            ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -76,21 +71,6 @@ fun FinalizeAccountCreationScreen(
 
                     }
             }
-                title = { Text("Create Account", color = Color.White, fontSize = 20.sp) },
-                navigationIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Backward Arrow",
-                        modifier = Modifier.padding(start = 8.dp),
-                        tint = Color.White
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color("#0C0C4F".toColorInt()),
-                    titleContentColor = Color.White
-                )
-            )
-        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
