@@ -54,7 +54,7 @@ public class RustLib {
 
 ## Writing the rust side
 
-We will writing rust code that compiles as C code to match the C header generated
+We will write rust code that compiles as C code to match the C header generated
 when compiling the Java library created in the previous step.
 Use javac to compile the Java class into a C header.
 

@@ -16,7 +16,7 @@ for the build command
 
 [Documentaiont](https://developer.android.com/develop/background-work/services)
 
-Main idea: servies are long-running operations in the background that can be accessed mby multiple devices.
+Main idea: services are long-running operations in the background that can be accessed by multiple devices.
 This is what we want for the light client, and is how Ethereum Phone implements their light client.
 
 Must be declared in the manifest file:
