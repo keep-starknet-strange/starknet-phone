@@ -8,7 +8,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,7 +26,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -52,6 +50,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import android.content.ClipData
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
@@ -174,35 +174,38 @@ fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -
 
         }.sum()
         val formatter = NumberFormat.getCurrencyInstance(Locale.US)
-        Text(
-            text = formatter.format(totalBalance),
-            fontFamily = FontFamily(Font(R.font.publicsans_bold)),
-            color = Color.White,
-            fontSize = 26.sp,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 70.dp)
-        )
-        Row(
-            modifier = Modifier.align(Alignment.CenterHorizontally)) {
+        Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = address.take(8) + "....",
-                fontFamily = FontFamily(Font(R.font.inter_regular)),
+                text = formatter.format(totalBalance),
+                fontFamily = FontFamily(Font(R.font.publicsans_bold)),
                 color = Color.White,
-                fontSize = 12.sp,
+                fontSize = 26.sp,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 70.dp)
             )
-            Icon(
-                painter = painterResource(R.drawable.copy),// replace with your Ethereum icon
-                contentDescription = null,
-                tint=Color.White,
-                modifier = Modifier.padding(start=5.dp)
-                    .size(15.dp).clickable {
-                        val clip = ClipEntry(ClipData.newPlainText("Wallet Address", address))
-                        clipboard.setClip(clip)
-                        Toast.makeText(context, "Address Copied", Toast.LENGTH_LONG).show()
-                    }
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = address.take(8) + "...",
+                    fontFamily = FontFamily(Font(R.font.inter_regular)),
+                    color = Color.White,
+                    fontSize = 12.sp,
+                )
+                Icon(
+                    painter = painterResource(R.drawable.copy),// replace with your Ethereum icon
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.padding(start = 5.dp)
+                        .size(15.dp).clickable {
+                            val clip = ClipEntry(ClipData.newPlainText("Wallet Address", address))
+                            clipboard.setClip(clip)
+                            Toast.makeText(context, "Address Copied", Toast.LENGTH_LONG).show()
+                        }
+                )
 
+            }
         }
 
         Spacer(modifier = Modifier.height(32.dp))
