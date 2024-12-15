@@ -44,12 +44,15 @@ import com.example.walletapp.R
 import com.example.walletapp.ui.account.WalletViewModel
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
 import com.example.walletapp.utils.etherToWei
 import com.example.walletapp.utils.isValidEthereumAddress
 import com.swmansion.starknet.account.StandardAccount
@@ -63,7 +66,7 @@ import java.math.BigDecimal
 
 
 @Composable
-fun SendScreen(walletViewModel: WalletViewModel) {
+fun SendScreen(walletViewModel: WalletViewModel,navController: NavController) {
 
     val balances by walletViewModel.balances.collectAsState()
     val address= BuildConfig.ACCOUNT_ADDRESS
@@ -143,6 +146,17 @@ fun SendScreen(walletViewModel: WalletViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            // Back Button
+            IconButton(
+                onClick = { navController.navigateUp() },
+                modifier = Modifier.align(Alignment.Start)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.White
+                )
+            }
             Spacer(modifier = Modifier.height(40.dp))
 
             // "From" label above the wallet address field (readonly)
@@ -306,27 +320,33 @@ fun TokenDropdown(
             DropdownMenuItem(onClick = {
                 onTokenSelected("ethereum")
                 expanded = false
-            }) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_ethereum),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("ETH", color = Color.White)
-            }
+            },
+                leadingIcon = {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_ethereum),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+
+                },
+                text={
+                    Text("ETH", color = Color.White)
+                })
             DropdownMenuItem(onClick = {
                 onTokenSelected("starknet")
                 expanded = false
-            }) {
-                Image(
-                    painter = painterResource(id = R.drawable.starknet_icon),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("STRK", color = Color.White)
-            }
+            },
+                leadingIcon = {
+                    Image(
+                        painter = painterResource(id = R.drawable.starknet_icon),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+
+                },
+                text={
+                    Text("STRK", color = Color.White)
+                })
         }
     }
 }

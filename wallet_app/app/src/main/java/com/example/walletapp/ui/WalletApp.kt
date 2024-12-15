@@ -106,16 +106,16 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
             composable<AddToken> {
                 AddTokenScreen(
                     tokenViewModel=tokenViewModel,
-                    navController: navController,
-                    onConfirm = { navController.navigateUp() }
+                    onConfirm = { navController.navigateUp() },
+                    navController
                 )
             }
 
             composable<Send> {
-                SendScreen(walletViewModel)
+                SendScreen(walletViewModel,navController)
             }
             composable<Receive> {
-                ReceiveScreen(modifier = Modifier)
+                ReceiveScreen(modifier = Modifier,navController)
             }
         }
     }
