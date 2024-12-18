@@ -5,10 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.snphone.snwalletsdk.SNWalletSDK.Companion
 import com.snphone.snwalletsdk.utils.StarknetClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -5,19 +5,16 @@ import com.swmansion.starknet.account.Account
 import com.swmansion.starknet.account.StandardAccount
 import com.swmansion.starknet.crypto.StarknetCurve
 import com.swmansion.starknet.data.ContractAddressCalculator
-import com.swmansion.starknet.data.types.CairoVersion
 import com.swmansion.starknet.data.types.Call
 import com.swmansion.starknet.data.types.DeployAccountResponse
 import com.swmansion.starknet.data.types.Felt
 import com.swmansion.starknet.data.types.StarknetChainId
 import com.swmansion.starknet.data.types.Uint256
 import com.swmansion.starknet.extensions.toFelt
-import com.swmansion.starknet.extensions.toNumAsHex
 import com.swmansion.starknet.provider.rpc.JsonRpcProvider
 import com.swmansion.starknet.signer.StarkCurveSigner
 import kotlinx.coroutines.future.await
 import java.math.BigInteger
-import java.security.SecureRandom
 
 
 const val ETH_ERC20_ADDRESS = "0x03f58b3b48d59f6ce07d27e2e62d10cbd31ce966fc285d817674b97272ae8db9"
@@ -88,12 +85,6 @@ class StarknetClient(rpcUrl: String) {
 
         return res.address?.hexString() ?: ""
 
-    }
-
-    suspend fun test(){
-        val request = provider.getBlockWithTxs(1)
-        val response = request.send()
-        Log.d(tag, "test: ${response.toString()}")
     }
 
     suspend fun getBalance(accountAddress: Felt,contractAddress:Felt): Uint256 {
