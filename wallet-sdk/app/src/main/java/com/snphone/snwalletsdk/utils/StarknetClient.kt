@@ -7,6 +7,7 @@ import com.swmansion.starknet.crypto.StarknetCurve
 import com.swmansion.starknet.data.ContractAddressCalculator
 import com.swmansion.starknet.data.types.CairoVersion
 import com.swmansion.starknet.data.types.Call
+import com.swmansion.starknet.data.types.DeployAccountResponse
 import com.swmansion.starknet.data.types.Felt
 import com.swmansion.starknet.data.types.StarknetChainId
 import com.swmansion.starknet.data.types.Uint256
@@ -19,8 +20,8 @@ import java.math.BigInteger
 import java.security.SecureRandom
 
 
-const val ETH_ERC20_ADDRESS = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7"
-const val ACCOUNT_CLASS_HASH = "0x04c6d6cf894f8bc96bb9c525e6853e5483177841f7388f74a46cfda6f028c755"
+const val ETH_ERC20_ADDRESS = "0x03f58b3b48d59f6ce07d27e2e62d10cbd31ce966fc285d817674b97272ae8db9"
+const val ACCOUNT_CLASS_HASH = "0x061dac032f228abef9c6626f995015233097ae253a7f72d68552db02f2971b8f"
 
 class StarknetClient(rpcUrl: String) {
 
@@ -28,25 +29,30 @@ class StarknetClient(rpcUrl: String) {
     private val tag = "StarknetClient"
     private val keystore = Keystore()
 
-    suspend fun deployAccount() {
+    suspend fun deployAccount(): String {
         // Predefined values for account creation
         val randomPrivateKey = StandardAccount.generatePrivateKey()
-        //keystore.storeData(randomPrivateKey.value.toString())       // save the key generated
+        keystore.storeData(randomPrivateKey.value.toString())       // save the key generated
         val data = keystore.retrieveData()                          // retrieve it to generate public key
         val privateKey = BigInteger(data).toFelt
 
         val publicKey = StarknetCurve.getPublicKey(privateKey)
 
+        Log.d(tag, "Private key: ${privateKey.hexString()}")
+        Log.d(tag,"Public key: ${publicKey.hexString()}")
+
         val signer = StarkCurveSigner(privateKey)
 
-        val salt = BigInteger(250, SecureRandom()).toFelt
+        val salt = Felt.ONE
+
+        val calldata = listOf(publicKey)
 
         val accountContractClassHash = Felt.fromHex(ACCOUNT_CLASS_HASH)
 
         val address = ContractAddressCalculator.calculateAddressFromHash(
             classHash = accountContractClassHash,
-            calldata = listOf(publicKey),
-            salt = salt,
+            calldata = calldata,
+            salt = salt
         )
 
         val account = StandardAccount(
@@ -54,8 +60,17 @@ class StarknetClient(rpcUrl: String) {
             signer = signer,
             provider = provider,
             chainId = StarknetChainId.SEPOLIA,
-            cairoVersion = CairoVersion.ONE,
         )
+
+//        val payloadForFeeEstimation = account.signDeployAccountV1(
+//            classHash = accountContractClassHash,
+//            calldata = calldata,
+//            salt = salt,
+//            maxFee = Felt.ZERO,
+//            nonce = Felt.ZERO,
+//            forFeeEstimate = true,
+//        )
+//        val feePayload = provider.getEstimateFee(listOf(payloadForFeeEstimation)).send()
 
         // Fund address first
         // how to approach this, we need the user to fund the address
@@ -65,16 +80,20 @@ class StarknetClient(rpcUrl: String) {
             calldata = listOf(publicKey),
             salt = salt,
             // 10*fee from estimate deploy account fee
-            maxFee = Felt.fromHex("0x11fcc58c7f7000"),
+            maxFee = Felt.fromHex("0x219d2e16ea"),
         )
-        try {
-                val result = provider.deployAccount(payload).send()
-                // Handle the result
-            } catch (e: Exception) {
-                // Handle the exception, e.g., log it or display an error message
-                Log.e("DeployAccountError", "Error deploying account: ", e)
-            }
 
+        val res: DeployAccountResponse  = provider.deployAccount(payload).send()
+        Log.d(tag, "Account deployed successfully: $res")
+
+        return res.address?.hexString() ?: ""
+
+    }
+
+    suspend fun test(){
+        val request = provider.getBlockWithTxs(1)
+        val response = request.send()
+        Log.d(tag, "test: ${response.toString()}")
     }
 
     suspend fun getBalance(accountAddress: Felt,contractAddress:Felt): Uint256 {

@@ -2,6 +2,7 @@ package com.snphone.snwalletsdk
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -34,7 +35,8 @@ class MainActivity : AppCompatActivity() {
 
         val starknetClient = StarknetClient(BuildConfig.RPC_URL)
         lifecycleScope.launch(Dispatchers.IO) {
-            starknetClient.deployAccount()
+            val address = starknetClient.deployAccount()
+            Log.d("MainActivity", "Address: $address")
         }
     }
 }
