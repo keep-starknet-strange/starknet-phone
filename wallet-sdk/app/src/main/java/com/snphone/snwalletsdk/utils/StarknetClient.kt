@@ -14,21 +14,21 @@ import com.swmansion.starknet.extensions.toFelt
 import com.swmansion.starknet.provider.rpc.JsonRpcProvider
 import com.swmansion.starknet.signer.StarkCurveSigner
 import kotlinx.coroutines.future.await
+import java.math.BigDecimal
 import java.math.BigInteger
-
-
-const val ETH_ERC20_ADDRESS = "0x03f58b3b48d59f6ce07d27e2e62d10cbd31ce966fc285d817674b97272ae8db9"
-const val ACCOUNT_CLASS_HASH = "0x061dac032f228abef9c6626f995015233097ae253a7f72d68552db02f2971b8f"
-const val CONTRACT_ADDRESS = "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d"
 
 class StarknetClient(rpcUrl: String) {
 
+     private val ETH_ERC20_ADDRESS = "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d"
+     private val ACCOUNTCLASSHASH = "0x061dac032f228abef9c6626f995015233097ae253a7f72d68552db02f2971b8f"
+
     private val provider = JsonRpcProvider(rpcUrl)
     private val tag = "StarknetClient"
-    private val keystore = Keystore()
+    private lateinit var keystore: Keystore
 
-    suspend fun deployAccount(): String {
+    fun deployAccount(): String {
         // Predefined values for account creation
+        keystore = Keystore()
         val randomPrivateKey = StandardAccount.generatePrivateKey()
         keystore.storeData(randomPrivateKey.value.toString())       // save the key generated
         val data = keystore.retrieveData()                          // retrieve it to generate public key
@@ -45,7 +45,7 @@ class StarknetClient(rpcUrl: String) {
 
         val calldata = listOf(publicKey)
 
-        val accountContractClassHash = Felt.fromHex(ACCOUNT_CLASS_HASH)
+        val accountContractClassHash = Felt.fromHex(ACCOUNTCLASSHASH)
 
         val address = ContractAddressCalculator.calculateAddressFromHash(
             classHash = accountContractClassHash,
@@ -91,7 +91,7 @@ class StarknetClient(rpcUrl: String) {
     suspend fun getBalance(accountAddress: Felt): String {
         // Create a call to Starknet ERC-20 ETH contract
         val call = Call(
-            contractAddress = CONTRACT_ADDRESS.toFelt,
+            contractAddress = ETH_ERC20_ADDRESS.toFelt,
             entrypoint = "balanceOf",
             calldata = listOf(accountAddress), // calldata is List<Felt>
         )
@@ -103,8 +103,6 @@ class StarknetClient(rpcUrl: String) {
         return try {
             val future = request.sendAsync()
             val response = future.await() // Await the completion without blocking
-
-            Log.d(tag, "Response: $response")
 
             // Validate response size
             require(response.size >= 2) { "Response size is less than 2; cannot construct Uint256" }
@@ -118,13 +116,12 @@ class StarknetClient(rpcUrl: String) {
             convertToTokenBalance(balance)
         } catch (e: Exception) {
             // Handle or log the exception as needed
-            throw RuntimeException("Failed to fetch balance", e)
+            throw RuntimeException("Failed to fetch balance $e", e)
         }
     }
 
 
     suspend fun transferFunds(account: Account, toAddress: Felt, amount: Uint256): Felt {
-        //TODO: Add support to starknet
         val erc20ContractAddress = Felt.fromHex(ETH_ERC20_ADDRESS)
         val calldata = listOf(toAddress) + amount.toCalldata()
         val call = Call(
@@ -166,6 +163,27 @@ class StarknetClient(rpcUrl: String) {
             whole.toString()
         } else {
             "$whole.$fractionalStr"
+        }
+    }
+
+    companion object {
+        fun toUint256Amount(amount: String, decimals: Int = 18): Uint256 {
+            require(decimals >= 0) { "Decimals must be non-negative" }
+
+            return try {
+                val bigDecimalAmount = BigDecimal(amount)
+                require(bigDecimalAmount >= BigDecimal.ZERO) { "Amount must be non-negative" }
+
+                // Check if decimal places don't exceed the specified decimals
+                val scale = bigDecimalAmount.scale()
+                require(scale <= decimals) { "Too many decimal places. Maximum allowed: $decimals" }
+
+                val scaledAmount = bigDecimalAmount.multiply(BigDecimal.TEN.pow(decimals)).toBigInteger()
+                val hexValue = "0x" + scaledAmount.toString(16)
+                Uint256.fromHex(hexValue)
+            } catch (e: NumberFormatException) {
+                throw IllegalArgumentException("Invalid amount format: $amount")
+            }
         }
     }
 }

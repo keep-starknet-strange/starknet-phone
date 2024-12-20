@@ -7,13 +7,17 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.snphone.snwalletsdk.utils.StarknetClient
+import com.swmansion.starknet.account.StandardAccount
 import com.swmansion.starknet.data.types.Felt
+import com.swmansion.starknet.data.types.StarknetChainId
+import com.swmansion.starknet.data.types.Uint256
 import com.swmansion.starknet.extensions.toFelt
+import com.swmansion.starknet.provider.rpc.JsonRpcProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 
 const val ACCOUNT_CLASS_HASH = "0x061dac032f228abef9c6626f995015233097ae253a7f72d68552db02f2971b8f"
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,9 +41,25 @@ class MainActivity : AppCompatActivity() {
 
         val starknetClient = StarknetClient(BuildConfig.RPC_URL)
         lifecycleScope.launch(Dispatchers.IO) {
-            val addressUser = "0x0607842ad50f3c1fc467655ed6edecdbfbe5705a9dbbec80b06143d56d4fe8e9".toFelt
-            val address = starknetClient.transferFunds(addressUser)
-            Log.d("MainActivity", "Balance: $address")
+            val addressUser = BuildConfig.publicAddress.toFelt
+            val privateKey = BuildConfig.privateKey.toFelt
+
+            val account = StandardAccount(
+                address = addressUser,
+                privateKey = privateKey,
+                provider = JsonRpcProvider(BuildConfig.RPC_URL),
+                chainId = StarknetChainId.SEPOLIA,
+            )
+            val recipientAddress = Felt.fromHex(BuildConfig.recepientAddress)
+            try {
+                val amount = StarknetClient.toUint256Amount(1.toString())
+                val address = starknetClient.transferFunds(account,recipientAddress,amount)
+                Log.d("MainActivity", "transaction id: $address")
+
+            }catch (e: Exception){
+                Log.d("MainActivity", "Error in amount: $e")
+
+            }
         }
     }
 }

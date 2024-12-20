@@ -27,6 +27,10 @@ android {
         val properties = Properties()
         properties.load(project.rootProject.file("local.properties").inputStream())
         buildConfigField("String", "RPC_URL", "\"${properties.getProperty("RPC_URL")}\"")
+        buildConfigField("String", "publicAddress", "\"${properties.getProperty("publicAddress")}\"")
+        buildConfigField("String", "privateKey", "\"${properties.getProperty("privateKey")}\"")
+        buildConfigField("String", "recepientAddress", "\"${properties.getProperty("recepientAddress")}\"")
+
     }
 
     buildTypes {
