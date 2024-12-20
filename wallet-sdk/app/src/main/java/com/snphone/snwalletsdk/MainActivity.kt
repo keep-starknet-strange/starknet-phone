@@ -10,14 +10,10 @@ import com.snphone.snwalletsdk.utils.StarknetClient
 import com.swmansion.starknet.account.StandardAccount
 import com.swmansion.starknet.data.types.Felt
 import com.swmansion.starknet.data.types.StarknetChainId
-import com.swmansion.starknet.data.types.Uint256
 import com.swmansion.starknet.extensions.toFelt
 import com.swmansion.starknet.provider.rpc.JsonRpcProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
-
-const val ACCOUNT_CLASS_HASH = "0x061dac032f228abef9c6626f995015233097ae253a7f72d68552db02f2971b8f"
 
 class MainActivity : AppCompatActivity() {
 
