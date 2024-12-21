@@ -74,6 +74,10 @@ dependencies {
     implementation("com.swmansion.starknet:starknet:0.13.0@aar"){
         isTransitive = true
     }
+
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+
     // Navigation stuff
     implementation(libs.androidx.navigation.compose.v283)
     implementation(libs.androidx.navigation.compose.v283)
