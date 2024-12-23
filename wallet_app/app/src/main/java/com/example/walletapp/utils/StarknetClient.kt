@@ -32,9 +32,6 @@ const val ACCOUNT_CLASS_HASH = "0x04c6d6cf894f8bc96bb9c525e6853e5483177841f7388f
 class StarknetClient(private val rpcUrl: String) {
 
     private val provider = JsonRpcProvider(rpcUrl)
-    private val privateKey = BuildConfig.PRIVATE_KEY
-    private val accountAddress = BuildConfig.ACCOUNT_ADDRESS
-    private val tag = "StarknetClient"
     private val keystore = Keystore()
 
     suspend fun deployAccount() {

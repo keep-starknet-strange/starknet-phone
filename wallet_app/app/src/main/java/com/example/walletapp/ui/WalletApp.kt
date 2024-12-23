@@ -1,12 +1,14 @@
 package com.example.walletapp.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.walletapp.BuildConfig
+import com.example.walletapp.datastore.WalletStoreModule
 import com.example.walletapp.ui.account.AddTokenScreen
 import com.example.walletapp.ui.account.TokenViewModel
 import com.example.walletapp.ui.account.WalletScreen
@@ -19,6 +21,9 @@ import com.example.walletapp.ui.onboarding.OnboardingScreen
 import com.example.walletapp.ui.theme.WalletappTheme
 import com.example.walletapp.ui.transfer.ReceiveScreen
 import com.example.walletapp.ui.transfer.SendScreen
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
 // main user account view
@@ -48,21 +53,17 @@ object Receive
 @Composable
 fun WalletApp(tokenViewModel: TokenViewModel) {
     val walletViewModel: WalletViewModel = viewModel()
+    val context = LocalContext.current
+    val dataStore = WalletStoreModule(context)
+    val hasAccountState = dataStore.hasAccount.collectAsState(initial = null)
+    hasAccountState.value?.let { hasAccount ->
     WalletappTheme {
 
-        // TODO(#109): get this information from a data store
-        val hasAccount = false
 
-        fun getStart(): Any {
-            return if (hasAccount) {
-                Wallet
-            } else {
-                Onboarding
-            }
-        }
+        val startDestination = if (hasAccount) Wallet else Onboarding
 
         val navController = rememberNavController()
-        NavHost(navController, startDestination = getStart()) {
+        NavHost(navController, startDestination = startDestination) {
 
             composable<Onboarding> {
                 OnboardingScreen(
@@ -78,7 +79,7 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
             }
             composable<FinalizeAccountCreation> {
                 FinalizeAccountCreationScreen(
-                    onContinue = { navController.navigate( route = CreatePin )},
+                    onContinue = { navController.navigate( route = CreatePin ) },
                     onBackButtonPressed = { navController.navigateUp() }
                 )
             }
@@ -90,7 +91,11 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
             }
             composable<CreatePin> {
                 CreatePinScreen(
-                    onContinue = { navController.navigate( route = Wallet )}
+                    onContinue = { navController.navigate( route = Wallet )
+                        CoroutineScope(Dispatchers.IO).launch {
+                            dataStore.setHasAccount(true)
+                        }
+                    }
                 )
             }
 
@@ -119,4 +124,5 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
             }
         }
     }
+        }
 }
