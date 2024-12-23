@@ -29,10 +29,9 @@ import androidx.compose.ui.unit.sp
 import android.content.ClipboardManager
 import android.content.ClipData
 import android.widget.Toast
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.core.graphics.toColorInt
 import com.example.walletapp.R
-import com.example.walletapp.datastore.DataStoreModule
+import com.example.walletapp.datastore.WalletStoreModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -94,7 +93,7 @@ fun FinalizeAccountCreationScreen(
 fun AccountInfoView(onContinue: () -> Unit) {
     val context = LocalContext.current as Activity
     val clipboardManager = LocalContext.current.getSystemService(ClipboardManager::class.java)
-    val dataStore = DataStoreModule(context)
+    val dataStore = WalletStoreModule(context)
     var checked by remember { mutableStateOf(true) }
     val accountName = "Starknet"
     val privateKey = "q78ggh277ibckewjtnM"

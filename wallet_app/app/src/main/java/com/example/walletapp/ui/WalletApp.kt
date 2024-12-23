@@ -8,8 +8,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.walletapp.BuildConfig
-import com.example.walletapp.datastore.DataStoreModule
+import com.example.walletapp.datastore.WalletStoreModule
 import com.example.walletapp.ui.account.AddTokenScreen
 import com.example.walletapp.ui.account.TokenViewModel
 import com.example.walletapp.ui.account.WalletScreen
@@ -55,7 +54,7 @@ object Receive
 fun WalletApp(tokenViewModel: TokenViewModel) {
     val walletViewModel: WalletViewModel = viewModel()
     val context = LocalContext.current
-    val dataStore = DataStoreModule(context)
+    val dataStore = WalletStoreModule(context)
     val hasAccountState = dataStore.hasAccount.collectAsState(initial = null)
     hasAccountState.value?.let { hasAccount ->
     WalletappTheme {
