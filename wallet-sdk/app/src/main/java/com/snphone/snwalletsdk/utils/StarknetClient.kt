@@ -26,7 +26,7 @@ class StarknetClient(rpcUrl: String) {
     private val tag = "StarknetClient"
     private lateinit var keystore: Keystore
 
-    fun deployAccount(): String {
+    fun deployAccount(): Pair<String, String> {
         // Predefined values for account creation
         keystore = Keystore()
         val randomPrivateKey = StandardAccount.generatePrivateKey()
@@ -60,18 +60,9 @@ class StarknetClient(rpcUrl: String) {
             chainId = StarknetChainId.SEPOLIA,
         )
 
-//        val payloadForFeeEstimation = account.signDeployAccountV1(
-//            classHash = accountContractClassHash,
-//            calldata = calldata,
-//            salt = salt,
-//            maxFee = Felt.ZERO,
-//            nonce = Felt.ZERO,
-//            forFeeEstimate = true,
-//        )
-//        val feePayload = provider.getEstimateFee(listOf(payloadForFeeEstimation)).send()
 
-        // Fund address first
-        // how to approach this, we need the user to fund the address
+        // Fund address first with Eth
+        // how to approach this, we need the user to fund the address with eth
 
         val payload = account.signDeployAccountV1(
             classHash = accountContractClassHash,
@@ -84,8 +75,8 @@ class StarknetClient(rpcUrl: String) {
         val res: DeployAccountResponse  = provider.deployAccount(payload).send()
         Log.d(tag, "Account deployed successfully: $res")
 
-        return res.address?.hexString() ?: ""
-
+        val deployedAddress = res.address?.hexString() ?: ""
+        return Pair(privateKey.hexString(), deployedAddress)
     }
 
     suspend fun getBalance(accountAddress: Felt): String {

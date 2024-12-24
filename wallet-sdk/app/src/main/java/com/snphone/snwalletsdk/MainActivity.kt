@@ -37,6 +37,12 @@ class MainActivity : AppCompatActivity() {
 
         val starknetClient = StarknetClient(BuildConfig.RPC_URL)
         lifecycleScope.launch(Dispatchers.IO) {
+
+            //Deploy account
+            //val (privateKey, accountAddress) = deployAccount()
+
+            //GetBalance
+            //val balance = getBalance(accountAddress)
             val addressUser = BuildConfig.publicAddress.toFelt
             val privateKey = BuildConfig.privateKey.toFelt
 
