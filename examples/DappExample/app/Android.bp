@@ -1,0 +1,8 @@
+android_app {
+    name: "DappExample",
+    certificate: "platform",
+    manifest: "src/main/AndroidManifest.xml",
+    srcs: ["src/main/java/**/*.java", "src/main/java/**/*.kt"],
+    android_resource_dirs: ["src/main/res"],
+    enabled: true,
+}
