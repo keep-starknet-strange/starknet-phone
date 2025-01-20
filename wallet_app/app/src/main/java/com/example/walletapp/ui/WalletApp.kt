@@ -1,5 +1,7 @@
 package com.example.walletapp.ui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -50,6 +52,7 @@ object Send
 @Serializable
 object Receive
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WalletApp(tokenViewModel: TokenViewModel) {
     val walletViewModel: WalletViewModel = viewModel()
@@ -59,8 +62,7 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
     hasAccountState.value?.let { hasAccount ->
     WalletappTheme {
 
-
-        val startDestination = if (hasAccount) Wallet else Onboarding
+        val startDestination = if (hasAccount) CreatePin else Onboarding
 
         val navController = rememberNavController()
         NavHost(navController, startDestination = startDestination) {
@@ -91,10 +93,15 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
             }
             composable<CreatePin> {
                 CreatePinScreen(
-                    onContinue = { navController.navigate( route = Wallet )
-                        CoroutineScope(Dispatchers.IO).launch {
-                            dataStore.setHasAccount(true)
+                    onContinue = {
+                        if (!hasAccount){
+                            CoroutineScope(Dispatchers.IO).launch {
+                                dataStore.setHasAccount(true)
+                            }
+                        }else{
+                            navController.navigate( route = Wallet )
                         }
+
                     }
                 )
             }
