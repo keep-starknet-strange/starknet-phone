@@ -1,19 +1,32 @@
-package com.example.walletapp.ui.onboarding
+package com.example.walletapp.ui.account
 
 import android.app.Activity
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,7 +45,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,16 +52,14 @@ import androidx.core.graphics.toColorInt
 import com.example.walletapp.R
 import com.example.walletapp.datastore.WalletStoreModule
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
-import okhttp3.Dispatcher
+import kotlinx.coroutines.launch
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreatePinScreen(onContinue: () -> Unit ,onError : () -> Unit) {
+fun EnterPinScreen(onContinue: () -> Unit) {
     val context = (LocalContext.current as Activity)
     val borderColor = Color("#1B1B76".toColorInt())
     var passcode by remember { mutableStateOf("") }
@@ -60,6 +70,7 @@ fun CreatePinScreen(onContinue: () -> Unit ,onError : () -> Unit) {
     val focusRequester = remember { FocusRequester() }
     val dataStore = WalletStoreModule(context)
     val hasAccountState = dataStore.hasAccount.collectAsState(initial = null)
+
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -102,7 +113,7 @@ fun CreatePinScreen(onContinue: () -> Unit ,onError : () -> Unit) {
 
             hasAccountState.value?.let { hasAccount ->
                 Text(
-                    text = "Create PIN-code",
+                    text = "Enter PIN-code",
                     style = TextStyle(
                         color = Color.White, fontSize = 25.sp,
                         fontWeight = FontWeight.Medium
@@ -184,7 +195,7 @@ fun CreatePinScreen(onContinue: () -> Unit ,onError : () -> Unit) {
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
-                onClick = if(passcode.length==maxDigits) onContinue else onError,
+                onClick = onContinue,
                 contentPadding = ButtonDefaults.ContentPadding,
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(

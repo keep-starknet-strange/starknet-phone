@@ -1,6 +1,10 @@
 package com.example.walletapp.ui
 
+import android.app.Activity
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -12,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.walletapp.datastore.WalletStoreModule
 import com.example.walletapp.ui.account.AddTokenScreen
+import com.example.walletapp.ui.account.EnterPinScreen
 import com.example.walletapp.ui.account.TokenViewModel
 import com.example.walletapp.ui.account.WalletScreen
 import com.example.walletapp.ui.account.WalletViewModel
@@ -44,6 +49,8 @@ object ImportAccount
 @Serializable
 object CreatePin
 @Serializable
+object EnterPin
+@Serializable
 object FinalizeAccountCreation
 
 // token transfer flow
@@ -62,7 +69,7 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
     hasAccountState.value?.let { hasAccount ->
     WalletappTheme {
 
-        val startDestination = if (hasAccount) CreatePin else Onboarding
+        val startDestination = if (hasAccount) EnterPin else Onboarding
 
         val navController = rememberNavController()
         NavHost(navController, startDestination = startDestination) {
@@ -94,14 +101,20 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
             composable<CreatePin> {
                 CreatePinScreen(
                     onContinue = {
-                        if (!hasAccount){
-                            CoroutineScope(Dispatchers.IO).launch {
-                                dataStore.setHasAccount(true)
-                            }
-                        }else{
-                            navController.navigate( route = Wallet )
+                        navController.navigate( route = Wallet )
+                        CoroutineScope(Dispatchers.IO).launch {
+                            dataStore.setHasAccount(true)
                         }
-
+                    },
+                    onError = {
+                        Toast.makeText(context,"Enter 6 digit pin", Toast.LENGTH_LONG).show()
+                    }
+                )
+            }
+            composable<EnterPin> {
+                EnterPinScreen(
+                    onContinue = {
+                            navController.navigate( route = Wallet )
                     }
                 )
             }
@@ -112,7 +125,11 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
                    onReceivePress = { navController.navigate( route = Receive ) },
                    onSendPress = { navController.navigate( route = Send ) },
                    tokenViewModel = tokenViewModel,
-                   walletViewModel = walletViewModel
+                   walletViewModel = walletViewModel,
+                   onBack = {
+                       val activity = (navController.context as? Activity)
+                       activity?.finish()
+                   }
                )
            }
             composable<AddToken> {
