@@ -2,11 +2,13 @@ package com.example.walletapp.ui.onboarding
 
 import android.app.Activity
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,6 +35,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,14 +52,12 @@ import okhttp3.Dispatcher
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreatePinScreen(onContinue: () -> Unit ,onError : () -> Unit) {
+fun CreatePinScreen(onContinue: (passcode : String) -> Unit ,onError : () -> Unit) {
     val context = (LocalContext.current as Activity)
     val borderColor = Color("#1B1B76".toColorInt())
     var passcode by remember { mutableStateOf("") }
-    var hiddenPasscode by remember { mutableStateOf("") }
+    var visible by remember { mutableStateOf(false) }
     val maxDigits = 6
-    val coroutineScope = rememberCoroutineScope()
-    // For focus control
     val focusRequester = remember { FocusRequester() }
     val dataStore = WalletStoreModule(context)
     val hasAccountState = dataStore.hasAccount.collectAsState(initial = null)
@@ -128,23 +129,13 @@ fun CreatePinScreen(onContinue: () -> Unit ,onError : () -> Unit) {
 
 
             OutlinedTextField(
-                value = hiddenPasscode,
+                value = passcode,
                 onValueChange = {   newValue ->
-
-                    val filterValue = newValue.filter { it.isDigit() || it == '*' }
-                    if (filterValue.length <= passcode.length) {
+                    val filterValue = newValue.filter { it.isDigit()}
+                    if (filterValue.length <= maxDigits) {
                         passcode = filterValue
-                        hiddenPasscode = filterValue
-                    } else if (passcode.length < maxDigits) {
-                        // Handle normal input
-                        passcode = filterValue
-                        hiddenPasscode = filterValue
-
-                        coroutineScope.launch(Dispatchers.Default) {
-                            delay(90L)
-                            hiddenPasscode = newValue.dropLast(1) + "*"
-                        }
-                    }},
+                    }
+                                },
                 placeholder = {
                     Text(
                         "Enter PIN Code",
@@ -157,6 +148,7 @@ fun CreatePinScreen(onContinue: () -> Unit ,onError : () -> Unit) {
                         modifier = Modifier.fillMaxWidth()
                     )
                 },
+                visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation('*'),
                 modifier = Modifier
                     .fillMaxWidth().padding(start=25.dp,end=25.dp)
                     .background(Color.Transparent).focusRequester(focusRequester),
@@ -170,6 +162,18 @@ fun CreatePinScreen(onContinue: () -> Unit ,onError : () -> Unit) {
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number // Open numeric keyboard
                 ),
+                trailingIcon = {
+                    if(passcode.isNotEmpty()){
+                        Icon( if(visible) painterResource(R.drawable.eye_open) else painterResource(R.drawable.eye_close),
+                            contentDescription = "",
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp).clickable(){
+                                visible=!visible
+
+                            })
+                    }
+
+                },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     containerColor = Color(0xFF1B1B76),
                     focusedBorderColor = borderColor,
@@ -184,7 +188,9 @@ fun CreatePinScreen(onContinue: () -> Unit ,onError : () -> Unit) {
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
-                onClick = if(passcode.length==maxDigits) onContinue else onError,
+                onClick ={
+                    if(passcode.length==maxDigits) onContinue(passcode) else onError()
+                    Log.d("password",passcode)  },
                 contentPadding = ButtonDefaults.ContentPadding,
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(

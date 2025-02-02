@@ -2,9 +2,11 @@ package com.example.walletapp.ui.account
 
 import android.app.Activity
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,6 +47,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,18 +58,18 @@ import com.example.walletapp.datastore.WalletStoreModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.text.dropLast
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EnterPinScreen(onContinue: () -> Unit) {
+fun EnterPinScreen(onContinue: (passcode : String) -> Unit,onError:()->Unit) {
     val context = (LocalContext.current as Activity)
     val borderColor = Color("#1B1B76".toColorInt())
     var passcode by remember { mutableStateOf("") }
-    var hiddenPasscode by remember { mutableStateOf("") }
+    var visible by remember { mutableStateOf(false) }
     val maxDigits = 6
-    val coroutineScope = rememberCoroutineScope()
     // For focus control
     val focusRequester = remember { FocusRequester() }
     val dataStore = WalletStoreModule(context)
@@ -139,23 +143,14 @@ fun EnterPinScreen(onContinue: () -> Unit) {
 
 
             OutlinedTextField(
-                value = hiddenPasscode,
+                value = passcode,
                 onValueChange = {   newValue ->
-
-                    val filterValue = newValue.filter { it.isDigit() || it == '*' }
-                    if (filterValue.length <= passcode.length) {
+                    val filterValue = newValue.filter { it.isDigit() }
+                    if (filterValue.length <= maxDigits) {
                         passcode = filterValue
-                        hiddenPasscode = filterValue
-                    } else if (passcode.length < maxDigits) {
-                        // Handle normal input
-                        passcode = filterValue
-                        hiddenPasscode = filterValue
 
-                        coroutineScope.launch(Dispatchers.Default) {
-                            delay(90L)
-                            hiddenPasscode = newValue.dropLast(1) + "*"
-                        }
-                    }},
+                    }
+                                },
                 placeholder = {
                     Text(
                         "Enter PIN Code",
@@ -181,6 +176,19 @@ fun EnterPinScreen(onContinue: () -> Unit) {
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number // Open numeric keyboard
                 ),
+                visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation('*'),
+                trailingIcon = {
+                    if(passcode.isNotEmpty()){
+                        Icon( if(visible) painterResource(R.drawable.eye_open) else painterResource(R.drawable.eye_close),
+                            contentDescription = "",
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp).clickable(){
+                                visible=!visible
+
+                            })
+                    }
+
+                },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     containerColor = Color(0xFF1B1B76),
                     focusedBorderColor = borderColor,
@@ -195,7 +203,8 @@ fun EnterPinScreen(onContinue: () -> Unit) {
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
-                onClick = onContinue,
+                onClick = {if(passcode.length==maxDigits)onContinue(passcode) else onError()
+                          Log.d("password",passcode)},
                 contentPadding = ButtonDefaults.ContentPadding,
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(

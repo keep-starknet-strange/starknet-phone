@@ -30,7 +30,9 @@ import com.example.walletapp.ui.transfer.ReceiveScreen
 import com.example.walletapp.ui.transfer.SendScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 
 // main user account view
@@ -100,8 +102,12 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
             }
             composable<CreatePin> {
                 CreatePinScreen(
-                    onContinue = {
+                    onContinue = { passcode ->
                         navController.navigate( route = Wallet )
+
+                        CoroutineScope(Dispatchers.IO).launch{
+                            dataStore.setPin(passcode)
+                        }
                         CoroutineScope(Dispatchers.IO).launch {
                             dataStore.setHasAccount(true)
                         }
@@ -113,8 +119,20 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
             }
             composable<EnterPin> {
                 EnterPinScreen(
-                    onContinue = {
-                            navController.navigate( route = Wallet )
+                    onContinue = { passcode ->
+                        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+                            val isPinValid = dataStore.verifyPin(passcode)
+                            withContext(Dispatchers.Main) {
+                                if (isPinValid) {
+                                    navController.navigate(route = Wallet)
+                                } else {
+                                    Toast.makeText(context, "Pin is Incorrect", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        }
+                    },
+                    onError = {
+                        Toast.makeText(context,"Enter 6 digit pin", Toast.LENGTH_LONG).show()
                     }
                 )
             }
@@ -148,5 +166,5 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
             }
         }
     }
-        }
+    }
 }
