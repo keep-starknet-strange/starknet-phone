@@ -1,21 +1,34 @@
-package com.example.walletapp.ui.onboarding
+package com.example.walletapp.ui.account
 
 import android.app.Activity
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -43,24 +56,25 @@ import androidx.core.graphics.toColorInt
 import com.example.walletapp.R
 import com.example.walletapp.datastore.WalletStoreModule
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
-import okhttp3.Dispatcher
+import kotlinx.coroutines.launch
+import kotlin.text.dropLast
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreatePinScreen(onContinue: (passcode : String) -> Unit ,onError : () -> Unit) {
+fun EnterPinScreen(onContinue: (passcode : String) -> Unit,onError:()->Unit) {
     val context = (LocalContext.current as Activity)
     val borderColor = Color("#1B1B76".toColorInt())
     var passcode by remember { mutableStateOf("") }
     var visible by remember { mutableStateOf(false) }
     val maxDigits = 6
+    // For focus control
     val focusRequester = remember { FocusRequester() }
     val dataStore = WalletStoreModule(context)
     val hasAccountState = dataStore.hasAccount.collectAsState(initial = null)
+
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -103,7 +117,7 @@ fun CreatePinScreen(onContinue: (passcode : String) -> Unit ,onError : () -> Uni
 
             hasAccountState.value?.let { hasAccount ->
                 Text(
-                    text = "Create PIN-code",
+                    text = "Enter PIN-code",
                     style = TextStyle(
                         color = Color.White, fontSize = 25.sp,
                         fontWeight = FontWeight.Medium
@@ -131,9 +145,10 @@ fun CreatePinScreen(onContinue: (passcode : String) -> Unit ,onError : () -> Uni
             OutlinedTextField(
                 value = passcode,
                 onValueChange = {   newValue ->
-                    val filterValue = newValue.filter { it.isDigit()}
+                    val filterValue = newValue.filter { it.isDigit() }
                     if (filterValue.length <= maxDigits) {
                         passcode = filterValue
+
                     }
                                 },
                 placeholder = {
@@ -148,7 +163,6 @@ fun CreatePinScreen(onContinue: (passcode : String) -> Unit ,onError : () -> Uni
                         modifier = Modifier.fillMaxWidth()
                     )
                 },
-                visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation('*'),
                 modifier = Modifier
                     .fillMaxWidth().padding(start=25.dp,end=25.dp)
                     .background(Color.Transparent).focusRequester(focusRequester),
@@ -162,6 +176,7 @@ fun CreatePinScreen(onContinue: (passcode : String) -> Unit ,onError : () -> Uni
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number // Open numeric keyboard
                 ),
+                visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation('*'),
                 trailingIcon = {
                     if(passcode.isNotEmpty()){
                         Icon( if(visible) painterResource(R.drawable.eye_open) else painterResource(R.drawable.eye_close),
@@ -188,9 +203,8 @@ fun CreatePinScreen(onContinue: (passcode : String) -> Unit ,onError : () -> Uni
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
-                onClick ={
-                    if(passcode.length==maxDigits) onContinue(passcode) else onError()
-                    Log.d("password",passcode)  },
+                onClick = {if(passcode.length==maxDigits)onContinue(passcode) else onError()
+                          Log.d("password",passcode)},
                 contentPadding = ButtonDefaults.ContentPadding,
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(

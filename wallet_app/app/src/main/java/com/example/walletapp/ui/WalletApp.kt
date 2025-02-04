@@ -1,5 +1,11 @@
 package com.example.walletapp.ui
 
+import android.app.Activity
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -10,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.walletapp.datastore.WalletStoreModule
 import com.example.walletapp.ui.account.AddTokenScreen
+import com.example.walletapp.ui.account.EnterPinScreen
 import com.example.walletapp.ui.account.TokenViewModel
 import com.example.walletapp.ui.account.WalletScreen
 import com.example.walletapp.ui.account.WalletViewModel
@@ -23,7 +30,9 @@ import com.example.walletapp.ui.transfer.ReceiveScreen
 import com.example.walletapp.ui.transfer.SendScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 
 // main user account view
@@ -42,6 +51,8 @@ object ImportAccount
 @Serializable
 object CreatePin
 @Serializable
+object EnterPin
+@Serializable
 object FinalizeAccountCreation
 
 // token transfer flow
@@ -50,6 +61,7 @@ object Send
 @Serializable
 object Receive
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WalletApp(tokenViewModel: TokenViewModel) {
     val walletViewModel: WalletViewModel = viewModel()
@@ -59,8 +71,7 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
     hasAccountState.value?.let { hasAccount ->
     WalletappTheme {
 
-
-        val startDestination = if (hasAccount) Wallet else Onboarding
+        val startDestination = if (hasAccount) EnterPin else Onboarding
 
         val navController = rememberNavController()
         NavHost(navController, startDestination = startDestination) {
@@ -91,10 +102,37 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
             }
             composable<CreatePin> {
                 CreatePinScreen(
-                    onContinue = { navController.navigate( route = Wallet )
+                    onContinue = { passcode ->
+                        navController.navigate( route = Wallet )
+
+                        CoroutineScope(Dispatchers.IO).launch{
+                            dataStore.setPin(passcode)
+                        }
                         CoroutineScope(Dispatchers.IO).launch {
                             dataStore.setHasAccount(true)
                         }
+                    },
+                    onError = {
+                        Toast.makeText(context,"Enter 6 digit pin", Toast.LENGTH_LONG).show()
+                    }
+                )
+            }
+            composable<EnterPin> {
+                EnterPinScreen(
+                    onContinue = { passcode ->
+                        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+                            val isPinValid = dataStore.verifyPin(passcode)
+                            withContext(Dispatchers.Main) {
+                                if (isPinValid) {
+                                    navController.navigate(route = Wallet)
+                                } else {
+                                    Toast.makeText(context, "Pin is Incorrect", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        }
+                    },
+                    onError = {
+                        Toast.makeText(context,"Enter 6 digit pin", Toast.LENGTH_LONG).show()
                     }
                 )
             }
@@ -105,7 +143,11 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
                    onReceivePress = { navController.navigate( route = Receive ) },
                    onSendPress = { navController.navigate( route = Send ) },
                    tokenViewModel = tokenViewModel,
-                   walletViewModel = walletViewModel
+                   walletViewModel = walletViewModel,
+                   onBack = {
+                       val activity = (navController.context as? Activity)
+                       activity?.finish()
+                   }
                )
            }
             composable<AddToken> {
@@ -124,5 +166,5 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
             }
         }
     }
-        }
+    }
 }
