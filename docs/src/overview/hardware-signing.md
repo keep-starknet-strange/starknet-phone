@@ -23,3 +23,7 @@ Some notable features:
 
 On Starknet, our account implementation needs to allow for this hardware signer.
 
+Account implementation
+
+- [argent account implementation](https://github.com/argentlabs/argent-contracts-starknet/blob/main/src/presets/argent_account.cairo)
+
