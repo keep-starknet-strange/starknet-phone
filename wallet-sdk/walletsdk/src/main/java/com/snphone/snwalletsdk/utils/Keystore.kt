@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.snphone.snwalletsdk.MainActivity
-import com.snphone.snwalletsdk.SNWalletSDK
 import java.io.IOException
 import java.security.GeneralSecurityException
 

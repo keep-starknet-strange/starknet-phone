@@ -1,7 +1,6 @@
 import java.util.Properties
 
 plugins {
-    //alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
     id("com.android.library")
@@ -17,7 +16,6 @@ android {
 
     defaultConfig {
         minSdk = 24
-        targetSdk = 34
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

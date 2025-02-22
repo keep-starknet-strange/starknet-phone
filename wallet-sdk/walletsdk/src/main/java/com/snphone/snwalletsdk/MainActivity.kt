@@ -2,18 +2,19 @@ package com.snphone.snwalletsdk
 
 import android.content.Context
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.snphone.snwalletsdk.utils.StarknetClient
 import kotlinx.coroutines.launch
 
-class SNWalletSDK : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
+
     init {
         instance = this
     }
 
     companion object {
-        private var instance: SNWalletSDK? = null
+        private var instance: MainActivity? = null
 
         fun applicationContext() : Context {
             return instance!!.applicationContext
