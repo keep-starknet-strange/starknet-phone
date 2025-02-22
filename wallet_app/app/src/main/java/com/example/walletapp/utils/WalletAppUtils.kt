@@ -7,6 +7,7 @@ import java.math.BigDecimal
 import java.security.MessageDigest
 import java.text.DecimalFormat
 import java.util.Base64
+import java.math.BigInteger
 
 // Function to format BigDecimal to Double with 2 decimal places
 fun BigDecimal.toDoubleWithTwoDecimal(): Double {
@@ -22,6 +23,11 @@ fun Double.toDoubleWithTwoDecimal(): Double {
 fun weiToEther(wei: Uint256): BigDecimal {
     val weiInEther = BigDecimal("1000000000000000000") // 10^18
     return BigDecimal(wei.value.toString()).divide(weiInEther)
+}
+
+fun weiStringToEther(wei: String): BigDecimal {
+    val weiInEther = BigDecimal("1000000000000000000") // 10^18
+    return BigDecimal(wei).divide(weiInEther)
 }
 
 fun etherToWei(ether: BigDecimal): Uint256 {
@@ -49,5 +55,4 @@ fun hashPin(pin: String): String {
     }
     return hexString.toString()
 }
-
 

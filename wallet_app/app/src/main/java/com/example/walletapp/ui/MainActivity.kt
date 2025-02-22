@@ -11,7 +11,6 @@ import com.example.walletapp.BuildConfig
 import com.example.walletapp.WalletAppApplication
 import com.example.walletapp.ui.account.TokenRepository
 import com.example.walletapp.ui.account.TokenViewModel
-import com.example.walletapp.utils.StarknetClient
 
 class MainActivity : ComponentActivity() {
     init {

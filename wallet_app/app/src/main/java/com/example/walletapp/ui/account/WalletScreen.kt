@@ -62,7 +62,6 @@ import coil.request.ImageRequest
 import com.example.walletapp.BuildConfig
 import com.example.walletapp.R
 import com.example.walletapp.model.CoinData
-import com.example.walletapp.utils.StarknetClient
 import com.example.walletapp.utils.toDoubleWithTwoDecimal
 import com.example.walletapp.utils.weiToEther
 import com.swmansion.starknet.crypto.starknetKeccak

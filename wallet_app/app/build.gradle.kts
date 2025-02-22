@@ -71,6 +71,9 @@ android {
 }
 dependencies {
 
+    // wallet sdk
+    implementation(files("../../wallet-sdk/walletsdk/build/outputs/aar/walletsdk-release.aar"))
+
     implementation("com.swmansion.starknet:starknet:0.13.0@aar"){
         isTransitive = true
     }
