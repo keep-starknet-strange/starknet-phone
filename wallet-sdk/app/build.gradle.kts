@@ -1,9 +1,10 @@
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.android.application)
+    //alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
+    id("com.android.library")
 }
 
 android {
@@ -15,11 +16,8 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.snphone.snwalletsdk"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
