@@ -1,5 +1,11 @@
 package com.example.demo
 
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -38,6 +44,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.demo.ui.theme.WalletsdkTheme
 import com.snphone.snwalletsdk.SNWalletSDK
@@ -45,9 +54,16 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
+import android.os.Handler
+import android.os.Looper
 
 class MainActivity : ComponentActivity() {
     private lateinit var sdk: SNWalletSDK
+    private val CHANNEL_ID = "transaction_channel"
+    private val NOTIFICATION_ID = 1
+    private val TIMEOUT_DURATION = 5000L // 5 seconds
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +88,7 @@ class MainActivity : ComponentActivity() {
                     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                         MainContent(modifier = Modifier.padding(innerPadding)) {
                             lifecycleScope.launch {
-                                signTransaction()
+                                sendTransactionWithTimeout(onTimeout = { showTransactionNotification() })
                             }
                         }
                     }
@@ -81,25 +97,67 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
-    private suspend fun signTransaction() {
-        try {
-            sdk.sendTransaction()
-        } catch (e: Exception) {
-            // Handle the exception
-            Toast.makeText(this, "An error occurred: ${e.message}", Toast.LENGTH_SHORT).show()
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Transaction Channel"
+            val descriptionText = "Channel for transaction notifications"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
         }
+    }
+
+    private fun showTransactionNotification() {
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_notification) // Replace with your notification icon
+            .setContentTitle("Transaction Submitted")
+            .setContentText("Your transaction has been submitted successfully.")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+        with(NotificationManagerCompat.from(this)) {
+            if (ActivityCompat.checkSelfPermission(
+                    applicationContext,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return
+            }
+            notify(NOTIFICATION_ID, builder.build())
+        }
+    }
+
+    private fun sendTransactionWithTimeout(onTimeout: () -> Unit) {
+        val handler = Handler(Looper.getMainLooper())
+        val timeoutRunnable = Runnable {
+            onTimeout()
+        }
+
+        // Post the timeout runnable with a delay
+        handler.postDelayed(timeoutRunnable, TIMEOUT_DURATION)
+
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainContent(modifier: Modifier = Modifier, onSignTransaction: () -> Unit) {
-    var showConfirmation by remember { mutableStateOf(false) }
+    var showInitialConfirmation by remember { mutableStateOf(false) }  // For initial confirmation
+    var showSuccessConfirmation by remember { mutableStateOf(false) }  // For success confirmation
     val coroutineScope = rememberCoroutineScope()
     var amountFrom by remember { mutableStateOf("1") }
     var amountTo by remember { mutableStateOf("") }
-    val ethToStrkRate = remember { BigDecimal("1500.00") } // 1 ETH = 1500 STRK (example rate)
+    val ethToStrkRate = remember { BigDecimal("1500.00") }
     val context = LocalContext.current
 
     // Calculate STRK amount when ETH amount changes
@@ -128,7 +186,6 @@ fun MainContent(modifier: Modifier = Modifier, onSignTransaction: () -> Unit) {
             OutlinedTextField(
                 value = amountFrom,
                 onValueChange = {
-                    // Only allow numeric input
                     if (it.isEmpty() || it.matches(Regex("[0-9]+(\\.[0-9]+)?"))) {
                         amountFrom = it
                     }
@@ -165,12 +222,7 @@ fun MainContent(modifier: Modifier = Modifier, onSignTransaction: () -> Unit) {
         Button(
             onClick = {
                 if (amountFrom.isNotEmpty() && amountTo.isNotEmpty()) {
-                    coroutineScope.launch {
-                        // Simulate sending the transaction
-                        delay(2000) // Simulate a 2-second delay
-                        showConfirmation = true
-                        onSignTransaction()
-                    }
+                    showInitialConfirmation = true  // Show confirmation dialog instead of immediate transaction
                 } else {
                     Toast.makeText(
                         context,
@@ -185,13 +237,42 @@ fun MainContent(modifier: Modifier = Modifier, onSignTransaction: () -> Unit) {
         }
     }
 
-    if (showConfirmation) {
+    // Initial Confirmation Dialog
+    if (showInitialConfirmation) {
         AlertDialog(
-            onDismissRequest = { showConfirmation = false },
+            onDismissRequest = { showInitialConfirmation = false },
+            title = { Text("Confirm Swap") },
+            text = { Text("Are you sure you want to swap $amountFrom ETH for $amountTo STRK?") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showInitialConfirmation = false
+                        coroutineScope.launch {
+                            delay(2000)  // Simulate processing delay
+                            onSignTransaction()  // Start the transaction with timeout
+                            showSuccessConfirmation = true  // Show success dialog
+                        }
+                    }
+                ) {
+                    Text("Confirm")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { showInitialConfirmation = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
+    // Success Confirmation Dialog
+    if (showSuccessConfirmation) {
+        AlertDialog(
+            onDismissRequest = { showSuccessConfirmation = false },
             title = { Text("Swap Successful") },
             text = { Text("Your swap of $amountFrom ETH for $amountTo STRK has been completed successfully.") },
             confirmButton = {
-                Button(onClick = { showConfirmation = false }) {
+                Button(onClick = { showSuccessConfirmation = false }) {
                     Text("OK")
                 }
             }
