@@ -9,7 +9,7 @@ class SNWalletSDK(
 ) {
     // System service methods
 
-    private var starknet: StarknetClient = StarknetClient("")
+    private var starknet: StarknetClient = StarknetClient(context, "")
 
     /**
      * Wallet only supports one address as of right now, thus we only need to get the wallet address once

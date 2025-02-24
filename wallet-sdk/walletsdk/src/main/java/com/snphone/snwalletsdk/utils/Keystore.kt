@@ -1,16 +1,16 @@
 package com.snphone.snwalletsdk.utils
 
+import android.content.Context
 import android.util.Log
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import com.snphone.snwalletsdk.MainActivity
 import java.io.IOException
 import java.security.GeneralSecurityException
 
-class Keystore() {
+class Keystore(private val context: Context) {
 
     private val tag = "Keystore"
-    private val context = MainActivity.applicationContext()
+
     fun storeData(message: String) {
         try {
             val masterKey = MasterKey.Builder(context)

@@ -1,5 +1,6 @@
 package com.snphone.snwalletsdk.utils
 
+import android.content.Context
 import android.util.Log
 import com.swmansion.starknet.account.Account
 import com.swmansion.starknet.account.StandardAccount
@@ -17,7 +18,7 @@ import kotlinx.coroutines.future.await
 import java.math.BigDecimal
 import java.math.BigInteger
 
-class StarknetClient(rpcUrl: String) {
+class StarknetClient(private val context: Context, private val rpcUrl: String) {
 
      private val ETH_ERC20_ADDRESS = "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d"
      private val ACCOUNTCLASSHASH = "0x061dac032f228abef9c6626f995015233097ae253a7f72d68552db02f2971b8f"
@@ -28,7 +29,7 @@ class StarknetClient(rpcUrl: String) {
 
     fun deployAccount(): Pair<String, String> {
         // Predefined values for account creation
-        keystore = Keystore()
+        keystore = Keystore(context)
         val randomPrivateKey = StandardAccount.generatePrivateKey()
         keystore.storeData(randomPrivateKey.value.toString())       // save the key generated
         val data = keystore.retrieveData()                          // retrieve it to generate public key
