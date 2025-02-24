@@ -9,7 +9,7 @@ class SNWalletSDK(
 ) {
     // System service methods
 
-    private var starknet: StarknetClient = StarknetClient("https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_7/uvYoCWiSny20w-s3xxUuTOQxnXfFfXBq")
+    private var starknet: StarknetClient = StarknetClient("")
 
     /**
      * Wallet only supports one address as of right now, thus we only need to get the wallet address once
