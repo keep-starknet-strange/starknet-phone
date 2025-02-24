@@ -19,5 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-//rootProject.name = "walletsdk"
+rootProject.name = "walletsdk"
 include(":walletsdk")
+include(":app")
