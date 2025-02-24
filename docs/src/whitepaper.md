@@ -7,7 +7,8 @@ their identity. To fully realize this goal, permissionless communication with th
 right now, people can run their own nodes on their own servers and communicate with the network that way. This is 
 both technically challenging, and often expensive, thus becoming prohibitive for users where it is not feasible to do 
 even if desired. True adoption of decentralized networks will not take place until it is easier to use them than not.
- # Why on a Device 
+
+# Why on a Device 
 
 Already, the most recommended and commonplace way to secure private keys is with a hardware device such as a Ledger 
 or Trezor. While these devices do not sacrifice on security, they do sacrifice on user experience. Connecting them to 
