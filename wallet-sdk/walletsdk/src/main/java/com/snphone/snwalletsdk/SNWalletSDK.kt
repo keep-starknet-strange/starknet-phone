@@ -14,25 +14,25 @@ class SNWalletSDK(
     /**
      * Wallet only supports one address as of right now, thus we only need to get the wallet address once
      */
-    private suspend fun initialAddressRequest() {
+    public suspend fun initialAddressRequest() {
         throw NotImplementedError("Initial address request not implemented")
     }
 
-    fun getAddress(): String {
+    public fun getAddress(): String {
         throw NotImplementedError("Get address not implemented")
     }
 
-    suspend fun sendTransaction(
+    public suspend fun sendTransaction(
     ): String = coroutineScope {
         throw NotImplementedError("Send transaction not implemented")
     }
 
-    suspend fun signMessage(message: String, type: String = "personal_sign"): String = coroutineScope {
+    public suspend fun signMessage(message: String, type: String = "personal_sign"): String = coroutineScope {
         throw NotImplementedError("Sign message not implemented")
     }
 
 
-    suspend fun getChainId(): Int = coroutineScope {
+    public suspend fun getChainId(): Int = coroutineScope {
         throw NotImplementedError("Get chain id not implemented")
     }
 

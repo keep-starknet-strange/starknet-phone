@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "walletsdk"
 include(":walletsdk")
 include(":app")
+include(":demo")
