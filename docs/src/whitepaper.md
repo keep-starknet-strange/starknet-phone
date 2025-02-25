@@ -10,6 +10,14 @@ right now, people can run their own nodes on their own servers and communicate w
 both technically challenging, and often expensive, thus becoming prohibitive for users where it is not feasible to do 
 even if desired. True adoption of decentralized networks will not take place until it is easier to use them than not.
 
+## How it works 
+
+### WalletSDK
+
+![Wallet SDK Diagram](./assets/walletsdk-diagram.png)
+
+### Hardware Signer 
+
 ## Why Android
 
 Already, the most recommended and commonplace way to secure private keys is with a hardware device such as a Ledger 
