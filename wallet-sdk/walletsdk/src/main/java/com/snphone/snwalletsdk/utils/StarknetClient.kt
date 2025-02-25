@@ -17,6 +17,7 @@ import com.swmansion.starknet.signer.StarkCurveSigner
 import kotlinx.coroutines.future.await
 import java.math.BigDecimal
 import java.math.BigInteger
+import com.snphone.snwalletsdk.utils.Signer
 
 class StarknetClient(private val context: Context, private val rpcUrl: String) {
 
@@ -25,16 +26,11 @@ class StarknetClient(private val context: Context, private val rpcUrl: String) {
 
     private val provider = JsonRpcProvider(rpcUrl)
     private val tag = "StarknetClient"
-    private lateinit var keystore: Keystore
 
     fun deployAccount(): Pair<String, String> {
         // Predefined values for account creation
-        keystore = Keystore(context)
-        val randomPrivateKey = StandardAccount.generatePrivateKey()
-        keystore.storeData(randomPrivateKey.value.toString())       // save the key generated
-        val data = keystore.retrieveData()                          // retrieve it to generate public key
-        val privateKey = BigInteger(data).toFelt
 
+        val privateKey = Signer(context).generatePrivateKey()
         val publicKey = StarknetCurve.getPublicKey(privateKey)
 
         Log.d(tag, "Private key: ${privateKey.hexString()}")

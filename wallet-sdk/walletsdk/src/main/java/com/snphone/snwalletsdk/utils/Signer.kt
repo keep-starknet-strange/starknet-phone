@@ -4,14 +4,32 @@ import android.content.Context
 import android.util.Log
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.swmansion.starknet.account.StandardAccount
 import java.io.IOException
 import java.security.GeneralSecurityException
+import com.swmansion.starknet.data.types.Felt
+import java.math.BigInteger
+import com.swmansion.starknet.extensions.toFelt
 
-class Keystore(private val context: Context) {
+class Signer(private val context: Context) {
 
     private val tag = "Keystore"
 
-    fun storeData(message: String) {
+    fun generatePrivateKey(): Felt {
+       // NOTE: this is just generating a private key that we a re storing. This should be updated to
+        // use a keystore signer
+
+        val randomPrivateKey = StandardAccount.generatePrivateKey()
+        this.storeData(randomPrivateKey.value.toString())       // save the key generated
+        val data = this.retrieveData()                          // retrieve it to generate public key
+        val privateKey = BigInteger(data).toFelt
+
+        return privateKey
+    }
+
+    private fun storeData(message: String) {
+        // NOTE: this should be phased out as we transition to a built in TEE signer
+
         try {
             val masterKey = MasterKey.Builder(context)
                 .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
@@ -36,7 +54,9 @@ class Keystore(private val context: Context) {
         }
     }
 
-    fun retrieveData(): String {
+    private fun retrieveData(): String {
+        // NOTE: this should be phased out as we transition to a built in TEE signer
+
         try {
             val masterKey = MasterKey.Builder(context)
                 .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
