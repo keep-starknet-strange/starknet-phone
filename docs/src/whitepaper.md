@@ -1,5 +1,7 @@
 
-# Starknet Phone Whitepaper 
+# Whitepaper (WIP)
+
+## Intro
 
 The end goal, at least as professed by most blockchain organizations, of blockchain networks, is decentralization.
 At its best, it will be a bastion of freedom and security, with peers transacting freely with each other without revealing 
@@ -8,7 +10,7 @@ right now, people can run their own nodes on their own servers and communicate w
 both technically challenging, and often expensive, thus becoming prohibitive for users where it is not feasible to do 
 even if desired. True adoption of decentralized networks will not take place until it is easier to use them than not.
 
-# Why on a Device 
+## Why Android
 
 Already, the most recommended and commonplace way to secure private keys is with a hardware device such as a Ledger 
 or Trezor. While these devices do not sacrifice on security, they do sacrifice on user experience. Connecting them to 
@@ -18,7 +20,7 @@ are good enough to serve this purpose, and allow for interaction with the alread
 Furthermore, mobile devices have sensors and data (camera, geolocation, NFC) which can be used by onchain applications, 
 to unlock previously impossible capabilities. 
 
-# Why Starknet
+## Why Starknet
 
 Two of the largest blockchain networks already have device offerings. Those being the Solana Saga and Seeker, as well 
 as the upcoming dGEN1, which will be shipping with an Ethereum light client on-board. While both of these devices 
@@ -48,6 +50,6 @@ interact with scalable decentralized apps (like DeFi or gaming), and verify tran
 making bitcoin accessible for everyday use right out of the box.
 
 
-# References 
+## References 
 
 [TEE on android](https://source.android.com/docs/security/features/keystore)
