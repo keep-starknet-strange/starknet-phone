@@ -17,7 +17,6 @@ import com.swmansion.starknet.signer.StarkCurveSigner
 import kotlinx.coroutines.future.await
 import java.math.BigDecimal
 import java.math.BigInteger
-import com.snphone.snwalletsdk.utils.Signer
 
 class StarknetClient(private val context: Context, private val rpcUrl: String) {
 

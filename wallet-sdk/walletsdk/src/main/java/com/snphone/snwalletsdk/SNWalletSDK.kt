@@ -11,6 +11,11 @@ class SNWalletSDK(
 
     private var starknet: StarknetClient = StarknetClient(context, "")
 
+    public suspend fun deployAccount() {
+        var starknet = StarknetClient(this.context, "")
+        starknet.deployAccount()
+    }
+
     /**
      * Wallet only supports one address as of right now, thus we only need to get the wallet address once
      */
