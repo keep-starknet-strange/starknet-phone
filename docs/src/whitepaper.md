@@ -44,27 +44,15 @@ as the upcoming dGEN1, which will be shipping with an Ethereum light client on-b
 are innovative in their respective ways, Starknet has some unique properties that makes more sense from a consumer 
 device standpoint. 
 
-1. Account Abstraction 
-
-Signing will happen using an on-device TEE, which is not 
+Signing will happen using an on-device TEE, such that the private key used for signing is not 
 exportable from the device. This prevents the key from being extracted in the case of theft, but also means 
 that the key is lost if the device is lost. Account Abstraction on Starknet allows for a system of Gaurdians, where 
 multiple signers can be used to secure an account, and transfer signing capability in the case of a lost device. 
 
-2. App Ecosystem 
-
+Furthermore, 
 Starknet is proving itself to be a hub for onchain games. Many of these games would benefit from being played on a mobile
 and/or dedicated device where transaction signing can be handled by the OS and moved out of their immediate attention.
-
 Native dApps, (both games and financial) can easily interact with a simple API provided by the OS. 
-
-3. Bitcoin Settlement 
-
-If OP_CAT is enabled on the bitcoin network, and Bitcoin settlement is acheived by Starknet, the OS will be in a 
-position to be the easiest gateway to low-cost Bitcoin transactions directly from mobile devices, all while maintaining 
-Bitcoin’s security through trustless Layer 2 scaling. This would allow Android users to manage Bitcoin-based assets, 
-interact with scalable decentralized apps (like DeFi or gaming), and verify transactions on-device using minimal resources, 
-making bitcoin accessible for everyday use right out of the box.
 
 
 ## References 
