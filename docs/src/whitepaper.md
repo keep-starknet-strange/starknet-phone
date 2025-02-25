@@ -14,7 +14,16 @@ even if desired. True adoption of decentralized networks will not take place unt
 
 ### WalletSDK
 
+The WalletSDK runs as an OS level system service, allowing it to be available for all native apps running on the OS.
+
 ![Wallet SDK Diagram](./assets/walletsdk-diagram.png)
+
+### Hardware Signer
+
+Android (Pixel specifically) devices have the ability to sign transactions on an embedded secure element, providing 
+similar security to a cold wallet like a Ledger or Trezor. 
+
+![Hardware signer diagram](/assets/gaurdian-diagram.png)
 
 ### Hardware Signer 
 
