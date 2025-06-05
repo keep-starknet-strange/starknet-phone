@@ -9,5 +9,3 @@ lightclientservice/target
 
 # jni files
 lightclientservice/app/src/main/jniLibs/
-
-**/.idea
