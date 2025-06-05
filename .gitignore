@@ -4,6 +4,15 @@
 # mdBook
 docs/book/
 
+<<<<<<< HEAD
+# build files
+lightclientservice/target
+
+# jni files
+lightclientservice/app/src/main/jniLibs/
+
+**/.idea
+=======
 target
 
 
@@ -19,3 +28,4 @@ lightclientservice/.idea
 **/.idea/*
 
 wallet_app/local.properties
+>>>>>>> 7fa021d0667ed3e9d92b8b69c838b0fb53370119
