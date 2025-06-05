@@ -69,6 +69,51 @@
         "design",
         "code"
       ]
+    },
+    {
+      "login": "ooochoche",
+      "name": "Benedict Ejembi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/101812348?v=4",
+      "profile": "https://github.com/ooochoche",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "Gift-Naomi",
+      "name": "Mystic",
+      "avatar_url": "https://avatars.githubusercontent.com/u/149405096?v=4",
+      "profile": "https://github.com/Gift-Naomi",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "mubarak23",
+      "name": "Mubarak Muhammad Aminu",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7858376?v=4",
+      "profile": "https://github.com/mubarak23",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "maxslimb",
+      "name": "Kishan Patel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/55874508?v=4",
+      "profile": "https://kishanpatel.tech/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "omahs",
+      "name": "omahs",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73983677?v=4",
+      "profile": "https://github.com/omahs",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

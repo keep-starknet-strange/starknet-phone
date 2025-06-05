@@ -4,6 +4,7 @@
 # mdBook
 docs/book/
 
+<<<<<<< HEAD
 # build files
 lightclientservice/target
 
@@ -11,3 +12,20 @@ lightclientservice/target
 lightclientservice/app/src/main/jniLibs/
 
 **/.idea
+=======
+target
+
+
+**/.gradle/*
+
+lightclientservice/app/build
+lightclientservice/target
+lightclientservice/local.properties
+lightclientservice/.idea
+
+**/*.so
+
+**/.idea/*
+
+wallet_app/local.properties
+>>>>>>> 7fa021d0667ed3e9d92b8b69c838b0fb53370119
