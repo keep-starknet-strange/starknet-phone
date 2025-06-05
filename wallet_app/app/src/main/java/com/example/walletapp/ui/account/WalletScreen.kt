@@ -50,6 +50,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import android.content.ClipData
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.toUpperCase
@@ -61,7 +62,6 @@ import coil.request.ImageRequest
 import com.example.walletapp.BuildConfig
 import com.example.walletapp.R
 import com.example.walletapp.model.CoinData
-import com.example.walletapp.utils.StarknetClient
 import com.example.walletapp.utils.toDoubleWithTwoDecimal
 import com.example.walletapp.utils.weiToEther
 import com.swmansion.starknet.crypto.starknetKeccak
@@ -82,7 +82,8 @@ fun WalletScreen(
     onSendPress: () -> Unit,
     onReceivePress: () -> Unit,
     tokenViewModel: TokenViewModel,
-    walletViewModel: WalletViewModel
+    walletViewModel: WalletViewModel,
+    onBack: () -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Wallet(
@@ -91,7 +92,8 @@ fun WalletScreen(
             onSendPress = onSendPress,
             onReceivePress = onReceivePress,
             tokenViewModel = tokenViewModel,
-            walletViewModel = walletViewModel
+            walletViewModel = walletViewModel,
+            onBack = onBack
         )
     }
 }
@@ -100,7 +102,7 @@ fun WalletScreen(
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -> Unit, onSendPress: () -> Unit,tokenViewModel: TokenViewModel,  walletViewModel: WalletViewModel) {
+fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -> Unit, onSendPress: () -> Unit,tokenViewModel: TokenViewModel,  walletViewModel: WalletViewModel,onBack:()->Unit) {
     val networkList = listOf("Starknet Mainnet", "Test Networks")
     var selectedNetworkIndex by remember { mutableStateOf(0) }
     val coinViewModel: CoinViewModel = viewModel()
@@ -125,6 +127,9 @@ fun Wallet(modifier: Modifier, onNewTokenPress: () -> Unit, onReceivePress: () -
         walletViewModel.fetchBalance(accountAddress, tokens, coinViewModel)
     }
 
+    BackHandler {
+        onBack()
+    }
     if (errorMessageCoinViewModel.isNotEmpty()) {
         Text(
             text = errorMessageCoinViewModel,

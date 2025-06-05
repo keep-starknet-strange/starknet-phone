@@ -1,6 +1,7 @@
 # Summary
 
 - [Introduction](./README.md)
+- [Whitepaper 🚧](./whitepaper.md)
 
 - [Overview](./overview/README.md)
    - [Hardware Signer 🚧](./overview/hardware-signing.md)

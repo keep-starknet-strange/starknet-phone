@@ -19,5 +19,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SNWalletSDK"
+rootProject.name = "walletsdk"
+include(":walletsdk")
 include(":app")
+include(":demo")

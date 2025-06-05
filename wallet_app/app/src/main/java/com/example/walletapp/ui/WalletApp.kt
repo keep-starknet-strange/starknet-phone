@@ -1,13 +1,22 @@
 package com.example.walletapp.ui
 
+import android.app.Activity
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.walletapp.BuildConfig
+import com.example.walletapp.datastore.WalletStoreModule
 import com.example.walletapp.ui.account.AddTokenScreen
+import com.example.walletapp.ui.account.EnterPinScreen
 import com.example.walletapp.ui.account.TokenViewModel
 import com.example.walletapp.ui.account.WalletScreen
 import com.example.walletapp.ui.account.WalletViewModel
@@ -19,6 +28,11 @@ import com.example.walletapp.ui.onboarding.OnboardingScreen
 import com.example.walletapp.ui.theme.WalletappTheme
 import com.example.walletapp.ui.transfer.ReceiveScreen
 import com.example.walletapp.ui.transfer.SendScreen
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 
 // main user account view
@@ -37,6 +51,8 @@ object ImportAccount
 @Serializable
 object CreatePin
 @Serializable
+object EnterPin
+@Serializable
 object FinalizeAccountCreation
 
 // token transfer flow
@@ -45,24 +61,20 @@ object Send
 @Serializable
 object Receive
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WalletApp(tokenViewModel: TokenViewModel) {
     val walletViewModel: WalletViewModel = viewModel()
+    val context = LocalContext.current
+    val dataStore = WalletStoreModule(context)
+    val hasAccountState = dataStore.hasAccount.collectAsState(initial = null)
+    hasAccountState.value?.let { hasAccount ->
     WalletappTheme {
 
-        // TODO(#109): get this information from a data store
-        val hasAccount = false
-
-        fun getStart(): Any {
-            return if (hasAccount) {
-                Wallet
-            } else {
-                Onboarding
-            }
-        }
+        val startDestination = if (hasAccount) EnterPin else Onboarding
 
         val navController = rememberNavController()
-        NavHost(navController, startDestination = getStart()) {
+        NavHost(navController, startDestination = startDestination) {
 
             composable<Onboarding> {
                 OnboardingScreen(
@@ -78,7 +90,7 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
             }
             composable<FinalizeAccountCreation> {
                 FinalizeAccountCreationScreen(
-                    onContinue = { navController.navigate( route = CreatePin )},
+                    onContinue = { navController.navigate( route = CreatePin ) },
                     onBackButtonPressed = { navController.navigateUp() }
                 )
             }
@@ -90,7 +102,38 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
             }
             composable<CreatePin> {
                 CreatePinScreen(
-                    onContinue = { navController.navigate( route = Wallet )}
+                    onContinue = { passcode ->
+                        navController.navigate( route = Wallet )
+
+                        CoroutineScope(Dispatchers.IO).launch{
+                            dataStore.setPin(passcode)
+                        }
+                        CoroutineScope(Dispatchers.IO).launch {
+                            dataStore.setHasAccount(true)
+                        }
+                    },
+                    onError = {
+                        Toast.makeText(context,"Enter 6 digit pin", Toast.LENGTH_LONG).show()
+                    }
+                )
+            }
+            composable<EnterPin> {
+                EnterPinScreen(
+                    onContinue = { passcode ->
+                        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+                            val isPinValid = dataStore.verifyPin(passcode)
+                            withContext(Dispatchers.Main) {
+                                if (isPinValid) {
+                                    navController.navigate(route = Wallet)
+                                } else {
+                                    Toast.makeText(context, "Pin is Incorrect", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        }
+                    },
+                    onError = {
+                        Toast.makeText(context,"Enter 6 digit pin", Toast.LENGTH_LONG).show()
+                    }
                 )
             }
 
@@ -100,7 +143,11 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
                    onReceivePress = { navController.navigate( route = Receive ) },
                    onSendPress = { navController.navigate( route = Send ) },
                    tokenViewModel = tokenViewModel,
-                   walletViewModel = walletViewModel
+                   walletViewModel = walletViewModel,
+                   onBack = {
+                       val activity = (navController.context as? Activity)
+                       activity?.finish()
+                   }
                )
            }
             composable<AddToken> {
@@ -118,5 +165,6 @@ fun WalletApp(tokenViewModel: TokenViewModel) {
                 ReceiveScreen(modifier = Modifier,navController)
             }
         }
+    }
     }
 }

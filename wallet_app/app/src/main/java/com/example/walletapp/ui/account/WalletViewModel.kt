@@ -8,7 +8,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import com.example.walletapp.BuildConfig
 import com.example.walletapp.model.Token
-import com.example.walletapp.utils.StarknetClient
 import com.example.walletapp.utils.weiToEther
 import com.example.walletapp.utils.toDoubleWithTwoDecimal
 import com.swmansion.starknet.account.Account
@@ -22,7 +21,8 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
-
+import com.snphone.snwalletsdk.utils.StarknetClient
+import com.example.walletapp.utils.weiStringToEther
 
 class WalletViewModel : ViewModel() {
     private val _balances = MutableStateFlow(emptyList<HashMap<String, Double>>())
@@ -48,8 +48,8 @@ class WalletViewModel : ViewModel() {
                         async(Dispatchers.IO) {
                             try {
                                 val balanceInWei =
-                                    starknetClient.getBalance(accountAddress, token.contactAddress)
-                                val balanceInEther = weiToEther(balanceInWei).toDoubleWithTwoDecimal()
+                                    starknetClient.getBalance(accountAddress)
+                                val balanceInEther = weiStringToEther(balanceInWei).toDoubleWithTwoDecimal()
                                 hashMapOf(token.name to balanceInEther)
                             } catch (e: RpcRequestFailedException) {
                                 withContext(Dispatchers.Main) {

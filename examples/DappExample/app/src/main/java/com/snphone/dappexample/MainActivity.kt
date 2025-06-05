@@ -37,7 +37,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainContent(modifier: Modifier = Modifier) {
-    val clickCount = remember { mutableStateOf(0) }
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -46,12 +45,16 @@ fun MainContent(modifier: Modifier = Modifier) {
     ) {
         Button(
             onClick = {
-                clickCount.value++
+                signTransaction()
             }
         ) {
-            Text(text = "Click me! (${clickCount.value})")
+            Text(text = "Sign Transaction")
         }
     }
+}
+
+private fun signTransaction() {
+    //
 }
 
 @Preview(showBackground = true)

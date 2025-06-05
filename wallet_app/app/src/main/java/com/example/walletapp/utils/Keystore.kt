@@ -1,11 +1,14 @@
 package com.example.walletapp.utils
 
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
 import android.util.Log
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.example.walletapp.ui.MainActivity
 import java.io.IOException
 import java.security.GeneralSecurityException
+import javax.crypto.KeyGenerator
 
 class Keystore() {
 
@@ -61,3 +64,21 @@ class Keystore() {
         }
     }
 }
+
+fun generateKey() {
+    val keyGenerator = KeyGenerator.getInstance(
+        KeyProperties.KEY_ALGORITHM_AES,
+        "AndroidKeyStore"
+    )
+    val keyGenParameterSpec = KeyGenParameterSpec.Builder(
+        "PIN_KEY",  // Key alias
+        KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+    ).setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+        .setUserAuthenticationRequired(false) // Set true if biometrics are required
+        .build()
+
+    keyGenerator.init(keyGenParameterSpec)
+    keyGenerator.generateKey()
+}
+

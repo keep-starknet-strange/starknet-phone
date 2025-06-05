@@ -98,6 +98,9 @@ pub mod StarknetPhoneAccount {
             assert(signature.len() == 2_u32, 'invalid signature');
             let public_key = self._public_key.read();
 
+            // TODO: update this to check valid secp256k1 signature -- use argent signers
+            // implementation as reference
+
             if check_ecdsa_signature(
                 message_hash: hash,
                 public_key: public_key,

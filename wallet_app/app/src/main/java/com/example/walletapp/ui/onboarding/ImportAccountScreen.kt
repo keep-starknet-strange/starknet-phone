@@ -1,10 +1,7 @@
 package com.example.walletapp.ui.onboarding
 
 import android.app.Activity
-import android.content.Intent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -24,16 +20,12 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,15 +36,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
-import com.example.walletapp.R
+import com.example.walletapp.datastore.WalletStoreModule
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -145,6 +138,8 @@ fun PrivateKeyView(modifier: Modifier = Modifier, onNext: () -> Unit) {
     val scope = rememberCoroutineScope()
     var openBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
+    val context = (LocalContext.current as Activity)
+    val dataStore = WalletStoreModule(context)
 
     Column(
         modifier = modifier
@@ -197,7 +192,10 @@ fun PrivateKeyView(modifier: Modifier = Modifier, onNext: () -> Unit) {
         Spacer(modifier = Modifier.weight(1f))
 
         Button(
-            onClick = onNext,
+            onClick = {onNext()
+                CoroutineScope(Dispatchers.IO).launch {
+                    dataStore.setPrivateKey(accountName)
+                }},
             contentPadding = ButtonDefaults.ContentPadding,
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
@@ -231,6 +229,7 @@ fun CreateNameView(modifier: Modifier = Modifier, onFinishAccountImport: () -> U
     val borderColor = Color("#1B1B76".toColorInt())
     var accountName by remember { mutableStateOf("") }
     val context = (LocalContext.current as Activity)
+    val dataStore = WalletStoreModule(context)
 
     Column(
         modifier = modifier
@@ -283,7 +282,10 @@ fun CreateNameView(modifier: Modifier = Modifier, onFinishAccountImport: () -> U
         Spacer(modifier = Modifier.weight(1f))
 
         Button(
-            onClick = onFinishAccountImport,
+            onClick = {onFinishAccountImport()
+                CoroutineScope(Dispatchers.IO).launch {
+                    dataStore.setAccountName(accountName)
+                }},
             contentPadding = ButtonDefaults.ContentPadding,
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
